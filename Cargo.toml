@@ -10,6 +10,7 @@ repository = "https://github.com/devanlooches/rustfetch"
 
 [dependencies]
 clap = { version = "2.33.3",default-features = false,  features = ["yaml"] }
+console = "0.14.1"
 dirs = {version = "3.0.2", default-features = false}
 nixinfo = {version = "0.3.3", default-features = false}
 regex = {version = "1.5.4", default-features = false, features = ["std", "unicode-perl"]}
