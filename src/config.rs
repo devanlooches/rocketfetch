@@ -1,3 +1,4 @@
+use crate::cli::Mode;
 use crate::cli::Opt;
 use crate::modules::*;
 use console::style;
@@ -12,6 +13,7 @@ pub struct Config {
     module_order: String,
     offset: usize,
     side_icon_cmd: String,
+    mode: Mode,
     user: User,
 }
 
@@ -48,7 +50,7 @@ impl Config {
     }
 
     async fn module_order(&self) -> Vec<String> {
-        let mut vec =  Vec::new();
+        let mut vec = Vec::new();
         for module in self.module_order.split_whitespace() {
             match module {
                 "user" => vec.push(User::get_info()),
@@ -90,7 +92,7 @@ impl Config {
             .max_by(|&x, &y| measure_text_width(x).cmp(&measure_text_width(y)))
             .unwrap()
             .len();
-            println!("Max Length: {}", maxlength);
+        println!("Max Length: {}", maxlength);
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
@@ -131,12 +133,19 @@ impl Config {
     }
 
     pub async fn print(&self) {
-        use crate::cli::Mode;
         let matches = Config::cli().await;
-        match matches.mode {
-            Mode::Classic => self.print_classic().await,
-            Mode::BottomTable => self.print_bottom_table().await,
-            Mode::SideTable => self.print_side_table().await,
+        if let Some(v) = matches.mode {
+            match v {
+                Mode::Classic => self.print_classic().await,
+                Mode::BottomTable => self.print_bottom_table().await,
+                Mode::SideTable => self.print_side_table().await,
+            }
+        } else {
+            match self.mode {
+                Mode::Classic => self.print_classic().await,
+                Mode::BottomTable => self.print_bottom_table().await,
+                Mode::SideTable => self.print_side_table().await,
+            }
         }
     }
 }
@@ -148,6 +157,7 @@ impl Default for Config {
             offset: 4,
             module_order: String::from("user"),
             side_icon_cmd: String::from("echo hello | cowsay"),
+            mode: Mode::Classic,
         }
     }
 }

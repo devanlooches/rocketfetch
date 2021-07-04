@@ -8,10 +8,12 @@ use user_error::UserFacingError;
 pub struct Opt {
     #[structopt(short = "c", long, name = "FILE", help = "Sets custom configuration file.")]
     pub config: Option<String>,
-    #[structopt(long, default_value = "classic", help = "Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`")]
-    pub mode: Mode,
+    #[structopt(long, help = "Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`")]
+    pub mode: Option<Mode>,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum Mode {
     Classic,
     SideTable,
