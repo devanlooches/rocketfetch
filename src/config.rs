@@ -21,13 +21,10 @@ impl Config {
     }
     pub async fn from_config() -> Self {
         let matches = Config::cli().await;
-        let path = matches
-            .config
-            .unwrap_or(format!(
-                "{}/.config/rustfetch/config.toml",
-                dirs::home_dir().unwrap().to_string_lossy()
-            ))
-            .to_string();
+        let path = matches.config.unwrap_or(format!(
+            "{}/.config/rustfetch/config.toml",
+            dirs::home_dir().unwrap().to_string_lossy()
+        ));
         match std::fs::read_to_string(path) {
             Ok(v) => match toml::from_str::<Config>(&v) {
                 Ok(v) => v,
@@ -71,7 +68,7 @@ impl Config {
     }
 
     async fn get_side_logo(&self) -> Vec<String> {
-        if self.side_icon_cmd == "" || self.side_icon_cmd == "auto" {
+        if self.side_icon_cmd.is_empty() || self.side_icon_cmd == "auto" {
             Config::get_logo().await
         } else {
             self.run_cmd(&self.side_icon_cmd)
@@ -84,6 +81,7 @@ impl Config {
 
     async fn print_classic(&self) {
         use console::measure_text_width;
+        use std::cmp::Ordering;
         let mut sidelogo = self.get_side_logo().await;
         let mut order = self.module_order().await;
 
@@ -92,10 +90,10 @@ impl Config {
             .max_by(|&x, &y| measure_text_width(x).cmp(&measure_text_width(y)))
             .unwrap()
             .len();
-        if sidelogo.len() > order.len() {
-            order.resize(sidelogo.len(), String::from(""));
-        } else if order.len() > sidelogo.len() {
-            sidelogo.resize(order.len(), String::from(""));
+        match sidelogo.len().cmp(&order.len()) {
+            Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
+            Ordering::Less => sidelogo.resize(order.len(), String::from("")),
+            Ordering::Equal => (),
         }
         for (i, line) in sidelogo.iter().enumerate() {
             println!(
@@ -107,7 +105,7 @@ impl Config {
         }
     }
 
-    async fn run_cmd(&self, cmd: &String) -> String {
+    async fn run_cmd(&self, cmd: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
             Command::new("cmd")
@@ -135,7 +133,7 @@ impl Config {
         use crate::cli::Mode;
         let matches = Config::cli().await;
         match matches.mode {
-            Mode::Classic => self.print_classic().await,    
+            Mode::Classic => self.print_classic().await,
             Mode::BottomTable => self.print_bottom_table().await,
             Mode::SideTable => self.print_side_table().await,
         }

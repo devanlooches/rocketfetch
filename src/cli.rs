@@ -1,5 +1,5 @@
 use structopt::StructOpt;
-use user_error::{UserFacingError, UFE};
+use user_error::UserFacingError;
 
 #[derive(StructOpt)]
 #[structopt(
