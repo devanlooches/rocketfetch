@@ -1,5 +1,7 @@
+use crate::cli::Opt;
 use crate::modules::*;
 use console::style;
+use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
 #[derive(Deserialize)]
@@ -14,12 +16,14 @@ pub struct Config {
 }
 
 impl Config {
+    pub async fn cli() -> Opt {
+        Opt::from_args()
+    }
     pub async fn from_config() -> Self {
-        use clap::{App, Arg};
-        let matches = App::new("rustfetch").version("0.1").author("Devan Looches <devan.looches@gmail.com>").about("A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration").arg(Arg::with_name("config").short("c").long("config").value_name("FILE").help("Sets custom config file").takes_value(true)).get_matches();
+        let matches = Config::cli().await;
         let path = matches
-            .value_of("config")
-            .unwrap_or(&format!(
+            .config
+            .unwrap_or(format!(
                 "{}/.config/rustfetch/config.toml",
                 dirs::home_dir().unwrap().to_string_lossy()
             ))
@@ -38,7 +42,7 @@ impl Config {
             Err(r) => {
                 println!(
                     "{}: {}. Falling back to default configuration.",
-                    style("WARNING").cyan(),
+                    style("WARNING").yellow(),
                     r.to_string()
                 );
                 Config::default()
@@ -78,7 +82,7 @@ impl Config {
         }
     }
 
-    pub async fn print_classic(&self) {
+    async fn print_classic(&self) {
         use console::measure_text_width;
         let mut sidelogo = self.get_side_logo().await;
         let mut order = self.module_order().await;
@@ -117,6 +121,24 @@ impl Config {
                 .expect("failed to execute process")
         };
         String::from_utf8(output.stdout).expect("Failed to read output")
+    }
+
+    async fn print_side_table(&self) {
+        todo!()
+    }
+
+    async fn print_bottom_table(&self) {
+        todo!()
+    }
+
+    pub async fn print(&self) {
+        use crate::cli::Mode;
+        let matches = Config::cli().await;
+        match matches.mode {
+            Mode::Classic => self.print_classic().await,    
+            Mode::BottomTable => self.print_bottom_table().await,
+            Mode::SideTable => self.print_side_table().await,
+        }
     }
 }
 
