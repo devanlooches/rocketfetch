@@ -1,6 +1,6 @@
+mod cli;
 mod config;
 mod modules;
-mod cli;
 #[macro_use]
 extern crate serde_derive;
 use config::Config;

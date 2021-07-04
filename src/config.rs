@@ -53,7 +53,7 @@ impl Config {
         let mut vec = Vec::new();
         for module in self.module_order.split_whitespace() {
             match module {
-                "user" => vec.push(User::get_info()),
+                "user" => vec.push(self.user.get_info().await),
                 v => {
                     UserFacingError::new("Failed to parse module order string.")
                         .reason(format!("Unknown module: {}", v))
@@ -108,7 +108,7 @@ impl Config {
         }
     }
 
-    async fn run_cmd(cmd: &str) -> String {
+    pub async fn run_cmd(cmd: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
             Command::new("cmd")
@@ -121,7 +121,10 @@ impl Config {
                 .output()
                 .expect("failed to execute process")
         };
-        String::from_utf8(output.stdout).expect("Failed to read output")
+        String::from_utf8(output.stdout)
+            .expect("Failed to read output")
+            .trim()
+            .to_string()
     }
 
     async fn print_side_table(&self) {
