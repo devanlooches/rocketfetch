@@ -40,7 +40,7 @@ impl Config {
 
             Err(r) => {
                 println!(
-                    "{}: {}. Falling back to default configuration.",
+                    "{}: Could not find default configuration: {}. Falling back to default configuration.",
                     style("WARNING").yellow(),
                     r.to_string()
                 );
@@ -92,7 +92,6 @@ impl Config {
             .max_by(|&x, &y| measure_text_width(x).cmp(&measure_text_width(y)))
             .unwrap()
             .len();
-        println!("Max Length: {}", maxlength);
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),

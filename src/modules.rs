@@ -1,6 +1,6 @@
 use crate::config::Config;
 use console::{style, Style};
-use nixinfo;
+// use nixinfo;
 use rsys::Rsys;
 #[derive(Deserialize)]
 #[serde(default)]
