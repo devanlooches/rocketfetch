@@ -48,7 +48,7 @@ impl Config {
     }
 
     async fn module_order(&self) -> Vec<String> {
-        let mut vec = Vec::new();
+        let mut vec =  Vec::new();
         for module in self.module_order.split_whitespace() {
             match module {
                 "user" => vec.push(User::get_info()),
@@ -71,7 +71,7 @@ impl Config {
         if self.side_icon_cmd.is_empty() || self.side_icon_cmd == "auto" {
             Config::get_logo().await
         } else {
-            self.run_cmd(&self.side_icon_cmd)
+            Config::run_cmd(&self.side_icon_cmd)
                 .await
                 .lines()
                 .map(|v| v.to_string())
@@ -90,6 +90,7 @@ impl Config {
             .max_by(|&x, &y| measure_text_width(x).cmp(&measure_text_width(y)))
             .unwrap()
             .len();
+            println!("Max Length: {}", maxlength);
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
@@ -99,13 +100,13 @@ impl Config {
             println!(
                 "{}{}{}",
                 line,
-                "".repeat(maxlength - line.len() + self.offset),
+                " ".repeat(maxlength - measure_text_width(line) + self.offset),
                 order[i]
             );
         }
     }
 
-    async fn run_cmd(&self, cmd: &str) -> String {
+    async fn run_cmd(cmd: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
             Command::new("cmd")
@@ -145,7 +146,7 @@ impl Default for Config {
         Config {
             user: User::default(),
             offset: 4,
-            module_order: String::from(""),
+            module_order: String::from("user"),
             side_icon_cmd: String::from("echo hello | cowsay"),
         }
     }

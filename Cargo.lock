@@ -44,7 +44,6 @@ dependencies = [
  "bitflags",
  "textwrap",
  "unicode-width",
- "yaml-rust",
 ]
 
 [[package]]
@@ -56,7 +55,9 @@ dependencies = [
  "encode_unicode",
  "lazy_static",
  "libc",
+ "regex",
  "terminal_size",
+ "unicode-width",
  "winapi",
 ]
 
@@ -297,7 +298,6 @@ dependencies = [
 name = "rustfetch"
 version = "0.1.0"
 dependencies = [
- "clap",
  "console",
  "dirs",
  "nixinfo",
@@ -499,9 +499,3 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
-
-[[package]]
-name = "yaml-rust"
-version = "0.3.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e66366e18dc58b46801afbf2ca7661a9f59cc8c5962c29892b6039b4f86fa992"

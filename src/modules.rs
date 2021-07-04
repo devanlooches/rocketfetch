@@ -24,6 +24,6 @@ impl Default for User {
 
 impl User {
     pub fn get_info() -> String {
-        todo!()
+        String::from("Devan@Nobody")
     }
 }

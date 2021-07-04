@@ -6,9 +6,9 @@ use user_error::UserFacingError;
     about = "A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration."
 )]
 pub struct Opt {
-    #[structopt(short = "c", long, name = "FILE")]
+    #[structopt(short = "c", long, name = "FILE", help = "Set a specific configuration file")]
     pub config: Option<String>,
-    #[structopt(long)]
+    #[structopt(long, default_value = "classic", help = "Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`")]
     pub mode: Mode,
 }
 
