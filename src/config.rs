@@ -85,8 +85,6 @@ impl Config {
     }
 
     async fn print_classic(&self) {
-        use console::measure_text_width;
-        use std::cmp::Ordering;
         let mut sidelogo = self.get_side_logo().await;
         let mut order = self.module_order().await;
 
@@ -185,8 +183,8 @@ impl Config {
     }
 
     async fn print_bottom_table(&self) {
-        let mut sidelogo = self.get_side_logo().await;
-        let mut info = self.module_order().await;
+        let sidelogo = self.get_side_logo().await;
+        let info = self.module_order().await;
         let logo_maxlength = strip_ansi_codes(
             sidelogo
                 .iter()
@@ -197,7 +195,7 @@ impl Config {
         let info_maxlength =
             strip_ansi_codes(info.iter().max_by_key(|&x| measure_text_width(x)).unwrap()).len();
 
-        let offset = info_maxlength / 2;
+        let offset = logo_maxlength / 4;
 
         for line in sidelogo {
             println!("{}", line);
