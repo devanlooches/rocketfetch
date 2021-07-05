@@ -2,7 +2,6 @@ use crate::cli::Mode;
 use crate::cli::Opt;
 use crate::modules::*;
 use console::measure_text_width;
-use console::strip_ansi_codes;
 use console::style;
 use std::cmp::Ordering;
 use structopt::StructOpt;
@@ -15,7 +14,7 @@ use user_error::{UserFacingError, UFE};
 pub struct Config {
     module_order: String,
     offset: usize,
-    side_icon_cmd: String,
+    logo_cmd: String,
     format: Format,
     user: User,
     delimiter: Delimiter,
@@ -27,9 +26,18 @@ impl Config {
     }
     pub async fn from_config() -> Self {
         let matches = Config::get_args().await;
+        let home_dir = match dirs::home_dir() {
+            Some(v) => v,
+            None => {
+                UserFacingError::new("Failed to find home directory")
+                    .help("If this persists, please open github issue.")
+                    .print_and_exit();
+                unreachable!()
+            }
+        };
         let path = matches.config.unwrap_or(format!(
             "{}/.config/rustfetch/config.toml",
-            dirs::home_dir().unwrap().to_string_lossy()
+            home_dir.to_string_lossy()
         ));
         match std::fs::read_to_string(path) {
             Ok(v) => match toml::from_str::<Config>(&v) {
@@ -58,7 +66,11 @@ impl Config {
         for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
                 "user" => vec.push(self.user.get_info().await),
-                "delimiter" => vec.push(self.delimiter.get_info(measure_text_width(&vec[i - 1])).await),
+                "delimiter" => vec.push(
+                    self.delimiter
+                        .get_info(measure_text_width(&vec[i - 1]))
+                        .await,
+                ),
                 v => {
                     UserFacingError::new("Failed to parse module order string.")
                         .reason(format!("Unknown module: {}", v))
@@ -75,10 +87,10 @@ impl Config {
     }
 
     async fn get_side_logo(&self) -> Vec<String> {
-        if self.side_icon_cmd.is_empty() || self.side_icon_cmd == "auto" {
+        if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
             Config::get_logo().await
         } else {
-            Config::run_cmd(&self.side_icon_cmd)
+            Config::run_cmd(&self.logo_cmd)
                 .await
                 .lines()
                 .map(|v| v.to_string())
@@ -90,11 +102,8 @@ impl Config {
         let mut sidelogo = self.get_side_logo().await;
         let mut order = self.module_order().await;
 
-        let maxlength = sidelogo
-            .iter()
-            .max_by(|&x, &y| measure_text_width(x).cmp(&measure_text_width(y)))
-            .unwrap()
-            .len();
+        let maxlength = self.logo_maxlength().await;
+
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
@@ -113,20 +122,67 @@ impl Config {
     pub async fn run_cmd(cmd: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
-            Command::new("cmd")
-                .args(&["/C", cmd])
-                .output()
-                .expect("failed to execute process")
+            match Command::new("cmd").args(&["/C", cmd]).output() {
+                Ok(v) => v,
+                Err(r) => {
+                    UserFacingError::new("Failed to execute command")
+                        .reason(r.to_string())
+                        .print_and_exit();
+                    unreachable!()
+                }
+            }
         } else {
-            Command::new("sh")
-                .args(["-c", cmd])
-                .output()
-                .expect("failed to execute process")
+            match Command::new("sh").args(["-c", cmd]).output() {
+                Ok(v) => v,
+                Err(r) => {
+                    UserFacingError::new("Failed to execute command")
+                        .reason(r.to_string())
+                        .print_and_exit();
+                    unreachable!()
+                }
+            }
         };
-        String::from_utf8(output.stdout)
-            .expect("Failed to read output")
-            .trim()
-            .to_string()
+        match String::from_utf8(output.stdout) {
+            Ok(v) => v.trim().to_string(),
+            Err(r) => {
+                UserFacingError::new("Failed to read stdout from command.").reason(r.to_string()).print_and_exit();
+                unreachable!()
+            }
+        }
+    }
+
+    async fn logo_maxlength(&self) -> usize {
+        match self
+            .get_side_logo()
+            .await
+            .iter()
+            .max_by_key(|&x| measure_text_width(x))
+        {
+            Some(v) => measure_text_width(v),
+            None => {
+                UserFacingError::new("Failed to find logo line with greatest length.")
+                    .help("Make sure you have a logo command defined, and that it outputs something. If this persists, please open a github issue.")
+                    .print_and_exit();
+                unreachable!()
+            }
+        }
+    }
+
+    async fn info_maxlength(&self) -> usize {
+        match self
+            .module_order()
+            .await
+            .iter()
+            .max_by_key(|&x| measure_text_width(x))
+        {
+            Some(v) => measure_text_width(v),
+            None => {
+                UserFacingError::new("Failed to find info line with the greatest length")
+                    .help("Make sure that you have some modules defined. If this persists, please open a github issue.")
+                    .print_and_exit();
+                unreachable!()
+            }
+        }
     }
 
     async fn print_side_table(&self) {
@@ -137,20 +193,12 @@ impl Config {
             Ordering::Less => sidelogo.resize(info.len(), String::from("")),
             Ordering::Equal => (),
         }
-        let logo_maxlength = strip_ansi_codes(
-            sidelogo
-                .iter()
-                .max_by_key(|&x| measure_text_width(x))
-                .unwrap(),
-        )
-        .len();
-        let info_maxlength =
-            strip_ansi_codes(info.iter().max_by_key(|&x| measure_text_width(x)).unwrap()).len();
-
+        let logo_maxlength = self.logo_maxlength().await;
+        let info_maxlength = self.info_maxlength().await;
         println!(
             "{}{}{}{}{}",
             &sidelogo[0],
-            " ".repeat(logo_maxlength - strip_ansi_codes(&sidelogo[0]).len() + self.offset),
+            " ".repeat(logo_maxlength - measure_text_width(&sidelogo[0]) + self.offset),
             self.format.top_left_corner_char,
             self.format
                 .horizontal_char
@@ -163,18 +211,25 @@ impl Config {
             println!(
                 "{}{}{vertical} {} {}{vertical}",
                 sidelogo[i + 1],
-                " ".repeat(logo_maxlength - strip_ansi_codes(&sidelogo[i + 1]).len() + self.offset),
+                " ".repeat(logo_maxlength - measure_text_width(&sidelogo[i + 1]) + self.offset),
                 info[i],
-                " ".repeat(info_maxlength - strip_ansi_codes(&info[i]).len()),
+                " ".repeat(info_maxlength - measure_text_width(&info[i])),
                 vertical = self.format.vertical_char
             );
         }
+        let last = match sidelogo.last() {
+            Some(v) => v,
+            None => {
+                UserFacingError::new("Failed to get last line of logo")
+                    .help("If this persists, please open a github issue.")
+                    .print_and_exit();
+                unreachable!()
+            }
+        };
         println!(
             "{}{}{}{}{}",
-            &sidelogo.last().unwrap(),
-            " ".repeat(
-                logo_maxlength - strip_ansi_codes(sidelogo.last().unwrap()).len() + self.offset
-            ),
+            last,
+            " ".repeat(logo_maxlength - measure_text_width(last) + self.offset),
             self.format.bottom_left_corner_char,
             self.format
                 .horizontal_char
@@ -187,17 +242,7 @@ impl Config {
     async fn print_bottom_table(&self) {
         let sidelogo = self.get_side_logo().await;
         let info = self.module_order().await;
-        let logo_maxlength = strip_ansi_codes(
-            sidelogo
-                .iter()
-                .max_by_key(|&x| measure_text_width(x))
-                .unwrap(),
-        )
-        .len();
-        let info_maxlength =
-            strip_ansi_codes(info.iter().max_by_key(|&x| measure_text_width(x)).unwrap()).len();
-
-        let offset = logo_maxlength / 4;
+        let info_maxlength = self.info_maxlength().await;
 
         for line in sidelogo {
             println!("{}", line);
@@ -206,8 +251,7 @@ impl Config {
             println!();
         }
         println!(
-            "{}{}{}{}",
-            " ".repeat(offset),
+            "{}{}{}",
             self.format.top_left_corner_char,
             self.format
                 .horizontal_char
@@ -217,16 +261,14 @@ impl Config {
         );
         for line in info {
             println!(
-                "{}{vertical} {} {}{vertical}",
-                " ".repeat(offset),
+                "{vertical} {} {}{vertical}",
                 line,
                 " ".repeat(info_maxlength - measure_text_width(&line)),
                 vertical = self.format.vertical_char
             );
         }
         println!(
-            "{}{}{}{}",
-            " ".repeat(offset),
+            "{}{}{}",
             self.format.bottom_left_corner_char,
             self.format
                 .horizontal_char
@@ -260,7 +302,7 @@ impl Default for Config {
             user: User::default(),
             offset: 4,
             module_order: String::from("user delimiter"),
-            side_icon_cmd: String::from("echo hello | cowsay"),
+            logo_cmd: String::from("echo hello | cowsay"),
             format: Format::default(),
             delimiter: Delimiter::default(),
         }

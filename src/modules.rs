@@ -3,6 +3,7 @@ use crate::config::Config;
 use console::Style;
 // use nixinfo;
 use rsys::Rsys;
+use user_error::{UFE, UserFacingError};
 
 #[derive(Deserialize)]
 #[serde(default)]
@@ -60,7 +61,13 @@ impl Default for User {
 
 impl User {
     pub async fn get_info(&self) -> String {
-        let hostname = Rsys::new().hostname().unwrap();
+        let hostname = match Rsys::new().hostname() {
+            Ok(v) => v,
+            Err(r) => {
+                UserFacingError::new("Failed to get hostname").reason(r.to_string()).print_and_exit();
+                unreachable!()
+            }
+        };
         let username = Config::run_cmd("whoami").await;
         format!(
             "{}{}{}{}",
