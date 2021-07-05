@@ -1,7 +1,10 @@
 use crate::cli::Mode;
 use crate::cli::Opt;
 use crate::modules::*;
+use console::measure_text_width;
+use console::strip_ansi_codes;
 use console::style;
+use std::cmp::Ordering;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
@@ -127,9 +130,6 @@ impl Config {
     }
 
     async fn print_side_table(&self) {
-        use console::measure_text_width;
-        use console::strip_ansi_codes;
-        use std::cmp::Ordering;
         let mut sidelogo = self.get_side_logo().await;
         let mut info = self.module_order().await;
         match sidelogo.len().cmp(&info.len()) {
@@ -152,7 +152,10 @@ impl Config {
             &sidelogo[0],
             " ".repeat(logo_maxlength - strip_ansi_codes(&sidelogo[0]).len() + self.offset),
             self.format.top_left_corner_char,
-            self.format.horizontal_char.to_string().repeat(info_maxlength + 2),
+            self.format
+                .horizontal_char
+                .to_string()
+                .repeat(info_maxlength + 2),
             self.format.top_right_corner_char,
         );
 
@@ -182,7 +185,55 @@ impl Config {
     }
 
     async fn print_bottom_table(&self) {
-        todo!()
+        let mut sidelogo = self.get_side_logo().await;
+        let mut info = self.module_order().await;
+        let logo_maxlength = strip_ansi_codes(
+            sidelogo
+                .iter()
+                .max_by_key(|&x| measure_text_width(x))
+                .unwrap(),
+        )
+        .len();
+        let info_maxlength =
+            strip_ansi_codes(info.iter().max_by_key(|&x| measure_text_width(x)).unwrap()).len();
+
+        let offset = info_maxlength / 2;
+
+        for line in sidelogo {
+            println!("{}", line);
+        }
+        for _ in 0..self.format.padding {
+            println!();
+        }
+        println!(
+            "{}{}{}{}",
+            " ".repeat(offset),
+            self.format.top_left_corner_char,
+            self.format
+                .horizontal_char
+                .to_string()
+                .repeat(info_maxlength + 2),
+            self.format.top_right_corner_char
+        );
+        for line in info {
+            println!(
+                "{}{vertical} {} {}{vertical}",
+                " ".repeat(offset),
+                line,
+                " ".repeat(info_maxlength - measure_text_width(&line)),
+                vertical = self.format.vertical_char
+            );
+        }
+        println!(
+            "{}{}{}{}",
+            " ".repeat(offset),
+            self.format.bottom_left_corner_char,
+            self.format
+                .horizontal_char
+                .to_string()
+                .repeat(info_maxlength + 2),
+            self.format.bottom_right_corner_char
+        );
     }
 
     pub async fn print(&self) {
