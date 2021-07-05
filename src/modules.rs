@@ -5,7 +5,7 @@ use console::Style;
 use rsys::Rsys;
 use user_error::{UFE, UserFacingError};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
@@ -35,7 +35,7 @@ impl Default for Format {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
@@ -79,7 +79,7 @@ impl User {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]

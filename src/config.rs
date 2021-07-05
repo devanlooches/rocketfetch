@@ -3,12 +3,11 @@ use crate::cli::Opt;
 use crate::modules::*;
 use console::measure_text_width;
 use console::style;
-use rsys::Rsys;
 use std::cmp::Ordering;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
@@ -25,7 +24,7 @@ impl Config {
     pub async fn get_args() -> Opt {
         Opt::from_args()
     }
-    pub async fn from_config() -> Self {
+    pub async fn path() -> String {
         let matches = Config::get_args().await;
         let home_dir = match dirs::home_dir() {
             Some(v) => v,
@@ -40,6 +39,9 @@ impl Config {
             "{}/.config/rustfetch/config.toml",
             home_dir.to_string_lossy()
         ));
+        path
+    }
+    pub async fn from_config(path: String) -> Self {
         match std::fs::read_to_string(path) {
             Ok(v) => match toml::from_str::<Config>(&v) {
                 Ok(v) => v,
@@ -53,7 +55,7 @@ impl Config {
 
             Err(r) => {
                 println!(
-                    "{}: Could not find default configuration: {}. Falling back to default configuration.",
+                    "{}: Could not find default configuration file: {}. Falling back to default configuration.",
                     style("WARNING").yellow(),
                     r.to_string()
                 );
@@ -106,7 +108,9 @@ impl Config {
                 ]
             }
             v => {
-                UserFacingError::new(format!("Unknown OS: {}", v)).help("Please file a new issue on github to request a new OS.").print_and_exit();
+                UserFacingError::new(format!("Unknown OS: {}", v))
+                    .help("Please file a new issue on github to request a new OS.")
+                    .print_and_exit();
                 unreachable!()
             }
         }
@@ -348,5 +352,17 @@ impl Default for Config {
             format: Format::default(),
             delimiter: Delimiter::default(),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::Config;
+    use pretty_assertions::assert_eq;
+
+    #[tokio::test]
+    async fn parse_config() {
+        let config = Config::from_config(String::from("config.toml")).await;
+        assert_eq!(Config::default(), config);
     }
 }

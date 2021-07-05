@@ -1,0 +1,25 @@
+module-order = "user delimiter"
+offset = 4
+logo-cmd = "auto"
+
+[format]
+mode = "classic"
+top-left-corner-char = "╭"
+top-right-corner-char = "╮"
+bottom-left-corner-char = "╰"
+bottom-right-corner-char = "╯"
+horizontal-char = "─"
+vertical-char = "│"
+padding = 1
+
+[user]
+pre-text-style = "bold.yellow"
+pre-text = ""
+output-style = "bold.yellow"
+seperator-style = "white"
+seperator-char = "@"
+
+[delimiter]
+style = "white"
+repeat-num = 0
+char = "-"
