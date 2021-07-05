@@ -3,6 +3,7 @@ use crate::cli::Opt;
 use crate::modules::*;
 use console::measure_text_width;
 use console::style;
+use rsys::Rsys;
 use std::cmp::Ordering;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
@@ -82,13 +83,52 @@ impl Config {
         vec
     }
 
-    async fn get_logo() -> Vec<String> {
-        todo!()
+    async fn logo(os: String) -> Vec<String> {
+        match os.trim() {
+            "macos" => {
+                vec![
+                    format!("                 ,xNMM."),
+                    format!("               .OMMMMo"),
+                    format!("               OMMM0,"),
+                    format!("     .;loddo:' loolloddol;."),
+                    format!("   cKMMMMMMMMMMNWMMMMMMMMMM0:"),
+                    format!(" .KMMMMMMMMMMMMMMMMMMMMMMMWd."),
+                    format!(" XMMMMMMMMMMMMMMMMMMMMMMMX."),
+                    format!(";MMMMMMMMMMMMMMMMMMMMMMMM:"),
+                    format!(":MMMMMMMMMMMMMMMMMMMMMMMM:"),
+                    format!(".MMMMMMMMMMMMMMMMMMMMMMMMX."),
+                    format!(" kMMMMMMMMMMMMMMMMMMMMMMMMWd."),
+                    format!(" .XMMMMMMMMMMMMMMMMMMMMMMMMMMk"),
+                    format!("  .XMMMMMMMMMMMMMMMMMMMMMMMMK."),
+                    format!("    kMMMMMMMMMMMMMMMMMMMMMMd"),
+                    format!("     ;KMMMMMMMWXXWMMMMMMMk."),
+                    format!("       .cooc,.    .,coo:."),
+                ]
+            }
+            v => {
+                UserFacingError::new(format!("Unknown OS: {}", v)).help("Please file a new issue on github to request a new OS.").print_and_exit();
+                unreachable!()
+            }
+        }
     }
 
-    async fn get_side_logo(&self) -> Vec<String> {
+    async fn get_logo(&self) -> Vec<String> {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
-            Config::get_logo().await
+            let os: String;
+            if cfg!(target_os = "linux") {
+                os = match nixinfo::distro() {
+                    Ok(v) => v,
+                    Err(r) => {
+                        UserFacingError::new("Failed to find distro")
+                            .reason(r.to_string())
+                            .print_and_exit();
+                        unreachable!()
+                    }
+                };
+            } else {
+                os = std::env::consts::OS.to_string();
+            }
+            Config::logo(os).await
         } else {
             Config::run_cmd(&self.logo_cmd)
                 .await
@@ -99,7 +139,7 @@ impl Config {
     }
 
     async fn print_classic(&self) {
-        let mut sidelogo = self.get_side_logo().await;
+        let mut sidelogo = self.get_logo().await;
         let mut order = self.module_order().await;
 
         let maxlength = self.logo_maxlength().await;
@@ -145,7 +185,9 @@ impl Config {
         match String::from_utf8(output.stdout) {
             Ok(v) => v.trim().to_string(),
             Err(r) => {
-                UserFacingError::new("Failed to read stdout from command.").reason(r.to_string()).print_and_exit();
+                UserFacingError::new("Failed to read stdout from command.")
+                    .reason(r.to_string())
+                    .print_and_exit();
                 unreachable!()
             }
         }
@@ -153,7 +195,7 @@ impl Config {
 
     async fn logo_maxlength(&self) -> usize {
         match self
-            .get_side_logo()
+            .get_logo()
             .await
             .iter()
             .max_by_key(|&x| measure_text_width(x))
@@ -186,7 +228,7 @@ impl Config {
     }
 
     async fn print_side_table(&self) {
-        let mut sidelogo = self.get_side_logo().await;
+        let mut sidelogo = self.get_logo().await;
         let mut info = self.module_order().await;
         match sidelogo.len().cmp(&info.len()) {
             Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
@@ -240,7 +282,7 @@ impl Config {
     }
 
     async fn print_bottom_table(&self) {
-        let sidelogo = self.get_side_logo().await;
+        let sidelogo = self.get_logo().await;
         let info = self.module_order().await;
         let info_maxlength = self.info_maxlength().await;
 
@@ -302,7 +344,7 @@ impl Default for Config {
             user: User::default(),
             offset: 4,
             module_order: String::from("user delimiter"),
-            logo_cmd: String::from("echo hello | cowsay"),
+            logo_cmd: String::from("auto"),
             format: Format::default(),
             delimiter: Delimiter::default(),
         }
