@@ -18,6 +18,7 @@ pub struct Config {
     side_icon_cmd: String,
     format: Format,
     user: User,
+    delimiter: Delimiter,
 }
 
 impl Config {
@@ -54,9 +55,10 @@ impl Config {
 
     async fn module_order(&self) -> Vec<String> {
         let mut vec = Vec::new();
-        for module in self.module_order.split_whitespace() {
+        for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
                 "user" => vec.push(self.user.get_info().await),
+                "delimiter" => vec.push(self.delimiter.get_info(measure_text_width(&vec[i - 1])).await),
                 v => {
                     UserFacingError::new("Failed to parse module order string.")
                         .reason(format!("Unknown module: {}", v))
@@ -257,9 +259,10 @@ impl Default for Config {
         Config {
             user: User::default(),
             offset: 4,
-            module_order: String::from("user"),
+            module_order: String::from("user delimiter"),
             side_icon_cmd: String::from("echo hello | cowsay"),
             format: Format::default(),
+            delimiter: Delimiter::default(),
         }
     }
 }

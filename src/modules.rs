@@ -71,3 +71,33 @@ impl User {
         )
     }
 }
+
+#[derive(Deserialize)]
+#[serde(default)]
+#[serde(rename_all = "kebab-case")]
+#[serde(deny_unknown_fields)]
+pub struct Delimiter {
+    style: String,
+    repeat_num: usize,
+    char: char,
+}
+
+impl Default for Delimiter {
+    fn default() -> Self {
+        Delimiter {
+            style: String::from("white"),
+            repeat_num: 0,
+            char: '-',
+        }
+    }
+}
+
+impl Delimiter {
+    pub async fn get_info(&self, num: usize) -> String {
+        let mut repeat = self.repeat_num;
+        if repeat == 0 {
+            repeat = num;
+        }
+        format!("{}", Style::from_dotted_str(&self.style).apply_to(self.char.to_string().repeat(repeat)))
+    }
+}
