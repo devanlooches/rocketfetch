@@ -1,7 +1,37 @@
+use crate::cli::Mode;
 use crate::config::Config;
-use console::{style, Style};
+use console::Style;
 // use nixinfo;
 use rsys::Rsys;
+
+#[derive(Deserialize)]
+#[serde(default)]
+#[serde(rename_all = "kebab-case")]
+#[serde(deny_unknown_fields)]
+pub struct Format {
+    pub mode: Mode,
+    pub top_left_corner_char: char,
+    pub top_right_corner_char: char,
+    pub bottom_left_corner_char: char,
+    pub bottom_right_corner_char: char,
+    pub horizontal_char: char,
+    pub vertical_char: char,
+}
+
+impl Default for Format {
+    fn default() -> Self {
+        Format {
+            mode: Mode::Classic,
+            top_left_corner_char: '╭',
+            top_right_corner_char: '╮',
+            bottom_left_corner_char: '╰',
+            bottom_right_corner_char: '╯',
+            horizontal_char: '─',
+            vertical_char: '│',
+        }
+    }
+}
+
 #[derive(Deserialize)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]

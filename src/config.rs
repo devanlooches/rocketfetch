@@ -13,16 +13,16 @@ pub struct Config {
     module_order: String,
     offset: usize,
     side_icon_cmd: String,
-    mode: Mode,
+    format: Format,
     user: User,
 }
 
 impl Config {
-    pub async fn cli() -> Opt {
+    pub async fn get_args() -> Opt {
         Opt::from_args()
     }
     pub async fn from_config() -> Self {
-        let matches = Config::cli().await;
+        let matches = Config::get_args().await;
         let path = matches.config.unwrap_or(format!(
             "{}/.config/rustfetch/config.toml",
             dirs::home_dir().unwrap().to_string_lossy()
@@ -127,7 +127,58 @@ impl Config {
     }
 
     async fn print_side_table(&self) {
-        todo!()
+        use console::measure_text_width;
+        use console::strip_ansi_codes;
+        use std::cmp::Ordering;
+        let mut sidelogo = self.get_side_logo().await;
+        let mut info = self.module_order().await;
+        match sidelogo.len().cmp(&info.len()) {
+            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
+            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
+            Ordering::Equal => (),
+        }
+        let logo_maxlength = strip_ansi_codes(
+            sidelogo
+                .iter()
+                .max_by_key(|&x| measure_text_width(x))
+                .unwrap(),
+        )
+        .len();
+        let info_maxlength =
+            strip_ansi_codes(info.iter().max_by_key(|&x| measure_text_width(x)).unwrap()).len();
+
+        println!(
+            "{}{}{}{}{}",
+            &sidelogo[0],
+            " ".repeat(logo_maxlength - strip_ansi_codes(&sidelogo[0]).len() + self.offset),
+            self.format.top_left_corner_char,
+            self.format.horizontal_char.to_string().repeat(info_maxlength + 2),
+            self.format.top_right_corner_char,
+        );
+
+        for i in 0..info.len() - 2 {
+            println!(
+                "{}{}{vertical} {} {}{vertical}",
+                sidelogo[i + 1],
+                " ".repeat(logo_maxlength - strip_ansi_codes(&sidelogo[i + 1]).len() + self.offset),
+                info[i],
+                " ".repeat(info_maxlength - strip_ansi_codes(&info[i]).len()),
+                vertical = self.format.vertical_char
+            );
+        }
+        println!(
+            "{}{}{}{}{}",
+            &sidelogo.last().unwrap(),
+            " ".repeat(
+                logo_maxlength - strip_ansi_codes(sidelogo.last().unwrap()).len() + self.offset
+            ),
+            self.format.bottom_left_corner_char,
+            self.format
+                .horizontal_char
+                .to_string()
+                .repeat(info_maxlength + 2),
+            self.format.bottom_right_corner_char,
+        );
     }
 
     async fn print_bottom_table(&self) {
@@ -135,7 +186,7 @@ impl Config {
     }
 
     pub async fn print(&self) {
-        let matches = Config::cli().await;
+        let matches = Config::get_args().await;
         if let Some(v) = matches.mode {
             match v {
                 Mode::Classic => self.print_classic().await,
@@ -143,7 +194,7 @@ impl Config {
                 Mode::SideTable => self.print_side_table().await,
             }
         } else {
-            match self.mode {
+            match self.format.mode {
                 Mode::Classic => self.print_classic().await,
                 Mode::BottomTable => self.print_bottom_table().await,
                 Mode::SideTable => self.print_side_table().await,
@@ -159,7 +210,7 @@ impl Default for Config {
             offset: 4,
             module_order: String::from("user"),
             side_icon_cmd: String::from("echo hello | cowsay"),
-            mode: Mode::Classic,
+            format: Format::default(),
         }
     }
 }
