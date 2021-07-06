@@ -18,6 +18,7 @@ pub struct Config {
     format: Format,
     user: User,
     delimiter: Delimiter,
+    os: Os,
 }
 
 impl Config {
@@ -74,6 +75,7 @@ impl Config {
                         .get_info(measure_text_width(&vec[i - 1]))
                         .await,
                 ),
+                "os" => vec.push(self.os.get_info().await),
                 v => {
                     UserFacingError::new("Failed to parse module order string.")
                         .reason(format!("Unknown module: {}", v))
@@ -85,7 +87,8 @@ impl Config {
         vec
     }
 
-    async fn logo(os: String) -> Vec<String> {
+    async fn logo(&self) -> Vec<String> {
+        let os = self.os.get_os().await;
         match os.trim() {
             "macos" => {
                 vec![
@@ -119,20 +122,7 @@ impl Config {
     async fn get_logo(&self) -> Vec<String> {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
             let os: String;
-            if cfg!(target_os = "linux") {
-                os = match nixinfo::distro() {
-                    Ok(v) => v,
-                    Err(r) => {
-                        UserFacingError::new("Failed to find distro")
-                            .reason(r.to_string())
-                            .print_and_exit();
-                        unreachable!()
-                    }
-                };
-            } else {
-                os = std::env::consts::OS.to_string();
-            }
-            Config::logo(os).await
+            self.logo().await
         } else {
             Config::run_cmd(&self.logo_cmd)
                 .await
@@ -347,10 +337,11 @@ impl Default for Config {
         Config {
             user: User::default(),
             offset: 4,
-            module_order: String::from("user delimiter"),
+            module_order: String::from("user delimiter os"),
             logo_cmd: String::from("auto"),
             format: Format::default(),
             delimiter: Delimiter::default(),
+            os: Os::default(),
         }
     }
 }

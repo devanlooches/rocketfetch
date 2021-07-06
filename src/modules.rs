@@ -3,7 +3,7 @@ use crate::config::Config;
 use console::Style;
 // use nixinfo;
 use rsys::Rsys;
-use user_error::{UFE, UserFacingError};
+use user_error::{UserFacingError, UFE};
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
@@ -64,7 +64,9 @@ impl User {
         let hostname = match Rsys::new().hostname() {
             Ok(v) => v,
             Err(r) => {
-                UserFacingError::new("Failed to get hostname").reason(r.to_string()).print_and_exit();
+                UserFacingError::new("Failed to get hostname")
+                    .reason(r.to_string())
+                    .print_and_exit();
                 unreachable!()
             }
         };
@@ -105,6 +107,70 @@ impl Delimiter {
         if repeat == 0 {
             repeat = num;
         }
-        format!("{}", Style::from_dotted_str(&self.style).apply_to(self.char.to_string().repeat(repeat)))
+        format!(
+            "{}",
+            Style::from_dotted_str(&self.style).apply_to(self.char.to_string().repeat(repeat))
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(default)]
+#[serde(rename_all = "kebab-case")]
+#[serde(deny_unknown_fields)]
+pub struct Os {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Os {
+    fn default() -> Self {
+        Os {
+            pre_text_style: String::from("yellow.bold"),
+            pre_text: String::from("OS: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Os {
+    pub async fn get_os(&self) -> String {
+        let os: String;
+        if cfg!(target_os = "linux") {
+            os = match nixinfo::distro() {
+                Ok(v) => v,
+                Err(r) => {
+                    UserFacingError::new("Failed to find distro")
+                        .reason(r.to_string())
+                        .print_and_exit();
+                    unreachable!()
+                }
+            };
+        } else {
+            os = std::env::consts::OS.to_string();
+        }
+        os
+    }
+    pub async fn get_info(&self) -> String {
+        let os = self.get_os().await;
+        let build_version = Config::run_cmd("sw_vers -buildVersion").await;
+        let arch = Config::run_cmd("machine").await;
+        let version: String;
+        if cfg!(target_os = "macos") {
+            version = Config::run_cmd("sw_vers -productVersion").await;
+        } else {
+            version = String::from("");
+        }
+
+        let output_style = Style::from_dotted_str(&self.output_style);
+        format!(
+            "{}{} {} {} {}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            output_style.apply_to(os),
+            output_style.apply_to(version),
+            output_style.apply_to(build_version),
+            output_style.apply_to(arch)
+        )
     }
 }
