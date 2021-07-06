@@ -127,7 +127,7 @@ pub struct Os {
 impl Default for Os {
     fn default() -> Self {
         Os {
-            pre_text_style: String::from("yellow.bold"),
+            pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("OS: "),
             output_style: String::from("white"),
         }
