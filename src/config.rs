@@ -3,6 +3,7 @@ use crate::cli::Opt;
 use crate::modules::*;
 use console::measure_text_width;
 use console::style;
+use console::Style;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use structopt::StructOpt;
@@ -79,16 +80,8 @@ impl Config {
                         .await,
                 ),
                 "os" => vec.push(self.os.get_info().await),
-                v if !self.custom_modules.is_empty()
-                    && self.custom_modules.contains_key(v) =>
-                {
-                    vec.push(
-                        self.custom_modules
-                            .get(v)
-                            .unwrap()
-                            .get_info()
-                            .await,
-                    )
+                v if !self.custom_modules.is_empty() && self.custom_modules.contains_key(v) => {
+                    vec.push(self.custom_modules.get(v).unwrap().get_info().await)
                 }
                 v => {
                     UserFacingError::new("Failed to parse module order string.")
@@ -105,23 +98,26 @@ impl Config {
         let os = self.os.get_os().await;
         match os.trim() {
             "macos" => {
+                let yellow = Style::from_dotted_str("yellow.bold");
+                let red = Style::from_dotted_str("red.bold");
+                let blue = Style::from_dotted_str("blue.bold");
                 vec![
-                    format!("                 ,xNMM."),
-                    format!("               .OMMMMo"),
-                    format!("               OMMM0,"),
-                    format!("     .;loddo:' loolloddol;."),
-                    format!("   cKMMMMMMMMMMNWMMMMMMMMMM0:"),
-                    format!(" .KMMMMMMMMMMMMMMMMMMMMMMMWd."),
-                    format!(" XMMMMMMMMMMMMMMMMMMMMMMMX."),
-                    format!(";MMMMMMMMMMMMMMMMMMMMMMMM:"),
-                    format!(":MMMMMMMMMMMMMMMMMMMMMMMM:"),
-                    format!(".MMMMMMMMMMMMMMMMMMMMMMMMX."),
-                    format!(" kMMMMMMMMMMMMMMMMMMMMMMMMWd."),
-                    format!(" .XMMMMMMMMMMMMMMMMMMMMMMMMMMk"),
-                    format!("  .XMMMMMMMMMMMMMMMMMMMMMMMMK."),
-                    format!("    kMMMMMMMMMMMMMMMMMMMMMMd"),
-                    format!("     ;KMMMMMMMWXXWMMMMMMMk."),
-                    format!("       .cooc,.    .,coo:."),
+                    yellow.apply_to("                 ,xNMM.").to_string(),
+                    yellow.apply_to("               .OMMMMo").to_string(),
+                    yellow.apply_to("               OMMM0,").to_string(),
+                    yellow.apply_to("     .;loddo:' loolloddol;.").to_string(),
+                    yellow.apply_to("   cKMMMMMMMMMMNWMMMMMMMMMM0:").to_string(),
+                    yellow.apply_to(" .KMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
+                    yellow.apply_to(" XMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
+                    yellow.apply_to(";MMMMMMMMMMMMMMMMMMMMMMMM:").to_string(),
+                    red.apply_to(":MMMMMMMMMMMMMMMMMMMMMMMM:").to_string(),
+                    red.apply_to(".MMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
+                    red.apply_to(" kMMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
+                    red.apply_to(" .XMMMMMMMMMMMMMMMMMMMMMMMMMMk").to_string(),
+                    blue.apply_to("  .XMMMMMMMMMMMMMMMMMMMMMMMMK.").to_string(),
+                    blue.apply_to("    kMMMMMMMMMMMMMMMMMMMMMMd").to_string(),
+                    blue.apply_to("     ;KMMMMMMMWXXWMMMMMMMk.").to_string(),
+                    blue.apply_to("       .cooc,.    .,coo:.").to_string(),
                 ]
             }
             v => {

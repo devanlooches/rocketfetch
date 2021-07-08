@@ -5,6 +5,7 @@ A *WIP* command line system information tool written in rust for performance wit
 
 # Table of Contents
 - [Inspiration](#inspiration)
+- [Installation](#installation)
 - [Configuration](#configuration)
   - [Top Level](#top-level-configuration)
   - [Format Header](#format-header-configuration)
@@ -17,6 +18,11 @@ A *WIP* command line system information tool written in rust for performance wit
 
 # Inspiration <a name="inspiration"></a>
 _Rocketfetch_ was inspired by [neofetch](https://github.com/dylanaraps/neofetch). I wanted to add some performance to neofetch while also improving the configuration. I modeled my configuration after that of [Starship](https://github.com/starship/starship).
+
+# Installation <a name="installation"></a>
+```shell
+cargo install rocketfetch
+```
 
 # Configuration <a name="configuration"></a>
 You can configure rocketfetch either through the default path of ~/.config/rocketfetch or pass a path in cli by specifying the -c option.
