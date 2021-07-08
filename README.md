@@ -6,6 +6,7 @@ A *WIP* command line system information tool written in rust for performance wit
 # Table of Contents
 - [Inspiration](#inspiration)
 - [Installation](#installation)
+- [Command Line](#cli)
 - [Configuration](#configuration)
   - [Top Level](#top-level-configuration)
   - [Format Header](#format-header-configuration)
@@ -20,8 +21,25 @@ A *WIP* command line system information tool written in rust for performance wit
 _Rocketfetch_ was inspired by [neofetch](https://github.com/dylanaraps/neofetch). I wanted to add some performance to neofetch while also improving the configuration. I modeled my configuration after that of [Starship](https://github.com/starship/starship).
 
 # Installation <a name="installation"></a>
-```shell
+```bash
 cargo install rocketfetch
+```
+
+# Command Line <a name="cli"></a>
+```bash
+rocketfetch 0.1.1
+A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
+
+USAGE:
+    rocketfetch [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --config <FILE>    Sets custom configuration file.
+        --mode <mode>      Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`
 ```
 
 # Configuration <a name="configuration"></a>
