@@ -180,3 +180,24 @@ impl Os {
         )
     }
 }
+
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "kebab-case")]
+pub struct Module {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+    command: String,
+}
+
+impl Module {
+    pub async fn get_info(&self) -> String {
+        let output = Config::run_cmd(&self.command).await;
+
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(output)
+        )
+    }
+}

@@ -7,5 +7,8 @@ use config::Config;
 
 #[tokio::main]
 async fn main() {
-    Config::from_config(Config::path().await).await.print().await;
+    Config::from_config(Config::path().await)
+        .await
+        .print()
+        .await;
 }

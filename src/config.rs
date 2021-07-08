@@ -4,13 +4,13 @@ use crate::modules::*;
 use console::measure_text_width;
 use console::style;
 use std::cmp::Ordering;
+use std::collections::HashMap;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
-#[serde(deny_unknown_fields)]
 pub struct Config {
     module_order: String,
     offset: usize,
@@ -19,6 +19,9 @@ pub struct Config {
     user: User,
     delimiter: Delimiter,
     os: Os,
+
+    #[serde(flatten)]
+    custom_modules: HashMap<String, Module>,
 }
 
 impl Config {
@@ -37,7 +40,7 @@ impl Config {
             }
         };
         let path = matches.config.unwrap_or(format!(
-            "{}/.config/rustfetch/config.toml",
+            "{}/.config/rocketfetch/config.toml",
             home_dir.to_string_lossy()
         ));
         path
@@ -76,6 +79,17 @@ impl Config {
                         .await,
                 ),
                 "os" => vec.push(self.os.get_info().await),
+                v if !self.custom_modules.is_empty()
+                    && self.custom_modules.contains_key(v) =>
+                {
+                    vec.push(
+                        self.custom_modules
+                            .get(v)
+                            .unwrap()
+                            .get_info()
+                            .await,
+                    )
+                }
                 v => {
                     UserFacingError::new("Failed to parse module order string.")
                         .reason(format!("Unknown module: {}", v))
@@ -355,6 +369,7 @@ impl Default for Config {
             format: Format::default(),
             delimiter: Delimiter::default(),
             os: Os::default(),
+            custom_modules: HashMap::new(),
         }
     }
 }
