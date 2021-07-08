@@ -1,5 +1,5 @@
 [package]
-name = "rustfetch"
+name = "rocketfetch"
 version = "0.1.0"
 authors = ["Devan Looches <devan.looches@gmail.com>"]
 edition = "2018"
