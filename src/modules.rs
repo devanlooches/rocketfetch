@@ -17,7 +17,10 @@ pub struct Format {
     pub bottom_right_corner_char: char,
     pub horizontal_char: char,
     pub vertical_char: char,
-    pub padding: usize,
+    pub padding_right: usize,
+    pub padding_left: usize,
+    pub padding_bottom: usize,
+    pub padding_top: usize,
 }
 
 impl Default for Format {
@@ -30,7 +33,10 @@ impl Default for Format {
             bottom_right_corner_char: '╯',
             horizontal_char: '─',
             vertical_char: '│',
-            padding: 1,
+            padding_right: 1,
+            padding_left: 1,
+            padding_bottom: 0,
+            padding_top: 0,
         }
     }
 }

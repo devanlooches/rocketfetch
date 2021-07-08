@@ -24,8 +24,8 @@ pub struct Opt {
 #[serde(rename_all = "kebab-case")]
 pub enum Mode {
     Classic,
-    SideTable,
-    BottomTable,
+    SideBlock,
+    BottomBlock,
 }
 
 impl std::str::FromStr for Mode {
@@ -34,13 +34,13 @@ impl std::str::FromStr for Mode {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "classic" => Ok(Mode::Classic),
-            "side-table" | "sidetable" => Ok(Mode::SideTable),
-            "bottom-table" | "bottomtable" => Ok(Mode::BottomTable),
+            "side-block" | "sideblock" => Ok(Mode::SideBlock),
+            "bottom-block" | "bottomblock" => Ok(Mode::BottomBlock),
             v => Err(format!(
                 "\n{}",
                 UserFacingError::new("Unable to parse mode string")
                     .reason(format!("Unknown Mode: {}", v))
-                    .help("Expected one of `side-table`, `bottom-table`, or `classic`")
+                    .help("Expected one of `side-block`, `bottom-block`, or `classic`")
                     .to_string()
             )),
         }

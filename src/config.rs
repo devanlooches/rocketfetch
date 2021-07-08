@@ -245,7 +245,7 @@ impl Config {
 
         for i in 0..info.len() - 2 {
             println!(
-                "{}{}{vertical} {} {}{vertical}",
+                "{}{}{vertical}{}{}{vertical}",
                 sidelogo[i + 1],
                 " ".repeat(logo_maxlength - measure_text_width(&sidelogo[i + 1]) + self.offset),
                 info[i],
@@ -283,25 +283,38 @@ impl Config {
         for line in sidelogo {
             println!("{}", line);
         }
-        for _ in 0..self.format.padding {
-            println!();
-        }
         println!(
             "{}{}{}",
             self.format.top_left_corner_char,
             self.format
                 .horizontal_char
                 .to_string()
-                .repeat(info_maxlength + 2),
+                .repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
             self.format.top_right_corner_char
         );
+        for _ in 0..self.format.padding_top {
+            println!(
+                "{vertical}{}{vertical}",
+                " ".repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
+                vertical = self.format.vertical_char
+            )
+        }
         for line in info {
             println!(
-                "{vertical} {} {}{vertical}",
+                "{vertical}{}{}{}{}{vertical}",
+                " ".repeat(self.format.padding_left),
                 line,
                 " ".repeat(info_maxlength - measure_text_width(&line)),
+                " ".repeat(self.format.padding_right),
                 vertical = self.format.vertical_char
             );
+        }
+        for _ in 0..self.format.padding_bottom {
+            println!(
+                "{vertical}{}{vertical}",
+                " ".repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
+                vertical = self.format.vertical_char
+            )
         }
         println!(
             "{}{}{}",
@@ -309,7 +322,7 @@ impl Config {
             self.format
                 .horizontal_char
                 .to_string()
-                .repeat(info_maxlength + 2),
+                .repeat(info_maxlength + self.format.padding_left + self.format.padding_right),
             self.format.bottom_right_corner_char
         );
     }
@@ -319,14 +332,14 @@ impl Config {
         if let Some(v) = matches.mode {
             match v {
                 Mode::Classic => self.print_classic().await,
-                Mode::BottomTable => self.print_bottom_table().await,
-                Mode::SideTable => self.print_side_table().await,
+                Mode::BottomBlock => self.print_bottom_table().await,
+                Mode::SideBlock => self.print_side_table().await,
             }
         } else {
             match self.format.mode {
                 Mode::Classic => self.print_classic().await,
-                Mode::BottomTable => self.print_bottom_table().await,
-                Mode::SideTable => self.print_side_table().await,
+                Mode::BottomBlock => self.print_bottom_table().await,
+                Mode::SideBlock => self.print_side_table().await,
             }
         }
     }
