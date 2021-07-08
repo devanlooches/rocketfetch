@@ -135,7 +135,6 @@ impl Config {
 
     async fn get_logo(&self) -> Vec<String> {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
-            let os: String;
             self.logo().await
         } else {
             Config::run_cmd(&self.logo_cmd)
