@@ -7,6 +7,7 @@ include = ["src/**/*"]
 license = "MIT"
 description = "A WIP command line system information tool written in rust for performance with toml file configuration."
 repository = "https://github.com/devanlooches/rustfetch"
+readme = "README.md"
 
 [dependencies]
 console = {version = "0.14.1"}
