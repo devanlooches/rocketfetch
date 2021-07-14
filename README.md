@@ -1,6 +1,6 @@
 <div align="center"> 
 <h1>Rocketfetch</h1>
-A *WIP* command line system information tool written in rust for performance with toml file configuration.
+A *WIP* (Contrubutions are greatly apperciated) command line system information tool written in rust for performance with toml file configuration.
 </div>
 
 # Table of Contents
