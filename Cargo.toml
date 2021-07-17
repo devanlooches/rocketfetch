@@ -27,3 +27,7 @@ user-error = {version = "1.2.8", default-features = false}
 
 [dev-dependencies]
 pretty_assertions = {version = "0.7.2", default-features = false}
+
+[profile.release]
+opt-level = 3
+lto = "fat"
