@@ -4,7 +4,6 @@ version = "0.1.4"
 authors = ["Devan Looches <devan.looches@gmail.com>"]
 edition = "2018"
 include = ["src/**/*"]
-exclude = ["bacon.toml"]
 license = "MIT"
 description = "A WIP command line system information tool written asynchronously in rust for performance with toml file configuration."
 repository = "https://github.com/devanlooches/rustfetch"
