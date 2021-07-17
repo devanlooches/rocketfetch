@@ -9,6 +9,7 @@ description = "A WIP command line system information tool written asynchronously
 repository = "https://github.com/devanlooches/rustfetch"
 readme = "README.md"
 keywords = ["system", "cli", "fetch", "asynch"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 console = {version = "0.14.1"}
