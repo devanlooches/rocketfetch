@@ -1,6 +1,7 @@
-<div align="center"> 
-<h1>Rocketfetch</h1>
-A *WIP* (Contrubutions are greatly apperciated) command line system information tool written in rust for performance with toml file configuration.
+<div align="center">
+    <h1>Rocketfetch</h1>
+    A *WIP* (Contrubutions are greatly apperciated) command line system information tool written in rust for performance
+    with toml file configuration.
 </div>
 
 # Table of Contents
@@ -8,17 +9,19 @@ A *WIP* (Contrubutions are greatly apperciated) command line system information 
 - [Installation](#installation)
 - [Command Line](#cli)
 - [Configuration](#configuration)
-  - [Top Level](#top-level-configuration)
-  - [Format Header](#format-header-configuration)
-  - [User Header](#user-header-configuration)
-  - [Delimiter Header](#delimiter-header-configuration)
-  - [OS Header](#os-header-configuration)
+- [Top Level](#top-level-configuration)
+- [Format Header](#format-header-configuration)
+- [User Header](#user-header-configuration)
+- [Delimiter Header](#delimiter-header-configuration)
+- [OS Header](#os-header-configuration)
 - [Default Configuration](#default-configuration)
 - [Todo](#todo)
 
 
 # Inspiration <a name="inspiration"></a>
-_Rocketfetch_ was inspired by [neofetch](https://github.com/dylanaraps/neofetch). I wanted to add some performance to neofetch while also improving the configuration. I modeled my configuration after that of [Starship](https://github.com/starship/starship).
+_Rocketfetch_ was inspired by [neofetch](https://github.com/dylanaraps/neofetch). I wanted to add some performance to
+neofetch while also improving the configuration. I modeled my configuration after that of
+[Starship](https://github.com/starship/starship).
 
 # Installation <a name="installation"></a>
 ```bash
@@ -31,25 +34,29 @@ rocketfetch 0.1.1
 A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
 
 USAGE:
-    rocketfetch [OPTIONS]
+rocketfetch [OPTIONS]
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+-h, --help Prints help information
+-V, --version Prints version information
 
 OPTIONS:
-    -c, --config <FILE>    Sets custom configuration file.
-        --mode <mode>      Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`
-```
+-c, --config <FILE> Sets custom configuration file.
+    --mode <mode> Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`
+ ```
 
 # Configuration <a name="configuration"></a>
-You can configure rocketfetch either through the default path of ~/.config/rocketfetch or pass a path in cli by specifying the -c option.
+You can configure rocketfetch either through the default path of ~/.config/rocketfetch or pass a path in cli by
+specifying the -c option.
 ### Top Level <a name="top-level-configuration"></a>
-| Value        | Default             | Description                                                                                                                                                                                                              |
+| Value | Default | Description |
 |--------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| module-order | "user delimiter os" | Specify the order in which the modules will go in seperated by spaces. Possible modules are: user, delimiter, os, as well as any custom modules you have defined. You may specify some more than once. More coming soon. |
-| offset       | 4                   | Specify the number of spaces between the logo and the information.                                                                                                                                                       |
-| logo-cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo                                                                              |
+| module-order | "user delimiter os" | Specify the order in which the modules will go in seperated by spaces.
+Possible modules are: user, delimiter, os, as well as any custom modules you have defined. You may specify some
+more than once. More coming soon. |
+| offset | 4 | Specify the number of spaces between the logo and the information. |
+| logo-cmd | "auto" | The command to run in order to get the logo. If set to auto or nothing, it will
+automatically detect the operating system and choose a logo |
 
 ### Format Header <a name="format-header-configuration"></a>
 | Value                    | Default   | Description                                                                                                                                                           |
@@ -64,7 +71,6 @@ You can configure rocketfetch either through the default path of ~/.config/rocke
 | padding-left             | 1         | Set the number of spaces to put before each module inside the block (Only works in side-block and bottom-block modes).                                                |
 | padding-right            | 1         | Set the number of spaces to put after each module inside the block (Only works in side-block and bottom-block modes).                                                 |
 | padding-top              | 0         | Set the number of lines to put above the modules inside the block (Only works in side-block and bottom-block modes).                                                  |
-| padding-bottom           | 0         | Set the number of lines to put below the modules inside the block (Only works in side-block and bottom-block modes).                                                  |
 
 ### User Header <a name="user-header-configuration"></a>
 | Value           | Default       | Description                                                                                                             |
@@ -87,7 +93,7 @@ You can configure rocketfetch either through the default path of ~/.config/rocke
 |----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
 | pre-text-style | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
 | pre-text       | "OS: "        | Text that comes before this module                                                                                  |
-| output-style   | "white"       | A format string with each word seperated by dots that describes the style of the output text                        |
+| output-style   | "white"       | A format string with each word seperated by dots that describes the style of the output text |
 
 ### Custom Header <a name="custom-header-configuration"></a>
 | Value          | Description                                                                                                         |
@@ -97,44 +103,44 @@ You can configure rocketfetch either through the default path of ~/.config/rocke
 | output-style   | A format string with each word seperated by dots that describes the style of the output text                        |
 | Command        | The command to run to get the output of the module                                                                  |
 
-# Default Configuration <a name="default-configuration"></a>
-A default Configuration will look like so:
+        # Default Configuration <a name="default-configuration"></a>
+        A default Configuration will look like so:
 
-```toml
-module-order = "user delimiter os"
-offset = 4
-logo-cmd = "auto"
+        ```toml
+        module-order = "user delimiter os"
+        offset = 4
+        logo-cmd = "auto"
 
-[format]
-mode = "classic"
-top-left-corner-char = "╭"
-top-right-corner-char = "╮"
-bottom-left-corner-char = "╰"
-bottom-right-corner-char = "╯"
-horizontal-char = "─"
-vertical-char = "│"
-padding-left = 1
-padding-right = 1
-padding-top = 0
-padding-bottom = 0
+        [format]
+        mode = "classic"
+        top-left-corner-char = "╭"
+        top-right-corner-char = "╮"
+        bottom-left-corner-char = "╰"
+        bottom-right-corner-char = "╯"
+        horizontal-char = "─"
+        vertical-char = "│"
+        padding-left = 1
+        padding-right = 1
+        padding-top = 0
+        padding-bottom = 0
 
-[user]
-pre-text-style = "bold.yellow"
-pre-text = ""
-output-style = "bold.yellow"
-seperator-style = "white"
-seperator-char = "@"
+        [user]
+        pre-text-style = "bold.yellow"
+        pre-text = ""
+        output-style = "bold.yellow"
+        seperator-style = "white"
+        seperator-char = "@"
 
-[delimiter]
-style = "white"
-repeat-num = 0
-char = "-"
+        [delimiter]
+        style = "white"
+        repeat-num = 0
+        char = "-"
 
-[os]
-pre-text-style = "bold.yellow"
-pre-text = "OS: "
-output-style = "white"
-```
+        [os]
+        pre-text-style = "bold.yellow"
+        pre-text = "OS: "
+        output-style = "white"
+        ```
 
-# Todo <a name="todo"></a>
-- Add more Modules
+        # Todo <a name="todo"></a>
+        - Add more Modules

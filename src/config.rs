@@ -124,7 +124,7 @@ impl Config {
             }
             v => {
                 UserFacingError::new(format!("Unknown OS: {}", v))
-                    .help("Please file a new issue on github to request a new OS.")
+                    .help("Please file a new issue on github to request a new OS: https://github.com/devanlooches/rocketfetch/issues/new")
                     .print_and_exit();
                 unreachable!()
             }
@@ -235,53 +235,61 @@ impl Config {
     async fn print_side_table(&self) {
         let mut sidelogo = self.get_logo().await;
         let mut info = self.module_order().await;
-        match sidelogo.len().cmp(&info.len()) {
-            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
-            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
-            Ordering::Equal => (),
-        }
+        let mut counter = 0;
+        info.resize(sidelogo.len() + self.format.padding_top, String::from(""));
+        sidelogo.resize(info.len() + self.format.padding_top, String::from(""));
+
         let logo_maxlength = self.logo_maxlength().await;
         let info_maxlength = self.info_maxlength().await;
+
         println!(
             "{}{}{}{}{}",
-            &sidelogo[0],
+            &sidelogo.first().unwrap(),
             " ".repeat(logo_maxlength - measure_text_width(&sidelogo[0]) + self.offset),
             self.format.top_left_corner_char,
             self.format
                 .horizontal_char
                 .to_string()
-                .repeat(info_maxlength + 2),
+                .repeat(info_maxlength + self.format.padding_left + self.format.padding_right),
             self.format.top_right_corner_char,
         );
+        counter += 1;
+
+        for i in 0..self.format.padding_top {
+            println!(
+                "{}{}{vertical}{}{vertical}",
+                sidelogo[i + counter],
+                " ".repeat(
+                    logo_maxlength - measure_text_width(&sidelogo[i + counter]) + self.offset
+                ),
+                " ".repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
+                vertical = self.format.vertical_char
+            );
+            counter += 1;
+        }
 
         for i in 0..info.len() - 2 {
             println!(
-                "{}{}{vertical}{}{}{vertical}",
-                sidelogo[i + 1],
-                " ".repeat(logo_maxlength - measure_text_width(&sidelogo[i + 1]) + self.offset),
+                "{}{}{vertical}{}{}{}{}{vertical}",
+                sidelogo[counter],
+                " ".repeat(logo_maxlength - measure_text_width(&sidelogo[counter]) + self.offset),
+                " ".repeat(self.format.padding_left),
                 info[i],
+                " ".repeat(self.format.padding_right),
                 " ".repeat(info_maxlength - measure_text_width(&info[i])),
                 vertical = self.format.vertical_char
             );
+            counter += 1;
         }
-        let last = match sidelogo.last() {
-            Some(v) => v,
-            None => {
-                UserFacingError::new("Failed to get last line of logo")
-                    .help("If this persists, please open a github issue.")
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
         println!(
             "{}{}{}{}{}",
-            last,
-            " ".repeat(logo_maxlength - measure_text_width(last) + self.offset),
+            sidelogo[counter],
+            " ".repeat(logo_maxlength - measure_text_width(&sidelogo[counter]) + self.offset),
             self.format.bottom_left_corner_char,
             self.format
                 .horizontal_char
                 .to_string()
-                .repeat(info_maxlength + 2),
+                .repeat(info_maxlength + self.format.padding_left + self.format.padding_right),
             self.format.bottom_right_corner_char,
         );
     }
@@ -319,13 +327,6 @@ impl Config {
                 " ".repeat(self.format.padding_right),
                 vertical = self.format.vertical_char
             );
-        }
-        for _ in 0..self.format.padding_bottom {
-            println!(
-                "{vertical}{}{vertical}",
-                " ".repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
-                vertical = self.format.vertical_char
-            )
         }
         println!(
             "{}{}{}",

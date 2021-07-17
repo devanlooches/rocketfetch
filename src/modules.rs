@@ -19,7 +19,6 @@ pub struct Format {
     pub vertical_char: char,
     pub padding_right: usize,
     pub padding_left: usize,
-    pub padding_bottom: usize,
     pub padding_top: usize,
 }
 
@@ -35,7 +34,6 @@ impl Default for Format {
             vertical_char: '│',
             padding_right: 1,
             padding_left: 1,
-            padding_bottom: 0,
             padding_top: 0,
         }
     }
