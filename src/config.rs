@@ -20,6 +20,7 @@ pub struct Config {
     user: User,
     delimiter: Delimiter,
     os: Os,
+    host: Host,
 
     #[serde(flatten)]
     custom_modules: HashMap<String, Module>,
@@ -80,6 +81,7 @@ impl Config {
                         .await,
                 ),
                 "os" => vec.push(self.os.get_info().await),
+                "host" => vec.push(self.host.get_info().await),
                 v if !self.custom_modules.is_empty() && self.custom_modules.contains_key(v) => {
                     vec.push(self.custom_modules.get(v).unwrap().get_info().await)
                 }
@@ -359,11 +361,12 @@ impl Default for Config {
         Config {
             user: User::default(),
             offset: 4,
-            module_order: String::from("user delimiter os"),
+            module_order: String::from("user delimiter os host"),
             logo_cmd: String::from("auto"),
             format: Format::default(),
             delimiter: Delimiter::default(),
             os: Os::default(),
+            host: Host::default(),
             custom_modules: HashMap::new(),
         }
     }

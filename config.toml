@@ -1,4 +1,4 @@
-module-order = "user delimiter os"
+module-order = "user delimiter os host"
 offset = 4
 logo-cmd = "auto"
 
@@ -30,4 +30,9 @@ char = "-"
 [os]
 pre-text-style = "bold.yellow"
 pre-text = "OS: "
+output-style = "white"
+
+[host]
+pre-text-style = "bold.yellow"
+pre-text = "Host: "
 output-style = "white"

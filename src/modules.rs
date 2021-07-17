@@ -183,6 +183,35 @@ impl Os {
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "kebab-case")]
+pub struct Host {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Host {
+    fn default() -> Self {
+        Host {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Host: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Host {
+    pub async fn get_info(&self) -> String {
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style)
+                .apply_to(Config::run_cmd("sysctl -n hw.model").await)
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "kebab-case")]
 pub struct Module {
     pre_text_style: String,
     pre_text: String,
