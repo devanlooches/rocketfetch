@@ -1,6 +1,6 @@
 [package]
 name = "rocketfetch"
-version = "0.2.7"
+version = "0.2.0"
 authors = ["Devan Looches <devan.looches@gmail.com>"]
 edition = "2018"
 include = ["src/**/*"]
