@@ -207,6 +207,33 @@ impl Host {
         )
     }
 }
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "kebab-case")]
+pub struct Kernel {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Kernel {
+    fn default() -> Self {
+        Kernel {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Kernel: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Kernel {
+    pub async fn get_info(&self) -> String {
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(Config::run_cmd("uname -r").await)
+        )
+    }
+}
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "kebab-case")]
