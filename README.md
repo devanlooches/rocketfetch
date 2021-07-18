@@ -14,6 +14,7 @@
 - [User Header](#user-header-configuration)
 - [Delimiter Header](#delimiter-header-configuration)
 - [OS Header](#os-header-configuration)
+- [Host Header](#host-header-configuration)
 - [Default Configuration](#default-configuration)
 - [Todo](#todo)
 
@@ -30,7 +31,7 @@ cargo install rocketfetch
 
 # Command Line <a name="cli"></a>
 ```bash
-rocketfetch 0.1.1
+rocketfetch 0.2.0
 A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
 
 USAGE:
@@ -92,6 +93,14 @@ side-block and bottom-block modes). |
 | pre-text-style | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
 | pre-text       | "OS: "        | Text that comes before this module                                                                                  |
 | output-style   | "white"       | A format string with each word seperated by dots that describes the style of the output text |
+
+### Host Header <a name="host-header-configuration"></a>
+| Value          | Default       | Description                                                                                                         |
+|----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
+| pre-text-style | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
+| pre-text       | "Host: "      | Text that comes before this module                                                                                  |
+| output-style   | "white"       | A format string with each word seperated by dots that describes the style of the output text                        |
+
 
 ### Custom Header <a name="custom-header-configuration"></a>
 | Value          | Description                                                                                                         |
