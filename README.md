@@ -155,4 +155,4 @@ output-style = "white"
 ```
 
 # Todo <a name="todo"></a>
-- [ ] Add more Modules
+- [ ] Add more Modules (For starters: the ones that neofetch supports)
