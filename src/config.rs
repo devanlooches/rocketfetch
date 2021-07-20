@@ -3,6 +3,7 @@ use crate::cli::Opt;
 use crate::modules::*;
 use console::measure_text_width;
 use console::style;
+use console::Color;
 use console::Style;
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -22,6 +23,7 @@ pub struct Config {
     os: Os,
     host: Host,
     kernel: Kernel,
+    uptime: Uptime,
 
     #[serde(flatten)]
     custom_modules: HashMap<String, Module>,
@@ -84,6 +86,7 @@ impl Config {
                 "os" => vec.push(self.os.get_info().await),
                 "host" => vec.push(self.host.get_info().await),
                 "kernel" => vec.push(self.kernel.get_info().await),
+                "uptime" => vec.push(self.uptime.get_info().await),
                 v if !self.custom_modules.is_empty() && self.custom_modules.contains_key(v) => {
                     vec.push(self.custom_modules.get(v).unwrap().get_info().await)
                 }
@@ -105,10 +108,12 @@ impl Config {
                 let yellow = Style::from_dotted_str("yellow.bold");
                 let red = Style::from_dotted_str("red.bold");
                 let blue = Style::from_dotted_str("blue.bold");
+                let green = Style::from_dotted_str("green.bold");
+                let purple = Style::new().color256(5).bold();
                 vec![
-                    yellow.apply_to("                 ,xNMM.").to_string(),
-                    yellow.apply_to("               .OMMMMo").to_string(),
-                    yellow.apply_to("               OMMM0,").to_string(),
+                    green.apply_to("                 ,xNMM.").to_string(),
+                    green.apply_to("               .OMMMMo").to_string(),
+                    green.apply_to("               OMMM0,").to_string(),
                     yellow.apply_to("     .;loddo:' loolloddol;.").to_string(),
                     yellow.apply_to("   cKMMMMMMMMMMNWMMMMMMMMMM0:").to_string(),
                     yellow.apply_to(" .KMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
@@ -118,8 +123,10 @@ impl Config {
                     red.apply_to(".MMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
                     red.apply_to(" kMMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
                     red.apply_to(" .XMMMMMMMMMMMMMMMMMMMMMMMMMMk").to_string(),
-                    blue.apply_to("  .XMMMMMMMMMMMMMMMMMMMMMMMMK.").to_string(),
-                    blue.apply_to("    kMMMMMMMMMMMMMMMMMMMMMMd").to_string(),
+                    purple
+                        .apply_to("  .XMMMMMMMMMMMMMMMMMMMMMMMMK.")
+                        .to_string(),
+                    purple.apply_to("    kMMMMMMMMMMMMMMMMMMMMMMd").to_string(),
                     blue.apply_to("     ;KMMMMMMMWXXWMMMMMMMk.").to_string(),
                     blue.apply_to("       .cooc,.    .,coo:.").to_string(),
                 ]
@@ -364,13 +371,14 @@ impl Default for Config {
         Config {
             user: User::default(),
             offset: 4,
-            module_order: String::from("user delimiter os host kernel"),
+            module_order: String::from("user delimiter os host kernel uptime"),
             logo_cmd: String::from("auto"),
             format: Format::default(),
             delimiter: Delimiter::default(),
             os: Os::default(),
             host: Host::default(),
             kernel: Kernel::default(),
+            uptime: Uptime::default(),
             custom_modules: HashMap::new(),
         }
     }

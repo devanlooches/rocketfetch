@@ -1,7 +1,7 @@
 use crate::cli::Mode;
 use crate::config::Config;
+use crate::pest_parse;
 use console::Style;
-// use nixinfo;
 use rsys::Rsys;
 use user_error::{UserFacingError, UFE};
 
@@ -231,6 +231,48 @@ impl Kernel {
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             Style::from_dotted_str(&self.output_style).apply_to(Config::run_cmd("uname -r").await)
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "kebab-case")]
+pub struct Uptime {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+    time_format: String,
+}
+
+impl Default for Uptime {
+    fn default() -> Self {
+        Uptime {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Uptime: "),
+            output_style: String::from("white"),
+            time_format: String::from("$days days, $hours hours, $minutes minutes"),
+        }
+    }
+}
+
+impl Uptime {
+    pub async fn get_info(&self) -> String {
+        let shr = secfmt::from(Rsys::new().uptime().unwrap());
+        let mut time = self.time_format.clone();
+        time = time.replace("$years", &shr.years.to_string());
+        time = time.replace("${years}", &shr.years.to_string());
+        time = time.replace("$days", &shr.days.to_string());
+        time = time.replace("${days}", &shr.days.to_string());
+        time = time.replace("$hours", &shr.hours.to_string());
+        time = time.replace("${hours}", &shr.hours.to_string());
+        time = time.replace("$minutes", &shr.minutes.to_string());
+        time = time.replace("${minutes}", &shr.minutes.to_string());
+        time = time.replace("$seconds", &shr.seconds.to_string());
+        time = time.replace("${seconds}", &shr.seconds.to_string());
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(time)
         )
     }
 }

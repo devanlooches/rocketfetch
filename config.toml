@@ -1,4 +1,4 @@
-module-order = "user delimiter os host"
+module-order = "user delimiter os host kernel uptime"
 offset = 4
 logo-cmd = "auto"
 
@@ -35,3 +35,14 @@ output-style = "white"
 pre-text-style = "bold.yellow"
 pre-text = "Host: "
 output-style = "white"
+
+[kernel]
+pre-text-style = "bold.yellow"
+pre-text = "Kernel: "
+output-style = "white"
+
+[uptime]
+pre-text-style = "bold.yellow"
+pre-text = "Uptime: "
+output-style = "white"
+time-format = "$days days, $hours hours, $minutes minutes"

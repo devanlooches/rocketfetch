@@ -101,12 +101,20 @@ OPTIONS:
 | pre-text       | "Host: "      | Text that comes before this module                                                                                  |
 | output-style   | "white"       | A format string with each word seperated by dots that describes the style of the output text                        |
 
-### Host Header <a name="kernel-header-configuration"></a>
+### Kernel Header <a name="kernel-header-configuration"></a>
 | Value          | Default       | Description                                                                                                         |
 |----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
 | pre-text-style | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
 | pre-text       | "Kernel: "    | Text that comes before this module                                                                                  |
 | output-style   | "white"       | A format string with each word seperated by dots that describes the style of the output text                        |
+
+### Uptime Header <a name="kernel-header-configuration"></a>
+| Value          | Default                                      | Description                                                                                                         |
+|----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| pre-text-style | "bold.yellow"                                | A format string with each word seperated by dots that describes the style of the text that comes before this module |
+| pre-text       | "Uptime: "                                   | Text that comes before this module                                                                                  |
+| output-style   | "white"                                      | A format string with each word seperated by dots that describes the style of the output text                        |
+| time-format    | "$days days, $hours hours, $minutes minutes" | A String that describes the format of the time. Variables are: $years, $days, $hours, $minutes, $seconds.           |
 
 
 ### Custom Header <a name="custom-header-configuration"></a>
@@ -120,7 +128,7 @@ OPTIONS:
 # Default Configuration <a name="default-configuration"></a>
 A default Configuration will look like so:
 ```toml
-module-order = "user delimiter os"
+module-order = "user delimiter os host kernel uptime"
 offset = 4
 logo-cmd = "auto"
 
@@ -152,6 +160,22 @@ char = "-"
 pre-text-style = "bold.yellow"
 pre-text = "OS: "
 output-style = "white"
+
+[host]
+pre-text-style = "bold.yellow"
+pre-text = "Host: "
+output-style = "white"
+
+[kernel]
+pre-text-style = "bold.yellow"
+pre-text = "Kernel: "
+output-style = "white"
+
+[uptime]
+pre-text-style = "bold.yellow"
+pre-text = "Uptime: "
+output-style = "white"
+time-format = "$days days, $hours hours, $minutes minutes"
 ```
 
 # Todo <a name="todo"></a>
