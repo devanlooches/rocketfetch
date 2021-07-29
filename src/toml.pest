@@ -1,0 +1,126 @@
+toml = _{ SOI ~ value ~ EOI }
+
+value = _{ (top_level_configuration | format_header | user_header | delimiter_header | os_header | host_header | kernel_header | uptime_header | custom_header ~ !(ANY* ~ opening_bracket ~ PEEK_ALL ~ closing_bracket ~ ANY*))* }
+
+multi_line_string = _{ triple_quote ~ inner ~ triple_quote }
+string = _{ quote ~ inner ~ quote }
+multi_line_literal = _{ triple_single_quote ~ (!triple_single_quote ~ ANY)* ~ triple_single_quote }
+literal = _{ single_quote ~ (!single_quote ~ ANY)* ~ single_quote }
+string_value = _{ (string | multi_line_string | literal | multi_line_literal) }
+
+unsigned_integer = @{ ("0" | ASCII_NONZERO_DIGIT ~ (ASCII_DIGIT)*) }
+
+inner = @{ (!(quote | backslash | "\u{0000}" | "\u{001F}") ~ ANY)* ~ (escape ~ inner)? }
+escape  = @{ backslash ~ ("b" | "t" | "n" | "f" | "r" | quote | backslash | unicode | NEWLINE)? }
+unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} | "U" ~ ASCII_HEX_DIGIT{8} }
+
+char_value = @{ (single_quote | quote) ~ ANY ~ (single_quote | quote)}
+
+WHITESPACE = _{ space | tab | NEWLINE }
+COMMENT    = _{ hashtag ~ (!NEWLINE ~ ANY)* }
+
+quote = @{ "\"" }
+triple_quote = @{ quote ~ quote ~ quote }
+single_quote = @{ "'" }
+triple_single_quote = @{ single_quote ~ single_quote ~ single_quote }
+space = @{ " " }
+tab = @{ "\t" }
+hashtag = @{ "#" }
+backslash = @{ "\\" }
+equal_sign = @{ "=" }
+opening_bracket = @{ "[" }
+closing_bracket = @{ "]" }
+dot = { "." }
+dash = { "-" }
+
+// Header Names
+format = { "format" }
+user = { "user" }
+delimiter = { "delimiter" }
+os = { "os" }
+host = { "host" }
+kernel = { "kernel" }
+uptime = { "uptime" }
+
+// General
+
+pre_text_style = { "pre_text_style" ~ equal_sign ~ string_value }
+pre_text = { "pre_text" ~ equal_sign ~ string_value }
+output_style = { "output_style" ~ equal_sign ~ string_value }
+
+// Top level Configuration
+
+top_level_configuration = _{ (module_order | offset | logo_cmd) }
+module_order = { "module_order" ~ equal_sign ~ string_value }
+offset = { "offset" ~ equal_sign ~ unsigned_integer }
+logo_cmd = { "logo_cmd" ~ equal_sign ~ string_value }
+
+// Format Header
+
+format_header = _{ opening_bracket ~ !NEWLINE ~ format ~ !NEWLINE ~ closing_bracket ~ (mode | top_left_corner_char | top_right_corner_char | bottom_left_corner_char | bottom_right_corner_char | horizontal_char | vertical_char | padding_left | padding_right | padding_top)* }
+mode = { "mode" ~ equal_sign ~ (classic | bottom_block | side_block) }
+top_left_corner_char = { "top_left_corner_char" ~ equal_sign ~ char_value }
+top_right_corner_char = { "top_right_corner_char" ~ equal_sign ~ char_value }
+bottom_left_corner_char = { "bottom_left_corner_char" ~ equal_sign ~ char_value }
+bottom_right_corner_char = { "bottom_right_corner_char" ~ equal_sign ~ char_value }
+horizontal_char = { "horizontal_char" ~ equal_sign ~ char_value }
+vertical_char = { "vertical_char" ~ equal_sign ~ char_value }
+padding_left = { "padding_left" ~ equal_sign ~ unsigned_integer }
+padding_right = { "padding_right" ~ equal_sign ~ unsigned_integer }
+padding_top = { "padding_top" ~ equal_sign ~ unsigned_integer}
+
+// Mode Names
+
+classic = @{ (classic_quote | classic_single_quote | classic_triple_quote | classic_triple_single_quote) }
+classic_single_quote = _{ single_quote ~ "classic" ~ single_quote }
+classic_quote = _{ quote ~ "classic" ~ quote }
+classic_triple_quote = _{ triple_quote ~ "classic" ~ triple_quote }
+classic_triple_single_quote = _{ triple_single_quote ~ "classic" ~ triple_single_quote }
+
+bottom_block = @{ (bottom_block_quote | bottom_block_single_quote | bottom_block_triple_quote | bottom_block_triple_single_quote) }
+bottom_block_string = _{ ("bottom_block" | "bottomblock") }
+bottom_block_single_quote = _{ single_quote ~ bottom_block_string ~ single_quote}
+bottom_block_quote = _{ quote ~ bottom_block_string ~ quote}
+bottom_block_triple_quote = _{ triple_quote ~ bottom_block_string ~ triple_quote }
+bottom_block_triple_single_quote = _{ triple_single_quote ~ bottom_block_string ~ triple_quote }
+
+side_block = @{ (side_block_quote | side_block_single_quote | side_block_triple_quote | side_block_triple_single_quote) }
+side_block_string = _{ ("side_block" | "sideblock") }
+side_block_single_quote = _{ single_quote ~ side_block_string ~ single_quote}
+side_block_quote = _{ quote ~ side_block_string ~ quote}
+side_block_triple_quote = _{ triple_quote ~ side_block_string ~ triple_quote }
+side_block_triple_single_quote = _{ triple_single_quote ~ side_block_string ~ triple_quote }
+
+// User Header
+
+user_header = _{ opening_bracket ~ !NEWLINE ~ user ~ !NEWLINE ~ closing_bracket ~ (pre_text_style | pre_text | output_style | seperator_style | seperator_style | seperator_char)* }
+seperator_style = { "seperator_style" ~ equal_sign ~ string_value }
+seperator_char = { "seperator_char" ~ equal_sign ~ char_value }
+
+// Delimiter Header
+
+delimiter_header = _{ opening_bracket ~ !NEWLINE ~ delimiter ~ !NEWLINE ~ closing_bracket ~ (style | repeat_num | char | pre_text | pre_text_style | output_style)* }
+style = { "style" ~ equal_sign ~ string_value }
+repeat_num = { "repeat_num" ~ equal_sign ~ unsigned_integer }
+char = { "char" ~ equal_sign ~ char_value }
+
+// OS Header
+
+os_header = _{ opening_bracket ~ !NEWLINE ~ os ~ !NEWLINE ~ closing_bracket ~ (pre_text | pre_text_style | output_style)* }
+
+// Host Header
+
+host_header = _{ opening_bracket ~ !NEWLINE ~ host ~ !NEWLINE ~ closing_bracket ~ (pre_text | pre_text_style | output_style)* }
+
+// Kernel Header
+
+kernel_header = _{ opening_bracket ~ !NEWLINE ~ kernel ~ !NEWLINE ~ closing_bracket ~ (pre_text | pre_text_style | output_style)* }
+
+// Uptime Header
+
+uptime_header = _{ opening_bracket ~ !NEWLINE ~ uptime ~ !NEWLINE ~ closing_bracket ~ (pre_text | pre_text_style | output_style | time_format)* }
+time_format = { "time_format" ~ equal_sign ~ string_value }
+
+// Custom Header
+custom_header = _{ opening_bracket ~ (!NEWLINE ~ !opening_bracket ~ !closing_bracket ~ !format ~ !user ~ !delimiter ~ !os ~ !host ~ !kernel ~ !uptime ~ ANY)* ~ !NEWLINE ~ closing_bracket ~ (pre_text | pre_text_style | output_style | command)* }
+command = { "command" ~ equal_sign ~ string_value }

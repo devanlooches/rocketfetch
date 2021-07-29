@@ -1,48 +1,48 @@
-module-order = "user delimiter os host kernel uptime"
+module_order = "user delimiter os host kernel uptime"
 offset = 4
-logo-cmd = "auto"
+logo_cmd = "auto"
 
 [format]
 mode = "classic"
-top-left-corner-char = "╭"
-top-right-corner-char = "╮"
-bottom-left-corner-char = "╰"
-bottom-right-corner-char = "╯"
-horizontal-char = "─"
-vertical-char = "│"
-padding-left = 1
-padding-right = 1
-padding-top = 0
+top_left_corner_char = "╭"
+top_right_corner_char = "╮"
+bottom_left_corner_char = "╰"
+bottom_right_corner_char = "╯"
+horizontal_char = "─"
+vertical_char = "│"
+padding_left = 1
+padding_right = 1
+padding_top = 0
 
 [user]
-pre-text-style = "bold.yellow"
-pre-text = ""
-output-style = "bold.yellow"
-seperator-style = "white"
-seperator-char = "@"
+pre_text_style = "bold.yellow"
+pre_text = ""
+output_style = "bold.yellow"
+seperator_style = "white"
+seperator_char = "@"
 
 [delimiter]
 style = "white"
-repeat-num = 0
+repeat_num = 0
 char = "-"
 
 [os]
-pre-text-style = "bold.yellow"
-pre-text = "OS: "
-output-style = "white"
+pre_text_style = "bold.yellow"
+pre_text = "OS: "
+output_style = "white"
 
 [host]
-pre-text-style = "bold.yellow"
-pre-text = "Host: "
-output-style = "white"
+pre_text_style = "bold.yellow"
+pre_text = "Host: "
+output_style = "white"
 
 [kernel]
-pre-text-style = "bold.yellow"
-pre-text = "Kernel: "
-output-style = "white"
+pre_text_style = "bold.yellow"
+pre_text = "Kernel: "
+output_style = "white"
 
 [uptime]
-pre-text-style = "bold.yellow"
-pre-text = "Uptime: "
-output-style = "white"
-time-format = "$days days, $hours hours, $minutes minutes"
+pre_text_style = "bold.yellow"
+pre_text = "Uptime: "
+output_style = "white"
+time_format = "$days days, $hours hours, $minutes minutes"

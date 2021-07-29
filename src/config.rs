@@ -1,10 +1,11 @@
 use crate::cli::Mode;
+extern crate pest;
 use crate::cli::Opt;
 use crate::modules::*;
 use console::measure_text_width;
 use console::style;
-use console::Color;
 use console::Style;
+use pest::Parser;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use structopt::StructOpt;
@@ -12,7 +13,7 @@ use user_error::{UserFacingError, UFE};
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
-#[serde(rename_all = "kebab-case")]
+#[serde(rename_all = "snake_case")]
 pub struct Config {
     module_order: String,
     offset: usize,
@@ -29,6 +30,10 @@ pub struct Config {
     custom_modules: HashMap<String, Module>,
 }
 
+#[derive(Parser)]
+#[grammar = "toml.pest"]
+pub struct TomlParser;
+
 impl Config {
     pub async fn get_args() -> Opt {
         Opt::from_args()
@@ -39,7 +44,7 @@ impl Config {
             Some(v) => v,
             None => {
                 UserFacingError::new("Failed to find home directory")
-                    .help("If this persists, please open github issue.")
+                    .help("If this persists, please open github issue: https://github.com/devanlooches/rocketfetch/issues/new")
                     .print_and_exit();
                 unreachable!()
             }
@@ -52,11 +57,36 @@ impl Config {
     }
     pub async fn from_config(path: String) -> Self {
         match std::fs::read_to_string(path) {
-            Ok(v) => match toml::from_str::<Config>(&v) {
+            Ok(string) => match toml::from_str::<Config>(&string) {
                 Ok(v) => v,
                 Err(r) => {
-                    UserFacingError::new("Failed to parse toml file.")
-                        .reason(r.to_string())
+                    Config::pest_parse(&string).await;
+                    let mut line: u64 = 0;
+                    let mut column: u64 = 0;
+                    let mut last = String::new();
+                    for word in r.to_string().split("at").last().unwrap().split_whitespace() {
+                        if last == "line" {
+                            line = word.parse::<u64>().unwrap();
+                        } else if last == "column" {
+                            column = word.parse::<u64>().unwrap();
+                        }
+                        last = word.to_string();
+                    }
+                    UserFacingError::new("Unable to parse toml file")
+                        .reason(format!(
+                            "--> {line}:{col}
+{line_len_sep} |
+{line} | {line_contents}
+{line_len_sep} |{col_len_sep}^--- {error}
+{line_len_sep} |",
+                            error = r.to_string(),
+                            line_len_sep = " ".repeat(line.to_string().len()),
+                            col_len_sep = " ".repeat(column.to_string().len()),
+                            line = line,
+                            line_contents =
+                                string.lines().collect::<Vec<&str>>()[(line - 1) as usize],
+                            col = column,
+                        ))
                         .print_and_exit();
                     unreachable!()
                 }
@@ -217,7 +247,7 @@ impl Config {
             Some(v) => measure_text_width(v),
             None => {
                 UserFacingError::new("Failed to find logo line with greatest length.")
-                    .help("Make sure you have a logo command defined, and that it outputs something. If this persists, please open a github issue.")
+                    .help("If this persists, please open a github issue: https://github.com/devanlooches/rocketfetch/issues/new")
                     .print_and_exit();
                 unreachable!()
             }
@@ -234,7 +264,7 @@ impl Config {
             Some(v) => measure_text_width(v),
             None => {
                 UserFacingError::new("Failed to find info line with the greatest length")
-                    .help("Make sure that you have some modules defined. If this persists, please open a github issue.")
+                    .help("Make sure that you have some modules defined. If this persists, please open a github issue: https://github.com/devanlooches/rocketfetch/issues/new")
                     .print_and_exit();
                 unreachable!()
             }
@@ -277,15 +307,15 @@ impl Config {
             counter += 1;
         }
 
-        for i in 0..info.len() - 2 {
+        for i in info.iter().take(info.len() - 2) {
             println!(
                 "{}{}{vertical}{}{}{}{}{vertical}",
                 sidelogo[counter],
                 " ".repeat(logo_maxlength - measure_text_width(&sidelogo[counter]) + self.offset),
                 " ".repeat(self.format.padding_left),
-                info[i],
+                i,
                 " ".repeat(self.format.padding_right),
-                " ".repeat(info_maxlength - measure_text_width(&info[i])),
+                " ".repeat(info_maxlength - measure_text_width(i)),
                 vertical = self.format.vertical_char
             );
             counter += 1;
@@ -364,16 +394,25 @@ impl Config {
             }
         }
     }
+
+    pub async fn pest_parse(content: &str) {
+        TomlParser::parse(Rule::toml, &content).unwrap_or_else(|e| {
+            UserFacingError::new("Unable to parse toml file")
+                .reason(e.to_string())
+                .print_and_exit();
+            unreachable!();
+        });
+    }
 }
 
 impl Default for Config {
     fn default() -> Self {
         Config {
-            user: User::default(),
             offset: 4,
             module_order: String::from("user delimiter os host kernel uptime"),
             logo_cmd: String::from("auto"),
             format: Format::default(),
+            user: User::default(),
             delimiter: Delimiter::default(),
             os: Os::default(),
             host: Host::default(),

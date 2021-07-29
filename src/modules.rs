@@ -1,13 +1,11 @@
 use crate::cli::Mode;
 use crate::config::Config;
-use crate::pest_parse;
 use console::Style;
 use rsys::Rsys;
 use user_error::{UserFacingError, UFE};
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
-#[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
 pub struct Format {
     pub mode: Mode,
@@ -41,7 +39,6 @@ impl Default for Format {
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
-#[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
 pub struct User {
     pre_text_style: String,
@@ -87,7 +84,6 @@ impl User {
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
-#[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
 pub struct Delimiter {
     style: String,
@@ -120,7 +116,6 @@ impl Delimiter {
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
-#[serde(rename_all = "kebab-case")]
 #[serde(deny_unknown_fields)]
 pub struct Os {
     pre_text_style: String,
@@ -180,7 +175,8 @@ impl Os {
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
-#[serde(rename_all = "kebab-case")]
+#[serde(default)]
+#[serde(deny_unknown_fields)]
 pub struct Host {
     pre_text_style: String,
     pre_text: String,
@@ -208,7 +204,8 @@ impl Host {
     }
 }
 #[derive(Deserialize, Debug, PartialEq)]
-#[serde(rename_all = "kebab-case")]
+#[serde(default)]
+#[serde(deny_unknown_fields)]
 pub struct Kernel {
     pre_text_style: String,
     pre_text: String,
@@ -236,7 +233,8 @@ impl Kernel {
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
-#[serde(rename_all = "kebab-case")]
+#[serde(default)]
+#[serde(deny_unknown_fields)]
 pub struct Uptime {
     pre_text_style: String,
     pre_text: String,
@@ -278,7 +276,8 @@ impl Uptime {
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
-#[serde(rename_all = "kebab-case")]
+#[serde(default)]
+#[serde(deny_unknown_fields)]
 pub struct Module {
     pre_text_style: String,
     pre_text: String,
@@ -295,5 +294,16 @@ impl Module {
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             Style::from_dotted_str(&self.output_style).apply_to(output)
         )
+    }
+}
+
+impl Default for Module {
+    fn default() -> Self {
+        Module {
+            command: String::from(""),
+            output_style: String::from("white"),
+            pre_text: String::from(""),
+            pre_text_style: String::from("bold.yellow"),
+        }
     }
 }
