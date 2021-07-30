@@ -38,19 +38,19 @@ If this fails to install, please make sure a have the most recent rust version i
 
 # Command Line <a name="cli"></a>
 ```bash
-rocketfetch 0.2.0
+rocketfetch 0.5.2
 A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
 
 USAGE:
-rocketfetch [OPTIONS]
+    rocketfetch [OPTIONS]
 
 FLAGS:
-_h, __help Prints help information
-_V, __version Prints version information
+    -h, --help       Prints help information
+    -V, --version    Prints version information
 
 OPTIONS:
-_c, __config <FILE> Sets custom configuration file.
-    __mode <mode> Set the printing mode. Can be one of `side_table`, `bottom_table`, or `classic`
+    -c, --config <FILE>    Sets custom configuration file.
+        --mode <mode>      Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`
  ```
 
  # Configuration <a name="configuration"></a>
