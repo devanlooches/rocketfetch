@@ -184,4 +184,4 @@ time_format = "$days days, $hours hours, $minutes minutes"
 ```
 
 # Todo <a name="todo"></a>
-_ [ ] Add more Modules (For starters: the ones that neofetch supports)
+- [ ] Add more Modules (For starters: the ones that neofetch supports)
