@@ -44,8 +44,8 @@ pub struct User {
     pre_text_style: String,
     pre_text: String,
     output_style: String,
-    seperator_style: String,
-    seperator_char: String,
+    separator_style: String,
+    separator_char: String,
 }
 
 impl Default for User {
@@ -54,8 +54,8 @@ impl Default for User {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from(""),
             output_style: String::from("bold.yellow"),
-            seperator_style: String::from("white"),
-            seperator_char: String::from("@"),
+            separator_style: String::from("white"),
+            separator_char: String::from("@"),
         }
     }
 }
@@ -76,7 +76,7 @@ impl User {
             "{}{}{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             Style::from_dotted_str(&self.output_style).apply_to(username),
-            Style::from_dotted_str(&self.seperator_style).apply_to(&self.seperator_char),
+            Style::from_dotted_str(&self.separator_style).apply_to(&self.separator_char),
             Style::from_dotted_str(&self.output_style).apply_to(hostname)
         )
     }

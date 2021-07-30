@@ -79,11 +79,11 @@ _c, __config <FILE> Sets custom configuration file.
 ### User Header <a name="user_header_configuration"></a>
 | Value           | Default       | Description                                                                                                         |
 |-----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
+| pre_text_style  | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
 | pre_text        | ""            | Text that comes before this module                                                                                  |
-| output_style    | "white"       | A format string with each word seperated by dots that describes the style of the text                               |
-| seperator_style | "white"       | A format string with each word seperated by dots that describes the style of the between username and hostname      |
-| seperator_char  | "@"           | A character that seperates between the username and hostname                                                        |
+| output_style    | "white"       | A format string with each word separated by dots that describes the style of the text                               |
+| separator_style | "white"       | A format string with each word separated by dots that describes the style of the between username and hostname      |
+| separator_char  | "@"           | A character that separates between the username and hostname                                                        |
 
 ### Delimiter Header <a name="delimiter_header_configuration"></a>
 | Value        | Default   | Description                                                                                                                                                 |
@@ -95,39 +95,39 @@ _c, __config <FILE> Sets custom configuration file.
 ### OS Header <a name="os_header_configuration"></a>
 | Value            | Default         | Description                                                                                                           |
 | ---------------- | --------------- | --------------------------------------------------------------------------------------------------------------------- |
-| pre_text_style   | "bold.yellow"   | A format string with each word seperated by dots that describes the style of the text that comes before this module   |
+| pre_text_style   | "bold.yellow"   | A format string with each word separated by dots that describes the style of the text that comes before this module   |
 | pre_text         | "OS: "          | Text that comes before this module                                                                                    |
-| output_style     | "white"         | A format string with each word seperated by dots that describes the style of the text                                 |
+| output_style     | "white"         | A format string with each word separated by dots that describes the style of the text                                 |
 
 ### Host Header <a name="host_header_configuration"></a>
 | Value          | Default       | Description                                                                                                         |
 |----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
+| pre_text_style | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
 | pre_text       | "Host: "      | Text that comes before this module                                                                                  |
-| output_style   | "white"       | A format string with each word seperated by dots that describes the style of the output text                        |
+| output_style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
 
 ### Kernel Header <a name="kernel_header_configuration"></a>
 | Value          | Default       | Description                                                                                                         |
 |----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style | "bold.yellow" | A format string with each word seperated by dots that describes the style of the text that comes before this module |
+| pre_text_style | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
 | pre_text       | "Kernel: "    | Text that comes before this module                                                                                  |
-| output_style   | "white"       | A format string with each word seperated by dots that describes the style of the output text                        |
+| output_style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
 
 ### Uptime Header <a name="kernel_header_configuration"></a>
 | Value          | Default                                      | Description                                                                                                         |
 |----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style | "bold.yellow"                                | A format string with each word seperated by dots that describes the style of the text that comes before this module |
+| pre_text_style | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module |
 | pre_text       | "Uptime: "                                   | Text that comes before this module                                                                                  |
-| output_style   | "white"                                      | A format string with each word seperated by dots that describes the style of the output text                        |
+| output_style   | "white"                                      | A format string with each word separated by dots that describes the style of the output text                        |
 | time_format    | "$days days, $hours hours, $minutes minutes" | A String that describes the format of the time. Variables are: $years, $days, $hours, $minutes, $seconds.           |
 
 
 ### Custom Header <a name="custom_header_configuration"></a>
 | Value          | Description                                                                                                   |
 |----------------|---------------------------------------------------------------------------------------------------------------|
-| pre_text_style | A format string with each word seperated by dots that describes the style of the text that before this module |
+| pre_text_style | A format string with each word separated by dots that describes the style of the text that before this module |
 | pre_text       | Text that comes before this module                                                                            |
-| output_style   | A format string with each word seperated by dots that describes the style of the output text                  |
+| output_style   | A format string with each word separated by dots that describes the style of the output text                  |
 | Command        | The command to run to get the output of the module                                                            |
 
 # Default Configuration <a name="default_configuration"></a>
@@ -153,8 +153,8 @@ padding_top = 0
 pre_text_style = "bold.yellow"
 pre_text = ""
 output_style = "bold.yellow"
-seperator_style = "white"
-seperator_char = "@"
+separator_style = "white"
+separator_char = "@"
 
 [delimiter]
 style = "white"

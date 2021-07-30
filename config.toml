@@ -18,8 +18,8 @@ padding_top = 0
 pre_text_style = "bold.yellow"
 pre_text = ""
 output_style = "bold.yellow"
-seperator_style = "white"
-seperator_char = "@"
+separator_style = "white"
+separator_char = "@"
 
 [delimiter]
 style = "white"

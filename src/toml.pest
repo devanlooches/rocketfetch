@@ -93,9 +93,9 @@ side_block_triple_single_quote = _{ triple_single_quote ~ side_block_string ~ tr
 
 // User Header
 
-user_header = _{ opening_bracket ~ user ~ closing_bracket ~ (pre_text_style | pre_text | output_style | seperator_style | seperator_style | seperator_char)* }
-seperator_style = { "seperator_style" ~ equal_sign ~ string_value }
-seperator_char = { "seperator_char" ~ equal_sign ~ char_value }
+user_header = _{ opening_bracket ~ user ~ closing_bracket ~ (pre_text_style | pre_text | output_style | separator_style | separator_style | separator_char)* }
+separator_style = { "separator_style" ~ equal_sign ~ string_value }
+separator_char = { "separator_char" ~ equal_sign ~ char_value }
 
 // Delimiter Header
 
