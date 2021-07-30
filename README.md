@@ -38,7 +38,7 @@ If this fails to install, please make sure a have the most recent rust version i
 
 # Command Line <a name="cli"></a>
 ```bash
-rocketfetch 0.5.2
+rocketfetch 0.5.3
 A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
 
 USAGE:
