@@ -2,6 +2,7 @@ use crate::cli::Mode;
 extern crate pest;
 use crate::cli::Opt;
 use crate::modules::*;
+use crate::utils::{handle_error_option, handle_error_result};
 use console::measure_text_width;
 use console::style;
 use console::Style;
@@ -25,6 +26,7 @@ pub struct Config {
     host: Host,
     kernel: Kernel,
     uptime: Uptime,
+    packages: Packages,
 
     #[serde(flatten)]
     custom_modules: HashMap<String, Module>,
@@ -40,15 +42,7 @@ impl Config {
     }
     pub async fn path() -> String {
         let matches = Config::get_args().await;
-        let home_dir = match dirs::home_dir() {
-            Some(v) => v,
-            None => {
-                UserFacingError::new("Failed to find home directory")
-                    .help("If this persists, please open github issue: https://github.com/devanlooches/rocketfetch/issues/new")
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
+        let home_dir = handle_error_option(dirs::home_dir(), "Failed to find home directory", None);
         let path = matches.config.unwrap_or(format!(
             "{}/.config/rocketfetch/config.toml",
             home_dir.to_string_lossy()
@@ -64,11 +58,25 @@ impl Config {
                     let mut line: u64 = 0;
                     let mut column: u64 = 0;
                     let mut last = String::new();
-                    for word in r.to_string().split("at").last().unwrap().split_whitespace() {
+                    for word in handle_error_option(
+                        r.to_string().split("at").last(),
+                        "Failed to get line and column number of configuration error.",
+                        None,
+                    )
+                    .split_whitespace()
+                    {
                         if last == "line" {
-                            line = word.parse::<u64>().unwrap();
+                            line = handle_error_result(
+                                word.parse::<u64>(),
+                                Some("Failed to get line number of configuration error."),
+                                None,
+                            );
                         } else if last == "column" {
-                            column = word.parse::<u64>().unwrap();
+                            column = handle_error_result(
+                                word.parse::<u64>(),
+                                Some("Failed to get column number of configuration error."),
+                                None,
+                            );
                         }
                         last = word.to_string();
                     }
@@ -117,7 +125,9 @@ impl Config {
                 "host" => vec.push(self.host.get_info().await),
                 "kernel" => vec.push(self.kernel.get_info().await),
                 "uptime" => vec.push(self.uptime.get_info().await),
+                "packages" => vec.push(self.packages.get_info().await),
                 v if !self.custom_modules.is_empty() && self.custom_modules.contains_key(v) => {
+                    // Can unwrap because checked above that the key is there
                     vec.push(self.custom_modules.get(v).unwrap().get_info().await)
                 }
                 v => {
@@ -283,7 +293,11 @@ impl Config {
 
         println!(
             "{}{}{}{}{}",
-            &sidelogo.first().unwrap(),
+            handle_error_option(
+                sidelogo.first(),
+                "Failed to get first line of sidelogo",
+                None
+            ),
             " ".repeat(logo_maxlength - measure_text_width(&sidelogo[0]) + self.offset),
             self.format.top_left_corner_char,
             self.format
@@ -396,12 +410,7 @@ impl Config {
     }
 
     pub async fn pest_parse(content: &str) {
-        TomlParser::parse(Rule::toml, &content).unwrap_or_else(|e| {
-            UserFacingError::new("Unable to parse toml file")
-                .reason(e.to_string())
-                .print_and_exit();
-            unreachable!();
-        });
+        handle_error_result(TomlParser::parse(Rule::toml, content), None, None);
     }
 }
 
@@ -409,7 +418,7 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             offset: 4,
-            module_order: String::from("user delimiter os host kernel uptime"),
+            module_order: String::from("user delimiter os host kernel uptime packages"),
             logo_cmd: String::from("auto"),
             format: Format::default(),
             user: User::default(),
@@ -419,6 +428,7 @@ impl Default for Config {
             kernel: Kernel::default(),
             uptime: Uptime::default(),
             custom_modules: HashMap::new(),
+            packages: Packages::default(),
         }
     }
 }

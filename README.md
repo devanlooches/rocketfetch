@@ -20,6 +20,8 @@
   - [OS Header](#os_header_configuration)
   - [Host Header](#host_header_configuration)
   - [Kernel Header](#kernel_header_configuration)
+  - [Uptime Header](#uptime_header_configuration)
+  - [Packages Header](#packages_header_configuration)
   - [Custom Header](#custom_header_configuration)
 - [Default Configuration](#default_configuration)
 - [Todo](#todo)
@@ -38,7 +40,7 @@ If this fails to install, please make sure you have the most recent rust version
 
 # Command Line <a name="cli"></a>
 ```bash
-rocketfetch 0.5.4
+rocketfetch 0.5.3
 A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
 
 USAGE:
@@ -113,7 +115,7 @@ OPTIONS:
 | pre_text       | "Kernel: "    | Text that comes before this module                                                                                  |
 | output_style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
 
-### Uptime Header <a name="kernel_header_configuration"></a>
+### Uptime Header <a name="uptime_header_configuration"></a>
 | Value          | Default                                      | Description                                                                                                         |
 |----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
 | pre_text_style | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module |
@@ -121,6 +123,13 @@ OPTIONS:
 | output_style   | "white"                                      | A format string with each word separated by dots that describes the style of the output text                        |
 | time_format    | "$days days, $hours hours, $minutes minutes" | A String that describes the format of the time. Variables are: $years, $days, $hours, $minutes, $seconds.           |
 
+### Packages Header <a name="packages_header_configuration"></a>
+| Value           | Default                                      | Description                                                                                                               |
+|-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre_text        | "Packages: "                                 | Text that comes before this module                                                                                        |
+| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| Package Manager | "auto"                                       | Sets the package manager you want to count packages for. If set to auto, will count all of the package managers installed |
 
 ### Custom Header <a name="custom_header_configuration"></a>
 | Value          | Description                                                                                                   |
@@ -133,7 +142,7 @@ OPTIONS:
 # Default Configuration <a name="default_configuration"></a>
 A default Configuration will look like so:
 ```toml
-module_order = "user delimiter os host kernel uptime"
+module_order = "user delimiter os host kernel uptime packages"
 offset = 4
 logo_cmd = "auto"
 
@@ -159,7 +168,7 @@ separator_char = "@"
 [delimiter]
 style = "white"
 repeat_num = 0
-char = "_"
+char = "-"
 
 [os]
 pre_text_style = "bold.yellow"
@@ -181,6 +190,12 @@ pre_text_style = "bold.yellow"
 pre_text = "Uptime: "
 output_style = "white"
 time_format = "$days days, $hours hours, $minutes minutes"
+
+[packages]
+pre_text_style = "bold.yellow"
+pre_text = "Packages: "
+output_style = "white"
+package_manager = "auto"
 ```
 
 # Todo <a name="todo"></a>

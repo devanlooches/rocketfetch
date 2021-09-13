@@ -1,9 +1,10 @@
 use crate::cli::Mode;
 use crate::config::Config;
+use crate::utils::handle_error_result;
 use console::Style;
+// use log::{error, info, trace};
 use rsys::Rsys;
 use user_error::{UserFacingError, UFE};
-
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
 #[serde(deny_unknown_fields)]
@@ -255,7 +256,11 @@ impl Default for Uptime {
 
 impl Uptime {
     pub async fn get_info(&self) -> String {
-        let shr = secfmt::from(Rsys::new().uptime().unwrap());
+        let shr = secfmt::from(handle_error_result(
+            Rsys::new().uptime(),
+            Some("Failed to create Rsys"),
+            None,
+        ));
         let mut time = self.time_format.clone();
         time = time.replace("$years", &shr.years.to_string());
         time = time.replace("${years}", &shr.years.to_string());
@@ -272,6 +277,97 @@ impl Uptime {
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             Style::from_dotted_str(&self.output_style).apply_to(time)
         )
+    }
+}
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(default)]
+#[serde(deny_unknown_fields)]
+pub struct Packages {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+    package_manager: String,
+}
+
+impl Default for Packages {
+    fn default() -> Self {
+        Packages {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Packages: "),
+            output_style: String::from("white"),
+            package_manager: String::from("auto"),
+        }
+    }
+}
+
+impl Packages {
+    pub async fn get_info(&self) -> String {
+        let output: String;
+        if self.package_manager != *"auto" {
+            output = if Packages::has(&self.package_manager).await {
+                format!(
+                    "{} ({})",
+                    Packages::get_packages_installed(vec![&self.package_manager]).await,
+                    &self.package_manager
+                )
+            } else {
+                UserFacingError::new(format!(
+                    "Package manager not installed: {}",
+                    self.package_manager
+                ))
+                .print_and_exit();
+                unreachable!();
+            }
+        } else {
+            let package_managers_installed = Packages::find_package_managers_installed().await;
+            output = format!(
+                "{} ({})",
+                Packages::get_packages_installed(
+                    package_managers_installed.iter().map(|x| &**x).collect()
+                )
+                .await,
+                package_managers_installed.join(", ")
+            )
+        };
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(output)
+        )
+    }
+    pub async fn has(pm: &str) -> bool {
+        !Config::run_cmd(format!("type -p \"{}\"", pm).as_str())
+            .await
+            .trim()
+            .is_empty()
+    }
+    pub async fn find_package_managers_installed() -> Vec<String> {
+        let package_managers = vec!["brew"];
+        let mut package_managers_installed = vec![];
+
+        for name in package_managers {
+            if Packages::has(name).await {
+                package_managers_installed.push(name.to_string());
+            }
+        }
+        package_managers_installed
+    }
+    pub async fn get_packages_installed(names: Vec<&str>) -> u128 {
+        let mut packages_installed: u128 = 0;
+        for name in names {
+            match name {
+                "brew" => {
+                    let files_in_cellar = handle_error_result(std::fs::read_dir(Config::run_cmd("brew --cellar").await), None, None).count() as u128;
+                    let files_in_caskroom =
+                        handle_error_result(std::fs::read_dir(Config::run_cmd("brew --caskroom").await),None, None).count() as u128;
+                    packages_installed += files_in_cellar;
+                    packages_installed += files_in_caskroom;
+                }
+                _ => UserFacingError::new(format!("Unknown Package Manager: {}", name)).help("Please open an issue on github (https://github.com/devanlooches/rocketfetch/issues/new) and request the package manager be added.")
+                    .print_and_exit(),
+            }
+        }
+        packages_installed
     }
 }
 

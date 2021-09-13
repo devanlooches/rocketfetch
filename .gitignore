@@ -1,3 +1,4 @@
 /target
 bacon.toml
 Cargo.lock
+.DS_Store

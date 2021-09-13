@@ -1,4 +1,4 @@
-module_order = "user delimiter os host kernel uptime"
+module_order = "user delimiter os host kernel uptime packages"
 offset = 4
 logo_cmd = "auto"
 
@@ -46,3 +46,9 @@ pre_text_style = "bold.yellow"
 pre_text = "Uptime: "
 output_style = "white"
 time_format = "$days days, $hours hours, $minutes minutes"
+
+[packages]
+pre_text_style = "bold.yellow"
+pre_text = "Packages: "
+output_style = "white"
+package_manager = "auto"
