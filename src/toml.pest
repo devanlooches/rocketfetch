@@ -1,6 +1,6 @@
 toml = _{ SOI ~ value ~ EOI }
 
-value = _{ (top_level_configuration | format_header | user_header | delimiter_header | os_header | host_header | kernel_header | uptime_header | custom_header ~ !(ANY* ~ opening_bracket ~ PEEK_ALL ~ closing_bracket ~ ANY*))* }
+value = _{ (top_level_configuration | format_header | user_header | delimiter_header | os_header | host_header | kernel_header | uptime_header| packages_header | custom_header ~ !(ANY* ~ opening_bracket ~ PEEK_ALL ~ closing_bracket ~ ANY*))* }
 
 multi_line_string = _{ triple_quote ~ inner ~ triple_quote }
 string = _{ quote ~ inner ~ quote }
@@ -120,6 +120,11 @@ kernel_header = _{ opening_bracket ~ kernel ~ closing_bracket ~ (pre_text | pre_
 
 uptime_header = _{ opening_bracket ~ uptime ~ closing_bracket ~ (pre_text | pre_text_style | output_style | time_format)* }
 time_format = { "time_format" ~ equal_sign ~ string_value }
+
+// Packages Header
+
+packages_header = _{ opening_bracket ~ uptime ~ closing_bracket ~ (pre_text | pre_text_style | output_style | package_manager)* }
+package_manager = { "package_manager" ~ equal_sign ~ string_value }
 
 // Custom Header
 custom_header = _{ opening_bracket ~ (!opening_bracket ~ !closing_bracket ~ !format ~ !user ~ !delimiter ~ !os ~ !host ~ !kernel ~ !uptime ~ ANY)* ~ closing_bracket ~ (pre_text | pre_text_style | output_style | command)* }
