@@ -15,7 +15,7 @@ pub struct Opt {
     pub config: Option<String>,
     #[structopt(
         long,
-        help = "Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`"
+        help = "Set the printing mode. Can be one of `side-block`, `bottom-block`, or `classic`"
     )]
     pub mode: Option<Mode>,
 }
