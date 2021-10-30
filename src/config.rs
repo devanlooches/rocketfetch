@@ -87,7 +87,7 @@ impl Config {
 {line} | {line_contents}
 {line_len_sep} |{col_len_sep}^--- {error}
 {line_len_sep} |",
-                            error = r.to_string(),
+                            error = r,
                             line_len_sep = " ".repeat(line.to_string().len()),
                             col_len_sep = " ".repeat(column.to_string().len()),
                             line = line,
@@ -104,7 +104,7 @@ impl Config {
                 println!(
                     "{}: Could not find default configuration file: {}. Falling back to default configuration.",
                     style("WARNING").yellow(),
-                    r.to_string()
+                    r
                 );
                 Config::default()
             }

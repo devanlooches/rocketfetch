@@ -1,8 +1,8 @@
 [package]
 name = "rocketfetch"
-version = "0.5.7"
+version = "0.5.8"
 authors = ["Devan Looches <devan.looches@gmail.com>"]
-edition = "2018"
+edition = "2021"
 include = ["src/**/*"]
 license = "MIT"
 description = "A WIP command line system information tool written asynchronously in rust for performance with toml file configuration."

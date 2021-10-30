@@ -41,7 +41,6 @@ impl std::str::FromStr for Mode {
                 UserFacingError::new("Unable to parse mode string")
                     .reason(format!("Unknown Mode: {}", v))
                     .help("Expected one of `side-block`, `bottom-block`, or `classic`")
-                    .to_string()
             )),
         }
     }
