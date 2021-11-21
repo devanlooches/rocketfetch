@@ -179,6 +179,33 @@ impl Config {
                     blue.apply_to("       .cooc,.    .,coo:.").to_string(),
                 ]
             }
+            "Arch Linux" => {
+                let lightblue = Style::new().blue().bright();
+                vec![
+                    "                     -`                 ",
+                    "                    .o+`                ",
+                    "                   `ooo/                ",
+                    "                  `+oooo:               ",
+                    "                 `+oooooo:              ",
+                    "                 -+oooooo+:             ",
+                    "               `/:-:++oooo+:            ",
+                    "              `/++++/+++++++:           ",
+                    "             `/++++++++++++++:          ",
+                    "            `/+++ooooooooooooo/`        ",
+                    "           ./ooosssso++osssssso+`       ",
+                    "          .oossssso-````/ossssss+`      ",
+                    "         -osssssso.      :ssssssso.     ",
+                    "        :osssssss/        osssso+++.    ",
+                    "       /ossssssss/        +ssssooo/-    ",
+                    "     `/ossssso+/:-        -:/+osssso+-  ",
+                    "    `+sso+:-`                 `.-/+oso: ",
+                    "   `++:.                           `-/+/",
+                    "   .`                                 `/",
+                ]
+                .iter()
+                .map(|x| lightblue.apply_to(x).to_string())
+                .collect()
+            }
             v => {
                 UserFacingError::new(format!("Unknown OS: {}", v))
                     .help("Please file a new issue on github to request a new OS: https://github.com/devanlooches/rocketfetch/issues/new")
