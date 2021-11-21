@@ -1,7 +1,7 @@
 <div align="center">
     <h1>Rocketfetch</h1>
-    A *WIP* (Contrubutions are greatly apperciated) command line system information tool written in rust for performance
-    with toml file configuration.
+    A *WIP* (Contributions are greatly appreciated) command line system information tool written in Rust for performance
+    with TOML file configuration.
 
 <a href="https://crates.io/crates/rocketfetch"><img src="https://img.shields.io/crates/v/rocketfetch?style=flat-square" alt="Crates.io version"/></a>
 <a href="https://crates.io/crates/rocketfetch"><img src="https://img.shields.io/crates/d/rocketfetch?style=flat-square" alt="Crates.io version"/></a>
@@ -36,12 +36,12 @@ neofetch while also improving the configuration. I modeled my configuration afte
 ```bash
 cargo install rocketfetch
 ```
-If this fails to install, please make sure you have the most recent rust version installed.
+If this fails to install, please make sure you have the most recent Rust version installed.
 
 # Command Line <a name="cli"></a>
 ```bash
 rocketfetch 0.5.3
-A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
+A WIP command line system information tool (neofetch) rewritten in Rust for performance with TOML file configuration.
 
 USAGE:
     rocketfetch [OPTIONS]
@@ -61,7 +61,7 @@ OPTIONS:
  ### Top Level <a name="top_level_configuration"></a>
 | Value        | Default             | Description                                                                                                                                                                                                              |
 |--------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| module_order | "user delimiter os host kernel uptime packages" | Specify the order in which the modules will go in seperated by spaces. Possible modules are: user, delimiter, os, host, kernel, uptime, packages, as well as any custom modules you have defined. You may specify some more than once. More coming soon! |
+| module_order | "user delimiter os host kernel uptime packages" | Specify the order in which the modules will go in separated by spaces. Possible modules are: user, delimiter, os, host, kernel, uptime, packages, as well as any custom modules you have defined. You may specify some more than once. More coming soon! |
 | offset       | 4                   | Specify the number of spaces between the logo and the information.                                                                                                                                                       |
 | logo_cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo based on the result. (Only macos is supported as of right now.)                                                                             |
 
