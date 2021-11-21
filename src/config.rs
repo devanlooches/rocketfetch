@@ -203,7 +203,7 @@ impl Config {
                     "   .`                                 `/",
                 ]
                 .iter()
-                .map(|x| lightblue.apply_to(x).to_string())
+                .map(|&x| lightblue.apply_to(x).to_string())
                 .collect()
             }
             v => {
