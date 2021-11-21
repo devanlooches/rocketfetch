@@ -6,6 +6,9 @@ use crate::utils::{handle_error_option, handle_error_result};
 use console::measure_text_width;
 use console::style;
 use console::Style;
+use libmacchina::GeneralReadout;
+use libmacchina::KernelReadout;
+use libmacchina::PackageReadout;
 use pest::Parser;
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -111,21 +114,26 @@ impl Config {
         }
     }
 
-    async fn module_order(&self) -> Vec<String> {
+    async fn module_order(
+        &self,
+        kernel_readout: &KernelReadout,
+        general_readout: &GeneralReadout,
+        package_readout: &PackageReadout,
+    ) -> Vec<String> {
         let mut vec = Vec::new();
         for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
-                "user" => vec.push(self.user.get_info().await),
+                "user" => vec.push(self.user.get_info(general_readout).await),
                 "delimiter" => vec.push(
                     self.delimiter
                         .get_info(measure_text_width(&vec[i - 1]))
                         .await,
                 ),
-                "os" => vec.push(self.os.get_info().await),
-                "host" => vec.push(self.host.get_info().await),
-                "kernel" => vec.push(self.kernel.get_info().await),
-                "uptime" => vec.push(self.uptime.get_info().await),
-                "packages" => vec.push(self.packages.get_info().await),
+                "os" => vec.push(self.os.get_info(general_readout).await),
+                "host" => vec.push(self.host.get_info(general_readout).await),
+                "kernel" => vec.push(self.kernel.get_info(kernel_readout).await),
+                "uptime" => vec.push(self.uptime.get_info(general_readout).await),
+                "packages" => vec.push(self.packages.get_info(package_readout).await),
                 v if !self.custom_modules.is_empty() && self.custom_modules.contains_key(v) => {
                     // Can unwrap because checked above that the key is there
                     vec.push(self.custom_modules.get(v).unwrap().get_info().await)
@@ -141,10 +149,10 @@ impl Config {
         vec
     }
 
-    async fn logo(&self) -> Vec<String> {
-        let os = self.os.get_os().await;
+    async fn logo(&self, general_readout: &GeneralReadout) -> Vec<String> {
+        let os = self.os.get_os(general_readout).await;
         match os.trim() {
-            "macos" => {
+            x if x.contains("macOS") => {
                 let yellow = Style::from_dotted_str("yellow.bold");
                 let red = Style::from_dotted_str("red.bold");
                 let blue = Style::from_dotted_str("blue.bold");
@@ -180,9 +188,9 @@ impl Config {
         }
     }
 
-    async fn get_logo(&self) -> Vec<String> {
+    async fn get_logo(&self, general_readout: &GeneralReadout) -> Vec<String> {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
-            self.logo().await
+            self.logo(general_readout).await
         } else {
             Config::run_cmd(&self.logo_cmd)
                 .await
@@ -192,11 +200,18 @@ impl Config {
         }
     }
 
-    async fn print_classic(&self) {
-        let mut sidelogo = self.get_logo().await;
-        let mut order = self.module_order().await;
+    async fn print_classic(
+        &self,
+        kernel_readout: &KernelReadout,
+        general_readout: &GeneralReadout,
+        package_readout: &PackageReadout,
+    ) {
+        let mut sidelogo = self.get_logo(general_readout).await;
+        let mut order = self
+            .module_order(kernel_readout, general_readout, package_readout)
+            .await;
 
-        let maxlength = self.logo_maxlength().await;
+        let maxlength = self.logo_maxlength(general_readout).await;
 
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
@@ -247,9 +262,9 @@ impl Config {
         }
     }
 
-    async fn logo_maxlength(&self) -> usize {
+    async fn logo_maxlength(&self, general_readout: &GeneralReadout) -> usize {
         match self
-            .get_logo()
+            .get_logo(general_readout)
             .await
             .iter()
             .max_by_key(|&x| measure_text_width(x))
@@ -264,9 +279,14 @@ impl Config {
         }
     }
 
-    async fn info_maxlength(&self) -> usize {
+    async fn info_maxlength(
+        &self,
+        kernel_readout: &KernelReadout,
+        general_readout: &GeneralReadout,
+        package_readout: &PackageReadout,
+    ) -> usize {
         match self
-            .module_order()
+            .module_order(kernel_readout, general_readout, package_readout)
             .await
             .iter()
             .max_by_key(|&x| measure_text_width(x))
@@ -281,15 +301,24 @@ impl Config {
         }
     }
 
-    async fn print_side_table(&self) {
-        let mut sidelogo = self.get_logo().await;
-        let mut info = self.module_order().await;
+    async fn print_side_table(
+        &self,
+        kernel_readout: &KernelReadout,
+        general_readout: &GeneralReadout,
+        package_readout: &PackageReadout,
+    ) {
+        let mut sidelogo = self.get_logo(general_readout).await;
+        let mut info = self
+            .module_order(kernel_readout, general_readout, package_readout)
+            .await;
         let mut counter = 0;
         info.resize(sidelogo.len() + self.format.padding_top, String::from(""));
         sidelogo.resize(info.len() + self.format.padding_top, String::from(""));
 
-        let logo_maxlength = self.logo_maxlength().await;
-        let info_maxlength = self.info_maxlength().await;
+        let logo_maxlength = self.logo_maxlength(general_readout).await;
+        let info_maxlength = self
+            .info_maxlength(kernel_readout, general_readout, package_readout)
+            .await;
 
         println!(
             "{}{}{}{}{}",
@@ -347,10 +376,19 @@ impl Config {
         );
     }
 
-    async fn print_bottom_table(&self) {
-        let sidelogo = self.get_logo().await;
-        let info = self.module_order().await;
-        let info_maxlength = self.info_maxlength().await;
+    async fn print_bottom_table(
+        &self,
+        kernel_readout: &KernelReadout,
+        general_readout: &GeneralReadout,
+        package_readout: &PackageReadout,
+    ) {
+        let sidelogo = self.get_logo(general_readout).await;
+        let info = self
+            .module_order(kernel_readout, general_readout, package_readout)
+            .await;
+        let info_maxlength = self
+            .info_maxlength(kernel_readout, general_readout, package_readout)
+            .await;
 
         for line in sidelogo {
             println!("{}", line);
@@ -392,19 +430,42 @@ impl Config {
         );
     }
 
-    pub async fn print(&self) {
+    pub async fn print(
+        &self,
+        kernel_readout: &KernelReadout,
+        general_readout: &GeneralReadout,
+        package_readout: &PackageReadout,
+    ) {
         let matches = Config::get_args().await;
         if let Some(v) = matches.mode {
             match v {
-                Mode::Classic => self.print_classic().await,
-                Mode::BottomBlock => self.print_bottom_table().await,
-                Mode::SideBlock => self.print_side_table().await,
+                Mode::Classic => {
+                    self.print_classic(kernel_readout, general_readout, package_readout)
+                        .await
+                }
+                Mode::BottomBlock => {
+                    self.print_bottom_table(kernel_readout, general_readout, package_readout)
+                        .await
+                }
+                Mode::SideBlock => {
+                    self.print_side_table(kernel_readout, general_readout, package_readout)
+                        .await
+                }
             }
         } else {
             match self.format.mode {
-                Mode::Classic => self.print_classic().await,
-                Mode::BottomBlock => self.print_bottom_table().await,
-                Mode::SideBlock => self.print_side_table().await,
+                Mode::Classic => {
+                    self.print_classic(kernel_readout, general_readout, package_readout)
+                        .await
+                }
+                Mode::BottomBlock => {
+                    self.print_bottom_table(kernel_readout, general_readout, package_readout)
+                        .await
+                }
+                Mode::SideBlock => {
+                    self.print_side_table(kernel_readout, general_readout, package_readout)
+                        .await
+                }
             }
         }
     }
@@ -439,7 +500,7 @@ mod test {
     use pretty_assertions::assert_eq;
 
     #[tokio::test]
-    async fn parse_config() {
+    async fn check_default_config() {
         let config = Config::from_config(String::from("config.toml")).await;
         assert_eq!(Config::default(), config);
     }

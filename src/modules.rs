@@ -1,9 +1,13 @@
 use crate::cli::Mode;
 use crate::config::Config;
-use crate::utils::handle_error_result;
+// use crate::utils::handle_error_result;
 use console::Style;
-// use log::{error, info, trace};
-use rsys::Rsys;
+use libmacchina::traits::GeneralReadout as _;
+use libmacchina::traits::KernelReadout as _;
+use libmacchina::traits::PackageReadout as _;
+use libmacchina::GeneralReadout;
+use libmacchina::KernelReadout;
+use libmacchina::PackageReadout;
 use user_error::{UserFacingError, UFE};
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(default)]
@@ -62,8 +66,8 @@ impl Default for User {
 }
 
 impl User {
-    pub async fn get_info(&self) -> String {
-        let hostname = match Rsys::new().hostname() {
+    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
+        let hostname = match general_readout.hostname() {
             Ok(v) => v,
             Err(r) => {
                 UserFacingError::new("Failed to get hostname")
@@ -72,7 +76,15 @@ impl User {
                 unreachable!()
             }
         };
-        let username = Config::run_cmd("whoami").await;
+        let username = match general_readout.username() {
+            Ok(v) => v,
+            Err(r) => {
+                UserFacingError::new("Failed to get username")
+                    .reason(r.to_string())
+                    .print_and_exit();
+                unreachable!()
+            }
+        };
         format!(
             "{}{}{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
@@ -135,10 +147,10 @@ impl Default for Os {
 }
 
 impl Os {
-    pub async fn get_os(&self) -> String {
+    pub async fn get_os(&self, general_readout: &GeneralReadout) -> String {
         let os: String;
         if cfg!(target_os = "linux") {
-            os = match nixinfo::distro() {
+            os = match general_readout.distribution() {
                 Ok(v) => v,
                 Err(r) => {
                     UserFacingError::new("Failed to find distro")
@@ -148,27 +160,28 @@ impl Os {
                 }
             };
         } else {
-            os = std::env::consts::OS.to_string();
+            os = match general_readout.os_name() {
+                Ok(v) => v,
+                Err(r) => {
+                    UserFacingError::new("Failed to find OS name")
+                        .reason(r.to_string())
+                        .print_and_exit();
+                    unreachable!()
+                }
+            };
         }
         os
     }
-    pub async fn get_info(&self) -> String {
-        let os = self.get_os().await;
+    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
+        let os = self.get_os(general_readout).await;
         let build_version = Config::run_cmd("sw_vers -buildVersion").await;
-        let arch = Config::run_cmd("machine").await;
-        let version: String;
-        if cfg!(target_os = "macos") {
-            version = Config::run_cmd("sw_vers -productVersion").await;
-        } else {
-            version = String::from("");
-        }
+        let arch = Config::run_cmd("uname -m").await;
 
         let output_style = Style::from_dotted_str(&self.output_style);
         format!(
-            "{}{} {} {} {}",
+            "{}{} {} {}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             output_style.apply_to(os),
-            output_style.apply_to(version),
             output_style.apply_to(build_version),
             output_style.apply_to(arch)
         )
@@ -195,12 +208,20 @@ impl Default for Host {
 }
 
 impl Host {
-    pub async fn get_info(&self) -> String {
+    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
+        let machine = match general_readout.machine() {
+            Ok(v) => v,
+            Err(r) => {
+                UserFacingError::new("Failed to find machine name")
+                    .reason(r.to_string())
+                    .print_and_exit();
+                unreachable!()
+            }
+        };
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style)
-                .apply_to(Config::run_cmd("sysctl -n hw.model").await)
+            Style::from_dotted_str(&self.output_style).apply_to(machine)
         )
     }
 }
@@ -224,11 +245,20 @@ impl Default for Kernel {
 }
 
 impl Kernel {
-    pub async fn get_info(&self) -> String {
+    pub async fn get_info(&self, kernel_readout: &KernelReadout) -> String {
+        let kernel = match kernel_readout.pretty_kernel() {
+            Ok(v) => v,
+            Err(r) => {
+                UserFacingError::new("Failed to find kernel version")
+                    .reason(r.to_string())
+                    .print_and_exit();
+                unreachable!()
+            }
+        };
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(Config::run_cmd("uname -r").await)
+            Style::from_dotted_str(&self.output_style).apply_to(kernel)
         )
     }
 }
@@ -255,12 +285,17 @@ impl Default for Uptime {
 }
 
 impl Uptime {
-    pub async fn get_info(&self) -> String {
-        let shr = secfmt::from(handle_error_result(
-            Rsys::new().uptime(),
-            Some("Failed to create Rsys"),
-            None,
-        ));
+    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
+        let uptime = match general_readout.uptime() {
+            Ok(v) => v,
+            Err(r) => {
+                UserFacingError::new("Failed to get uptime")
+                    .reason(r.to_string())
+                    .print_and_exit();
+                unreachable!()
+            }
+        };
+        let shr = secfmt::from(uptime as u64);
         let mut time = self.time_format.clone();
         time = time.replace("$years", &shr.years.to_string());
         time = time.replace("${years}", &shr.years.to_string());
@@ -286,7 +321,6 @@ pub struct Packages {
     pre_text_style: String,
     pre_text: String,
     output_style: String,
-    package_manager: String,
 }
 
 impl Default for Packages {
@@ -295,79 +329,22 @@ impl Default for Packages {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Packages: "),
             output_style: String::from("white"),
-            package_manager: String::from("auto"),
         }
     }
 }
 
 impl Packages {
-    pub async fn get_info(&self) -> String {
-        let output: String;
-        if self.package_manager != *"auto" {
-            output = if Packages::has(&self.package_manager).await {
-                format!(
-                    "{} ({})",
-                    Packages::get_packages_installed(vec![&self.package_manager]).await,
-                    &self.package_manager
-                )
-            } else {
-                UserFacingError::new(format!(
-                    "Package manager not installed: {}",
-                    self.package_manager
-                ))
-                .print_and_exit();
-                unreachable!();
-            }
-        } else {
-            let package_managers_installed = Packages::find_package_managers_installed().await;
-            output = format!(
-                "{} ({})",
-                Packages::get_packages_installed(
-                    package_managers_installed.iter().map(|x| &**x).collect()
-                )
-                .await,
-                package_managers_installed.join(", ")
-            )
-        };
+    pub async fn get_info(&self, package_readout: &PackageReadout) -> String {
+        let package = package_readout.count_pkgs();
+        let mut packages = String::new();
+        for (name, num) in package {
+            packages.push_str(format!("{} ({}) ", num, name.to_string()).as_str());
+        }
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(output)
+            Style::from_dotted_str(&self.output_style).apply_to(packages)
         )
-    }
-    pub async fn has(pm: &str) -> bool {
-        !Config::run_cmd(format!("type -p \"{}\"", pm).as_str())
-            .await
-            .trim()
-            .is_empty()
-    }
-    pub async fn find_package_managers_installed() -> Vec<String> {
-        let package_managers = vec!["brew"];
-        let mut package_managers_installed = vec![];
-
-        for name in package_managers {
-            if Packages::has(name).await {
-                package_managers_installed.push(name.to_string());
-            }
-        }
-        package_managers_installed
-    }
-    pub async fn get_packages_installed(names: Vec<&str>) -> u128 {
-        let mut packages_installed: u128 = 0;
-        for name in names {
-            match name {
-                "brew" => {
-                    let files_in_cellar = handle_error_result(std::fs::read_dir(Config::run_cmd("brew --cellar").await), None, None).count() as u128;
-                    let files_in_caskroom =
-                        handle_error_result(std::fs::read_dir(Config::run_cmd("brew --caskroom").await),None, None).count() as u128;
-                    packages_installed += files_in_cellar;
-                    packages_installed += files_in_caskroom;
-                }
-                _ => UserFacingError::new(format!("Unknown Package Manager: {}", name)).help("Please open an issue on github (https://github.com/devanlooches/rocketfetch/issues/new) and request the package manager be added.")
-                    .print_and_exit(),
-            }
-        }
-        packages_installed
     }
 }
 

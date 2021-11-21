@@ -61,9 +61,10 @@ OPTIONS:
  ### Top Level <a name="top_level_configuration"></a>
 | Value        | Default             | Description                                                                                                                                                                                                              |
 |--------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| module_order | "user delimiter os" | Specify the order in which the modules will go in seperated by spaces. Possible modules are: user, delimiter, os, as well as any custom modules you have defined. You may specify some more than once. More coming soon. |
+| module_order | "user delimiter os host kernel uptime packages" | Specify the order in which the modules will go in seperated by spaces. Possible modules are: user, delimiter, os, host, kernel, uptime, packages, as well as any custom modules you have defined. You may specify some more than once. More coming soon! |
 | offset       | 4                   | Specify the number of spaces between the logo and the information.                                                                                                                                                       |
-| logo_cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo                                                                              |
+| logo_cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo based on the result. (Only macos is supported as of right now.)                                                                             |
+
 ### Format Header <a name="format_header_configuration"></a>
 | Value                    | Default     | Description                                                                                                                                                             |
 | ----------------------   | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -92,7 +93,7 @@ OPTIONS:
 | ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | style        | "white"   | A format string with each word separated by dots that describes the style of the delimiter                                                                  |
 | repeat_num   | 0         | The number of times to repeat the delimiter char to form the delimiter. If set to 0, it will the repeat number to the length of the module above this one   |
-| char         | "_"       | The character to use as the delimiter                                                                                                                       |
+| char         | "-"       | The character to use as the delimiter                                                                                                                       |
 
 ### OS Header <a name="os_header_configuration"></a>
 | Value            | Default         | Description                                                                                                           |
@@ -129,7 +130,6 @@ OPTIONS:
 | pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
 | pre_text        | "Packages: "                                 | Text that comes before this module                                                                                        |
 | output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
-| Package Manager | "auto"                                       | Sets the package manager you want to count packages for. If set to auto, will count all of the package managers installed |
 
 ### Custom Header <a name="custom_header_configuration"></a>
 | Value          | Description                                                                                                   |
