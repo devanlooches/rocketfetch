@@ -20,7 +20,7 @@ pub struct Opt {
     pub mode: Option<Mode>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub enum Mode {
     Classic,

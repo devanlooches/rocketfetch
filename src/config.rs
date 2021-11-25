@@ -1,23 +1,17 @@
 use crate::cli::Mode;
-extern crate pest;
 use crate::cli::Opt;
+use crate::handle_error;
 use crate::modules::*;
-use crate::utils::{handle_error_option, handle_error_result};
 use console::measure_text_width;
 use console::style;
 use console::Style;
-use libmacchina::GeneralReadout;
-use libmacchina::KernelReadout;
-use libmacchina::PackageReadout;
-use pest::Parser;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(rename_all = "snake_case")]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(rename_all = "snake_case", default)]
 pub struct Config {
     module_order: String,
     offset: usize,
@@ -35,50 +29,43 @@ pub struct Config {
     custom_modules: HashMap<String, Module>,
 }
 
-#[derive(Parser)]
-#[grammar = "toml.pest"]
-pub struct TomlParser;
-
 impl Config {
-    pub async fn get_args() -> Opt {
+    pub fn get_args() -> Opt {
         Opt::from_args()
     }
-    pub async fn path() -> String {
-        let matches = Config::get_args().await;
-        let home_dir = handle_error_option(dirs::home_dir(), "Failed to find home directory", None);
+    pub fn path() -> String {
+        let matches = Config::get_args();
+        let home_dir = handle_error!(dirs::home_dir().ok_or(""), "Failed to find home directory");
         let path = matches.config.unwrap_or(format!(
             "{}/.config/rocketfetch/config.toml",
             home_dir.to_string_lossy()
         ));
         path
     }
-    pub async fn from_config(path: String) -> Self {
+    pub fn from_config(path: String) -> Self {
         match std::fs::read_to_string(path) {
             Ok(string) => match toml::from_str::<Config>(&string) {
                 Ok(v) => v,
                 Err(r) => {
-                    Config::pest_parse(&string).await;
                     let mut line: u64 = 0;
                     let mut column: u64 = 0;
                     let mut last = String::new();
-                    for word in handle_error_option(
-                        r.to_string().split("at").last(),
-                        "Failed to get line and column number of configuration error.",
-                        None,
-                    )
-                    .split_whitespace()
-                    {
+                    let r = r.to_string();
+                    println!("{}", r);
+                    let error = handle_error!(
+                        r.split("at").last().ok_or(""),
+                        "Failed to get line and column number of configuration error"
+                    );
+                    for word in error.split_whitespace() {
                         if last == "line" {
-                            line = handle_error_result(
+                            line = handle_error!(
                                 word.parse::<u64>(),
-                                Some("Failed to get line number of configuration error."),
-                                None,
+                                "Failed to get line number of configuration error"
                             );
                         } else if last == "column" {
-                            column = handle_error_result(
+                            column = handle_error!(
                                 word.parse::<u64>(),
-                                Some("Failed to get column number of configuration error."),
-                                None,
+                                "Failed to get column number of configuration error"
                             );
                         }
                         last = word.to_string();
@@ -92,7 +79,7 @@ impl Config {
 {line_len_sep} |",
                             error = r,
                             line_len_sep = " ".repeat(line.to_string().len()),
-                            col_len_sep = " ".repeat(column.to_string().len()),
+                            col_len_sep = " ".repeat(column as usize),
                             line = line,
                             line_contents =
                                 string.lines().collect::<Vec<&str>>()[(line - 1) as usize],
@@ -105,7 +92,7 @@ impl Config {
 
             Err(r) => {
                 println!(
-                    "{}: Could not find default configuration file: {}. Falling back to default configuration.",
+                    "{}: Could not find default configuration file: {}. Falling back to default configuration.\n",
                     style("WARNING").yellow(),
                     r
                 );
@@ -114,43 +101,107 @@ impl Config {
         }
     }
 
-    async fn module_order(
-        &self,
-        kernel_readout: &KernelReadout,
-        general_readout: &GeneralReadout,
-        package_readout: &PackageReadout,
-    ) -> Vec<String> {
-        let mut vec = Vec::new();
+    fn module_order(&self) -> Vec<String> {
+        use std::thread;
+        let modules = self.module_order.split_whitespace().collect::<Vec<&str>>();
+        let mut modules_unordered = HashMap::new();
+        let mut handles = Vec::new();
+        let self_clone = self.clone();
+        let user = self_clone.user;
+        let os = self_clone.os;
+        let host = self_clone.host;
+        let kernel = self_clone.kernel;
+        let uptime = self_clone.uptime;
+        let packages = self_clone.packages;
+        let custom = self_clone.custom_modules;
+        if modules.contains(&"user") {
+            let handle = thread::spawn(move || (String::from("user"), user.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"os") {
+            let handle = thread::spawn(move || (String::from("os"), os.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"host") {
+            let handle = thread::spawn(move || (String::from("host"), host.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"kernel") {
+            let handle = thread::spawn(move || (String::from("kernel"), kernel.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"uptime") {
+            let handle = thread::spawn(move || (String::from("uptime"), uptime.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"packages") {
+            let handle = thread::spawn(move || (String::from("packages"), packages.get_info()));
+            handles.push(handle);
+        }
+        for (name, module) in custom {
+            let handle = thread::spawn(move || (name, module.get_info()));
+            handles.push(handle);
+        }
+        for handle in handles {
+            let joined_handle = handle.join().unwrap();
+            modules_unordered.insert(joined_handle.0, joined_handle.1);
+        }
+        let mut vec: Vec<String> = Vec::new();
         for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
-                "user" => vec.push(self.user.get_info(general_readout).await),
-                "delimiter" => vec.push(
-                    self.delimiter
-                        .get_info(measure_text_width(&vec[i - 1]))
-                        .await,
+                "user" => vec.push(
+                    modules_unordered
+                        .get(&String::from("user"))
+                        .unwrap()
+                        .to_string(),
                 ),
-                "os" => vec.push(self.os.get_info(general_readout).await),
-                "host" => vec.push(self.host.get_info(general_readout).await),
-                "kernel" => vec.push(self.kernel.get_info(kernel_readout).await),
-                "uptime" => vec.push(self.uptime.get_info(general_readout).await),
-                "packages" => vec.push(self.packages.get_info(package_readout).await),
-                v if !self.custom_modules.is_empty() && self.custom_modules.contains_key(v) => {
-                    // Can unwrap because checked above that the key is there
-                    vec.push(self.custom_modules.get(v).unwrap().get_info().await)
-                }
+                "delimiter" => vec.push(self.delimiter.get_info(measure_text_width(&vec[i - 1]))),
+                "os" => vec.push(
+                    modules_unordered
+                        .get(&String::from("os"))
+                        .unwrap()
+                        .to_string(),
+                ),
+                "host" => vec.push(
+                    modules_unordered
+                        .get(&String::from("host"))
+                        .unwrap()
+                        .to_string(),
+                ),
+                "kernel" => vec.push(
+                    modules_unordered
+                        .get(&String::from("kernel"))
+                        .unwrap()
+                        .to_string(),
+                ),
+                "uptime" => vec.push(
+                    modules_unordered
+                        .get(&String::from("uptime"))
+                        .unwrap()
+                        .to_string(),
+                ),
+                "packages" => vec.push(
+                    modules_unordered
+                        .get(&String::from("packages"))
+                        .unwrap()
+                        .to_string(),
+                ),
                 v => {
-                    UserFacingError::new("Failed to parse module order string.")
-                        .reason(format!("Unknown module: {}", v))
-                        .print_and_exit();
-                    unreachable!();
+                    let error = format!("Unknown module: {}", v);
+                    let module = handle_error!(
+                        modules_unordered.get(v).ok_or(""),
+                        error,
+                        "Make sure you have this module defined."
+                    );
+                    vec.push(module.to_string());
                 }
             }
         }
         vec
     }
 
-    async fn logo(&self, general_readout: &GeneralReadout) -> Vec<String> {
-        let os = self.os.get_os(general_readout).await;
+    fn logo(&self) -> Vec<String> {
+        let os = self.os.get_os();
         match os.trim() {
             x if x.contains("macOS") => {
                 let yellow = Style::from_dotted_str("yellow.bold");
@@ -208,37 +259,29 @@ impl Config {
             }
             v => {
                 UserFacingError::new(format!("Unknown OS: {}", v))
-                    .help("Please file a new issue on github to request a new OS: https://github.com/devanlooches/rocketfetch/issues/new")
+                    .help("Please file a new issue on github to request support for a new OS: https://github.com/devanlooches/rocketfetch/issues/new")
                     .print_and_exit();
                 unreachable!()
             }
         }
     }
 
-    async fn get_logo(&self, general_readout: &GeneralReadout) -> Vec<String> {
+    fn get_logo(&self) -> Vec<String> {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
-            self.logo(general_readout).await
+            self.logo()
         } else {
             Config::run_cmd(&self.logo_cmd)
-                .await
                 .lines()
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
         }
     }
 
-    async fn print_classic(
-        &self,
-        kernel_readout: &KernelReadout,
-        general_readout: &GeneralReadout,
-        package_readout: &PackageReadout,
-    ) {
-        let mut sidelogo = self.get_logo(general_readout).await;
-        let mut order = self
-            .module_order(kernel_readout, general_readout, package_readout)
-            .await;
+    fn print_classic(&self) {
+        let mut sidelogo = self.get_logo();
+        let mut order = self.module_order();
 
-        let maxlength = self.logo_maxlength(general_readout).await;
+        let maxlength = self.logo_maxlength();
 
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
@@ -255,104 +298,65 @@ impl Config {
         }
     }
 
-    pub async fn run_cmd(cmd: &str) -> String {
+    pub fn run_cmd(cmd: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
-            match Command::new("cmd").args(&["/C", cmd]).output() {
-                Ok(v) => v,
-                Err(r) => {
-                    UserFacingError::new("Failed to execute command")
-                        .reason(r.to_string())
-                        .print_and_exit();
-                    unreachable!()
-                }
-            }
+            let command_run = Command::new("cmd").args(&["/C", cmd]).output();
+            handle_error!(command_run, "Failed to run command")
         } else {
-            match Command::new("sh").args(["-c", cmd]).output() {
-                Ok(v) => v,
-                Err(r) => {
-                    UserFacingError::new("Failed to execute command")
-                        .reason(r.to_string())
-                        .print_and_exit();
-                    unreachable!()
-                }
-            }
+            let command_run = Command::new("sh").args(["-c", cmd]).output();
+            handle_error!(command_run, "Failed to run command")
         };
-        match String::from_utf8(output.stdout) {
-            Ok(v) => v.trim().to_string(),
-            Err(r) => {
-                UserFacingError::new("Failed to read stdout from command.")
-                    .reason(r.to_string())
-                    .print_and_exit();
-                unreachable!()
-            }
-        }
+        handle_error!(
+            String::from_utf8(output.stdout.clone()),
+            "Failed to read stdout from command"
+        )
+        .trim()
+        .to_string()
     }
 
-    async fn logo_maxlength(&self, general_readout: &GeneralReadout) -> usize {
+    fn logo_maxlength(&self) -> usize {
         match self
-            .get_logo(general_readout)
-            .await
+            .get_logo()
             .iter()
             .max_by_key(|&x| measure_text_width(x))
         {
             Some(v) => measure_text_width(v),
             None => {
-                UserFacingError::new("Failed to find logo line with greatest length.")
-                    .help("If this persists, please open a github issue: https://github.com/devanlooches/rocketfetch/issues/new")
+                UserFacingError::new("Failed to find logo line with greatest length")
                     .print_and_exit();
                 unreachable!()
             }
         }
     }
 
-    async fn info_maxlength(
-        &self,
-        kernel_readout: &KernelReadout,
-        general_readout: &GeneralReadout,
-        package_readout: &PackageReadout,
-    ) -> usize {
-        match self
-            .module_order(kernel_readout, general_readout, package_readout)
-            .await
-            .iter()
-            .max_by_key(|&x| measure_text_width(x))
-        {
+    fn info_maxlength(info: &[String]) -> usize {
+        match info.iter().max_by_key(|&x| measure_text_width(x)) {
             Some(v) => measure_text_width(v),
             None => {
                 UserFacingError::new("Failed to find info line with the greatest length")
-                    .help("Make sure that you have some modules defined. If this persists, please open a github issue: https://github.com/devanlooches/rocketfetch/issues/new")
+                    .help("Make sure that you have some modules defined.")
                     .print_and_exit();
                 unreachable!()
             }
         }
     }
 
-    async fn print_side_table(
-        &self,
-        kernel_readout: &KernelReadout,
-        general_readout: &GeneralReadout,
-        package_readout: &PackageReadout,
-    ) {
-        let mut sidelogo = self.get_logo(general_readout).await;
-        let mut info = self
-            .module_order(kernel_readout, general_readout, package_readout)
-            .await;
+    fn print_side_table(&self) {
+        let mut sidelogo = self.get_logo();
+        let mut info = self.module_order();
         let mut counter = 0;
         info.resize(sidelogo.len() + self.format.padding_top, String::from(""));
         sidelogo.resize(info.len() + self.format.padding_top, String::from(""));
 
-        let logo_maxlength = self.logo_maxlength(general_readout).await;
-        let info_maxlength = self
-            .info_maxlength(kernel_readout, general_readout, package_readout)
-            .await;
+        let logo_maxlength = self.logo_maxlength();
+        let info_maxlength = Config::info_maxlength(&info);
 
         println!(
             "{}{}{}{}{}",
-            handle_error_option(
-                sidelogo.first(),
-                "Failed to get first line of sidelogo",
-                None
+            handle_error!(
+                sidelogo.first().ok_or(""),
+                "Failed to get first line of sidelogo"
             ),
             " ".repeat(logo_maxlength - measure_text_width(&sidelogo[0]) + self.offset),
             self.format.top_left_corner_char,
@@ -403,19 +407,10 @@ impl Config {
         );
     }
 
-    async fn print_bottom_table(
-        &self,
-        kernel_readout: &KernelReadout,
-        general_readout: &GeneralReadout,
-        package_readout: &PackageReadout,
-    ) {
-        let sidelogo = self.get_logo(general_readout).await;
-        let info = self
-            .module_order(kernel_readout, general_readout, package_readout)
-            .await;
-        let info_maxlength = self
-            .info_maxlength(kernel_readout, general_readout, package_readout)
-            .await;
+    fn print_bottom_table(&self) {
+        let sidelogo = self.get_logo();
+        let info = self.module_order();
+        let info_maxlength = Config::info_maxlength(&info);
 
         for line in sidelogo {
             println!("{}", line);
@@ -457,48 +452,21 @@ impl Config {
         );
     }
 
-    pub async fn print(
-        &self,
-        kernel_readout: &KernelReadout,
-        general_readout: &GeneralReadout,
-        package_readout: &PackageReadout,
-    ) {
-        let matches = Config::get_args().await;
+    pub fn print(&self) {
+        let matches = Config::get_args();
         if let Some(v) = matches.mode {
             match v {
-                Mode::Classic => {
-                    self.print_classic(kernel_readout, general_readout, package_readout)
-                        .await
-                }
-                Mode::BottomBlock => {
-                    self.print_bottom_table(kernel_readout, general_readout, package_readout)
-                        .await
-                }
-                Mode::SideBlock => {
-                    self.print_side_table(kernel_readout, general_readout, package_readout)
-                        .await
-                }
+                Mode::Classic => self.print_classic(),
+                Mode::BottomBlock => self.print_bottom_table(),
+                Mode::SideBlock => self.print_side_table(),
             }
         } else {
             match self.format.mode {
-                Mode::Classic => {
-                    self.print_classic(kernel_readout, general_readout, package_readout)
-                        .await
-                }
-                Mode::BottomBlock => {
-                    self.print_bottom_table(kernel_readout, general_readout, package_readout)
-                        .await
-                }
-                Mode::SideBlock => {
-                    self.print_side_table(kernel_readout, general_readout, package_readout)
-                        .await
-                }
+                Mode::Classic => self.print_classic(),
+                Mode::BottomBlock => self.print_bottom_table(),
+                Mode::SideBlock => self.print_side_table(),
             }
         }
-    }
-
-    pub async fn pest_parse(content: &str) {
-        handle_error_result(TomlParser::parse(Rule::toml, content), None, None);
     }
 }
 
@@ -526,9 +494,9 @@ mod test {
     use super::Config;
     use pretty_assertions::assert_eq;
 
-    #[tokio::test]
-    async fn check_default_config() {
-        let config = Config::from_config(String::from("config.toml")).await;
+    #[test]
+    fn check_default_config() {
+        let config = Config::from_config(String::from("config.toml"));
         assert_eq!(Config::default(), config);
     }
 }

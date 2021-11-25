@@ -1,5 +1,6 @@
 use crate::cli::Mode;
 use crate::config::Config;
+use crate::handle_error;
 // use crate::utils::handle_error_result;
 use console::Style;
 use libmacchina::traits::GeneralReadout as _;
@@ -9,9 +10,8 @@ use libmacchina::GeneralReadout;
 use libmacchina::KernelReadout;
 use libmacchina::PackageReadout;
 use user_error::{UserFacingError, UFE};
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Format {
     pub mode: Mode,
     pub top_left_corner_char: char,
@@ -42,9 +42,8 @@ impl Default for Format {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct User {
     pre_text_style: String,
     pre_text: String,
@@ -66,25 +65,10 @@ impl Default for User {
 }
 
 impl User {
-    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
-        let hostname = match general_readout.hostname() {
-            Ok(v) => v,
-            Err(r) => {
-                UserFacingError::new("Failed to get hostname")
-                    .reason(r.to_string())
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
-        let username = match general_readout.username() {
-            Ok(v) => v,
-            Err(r) => {
-                UserFacingError::new("Failed to get username")
-                    .reason(r.to_string())
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let hostname = handle_error!(general_readout.hostname(), "Failed to get hostname");
+        let username = handle_error!(general_readout.username(), "Failed to get username");
         format!(
             "{}{}{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
@@ -95,9 +79,8 @@ impl User {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Delimiter {
     style: String,
     repeat_num: usize,
@@ -115,7 +98,7 @@ impl Default for Delimiter {
 }
 
 impl Delimiter {
-    pub async fn get_info(&self, num: usize) -> String {
+    pub fn get_info(&self, num: usize) -> String {
         let mut repeat = self.repeat_num;
         if repeat == 0 {
             repeat = num;
@@ -127,9 +110,8 @@ impl Delimiter {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Os {
     pre_text_style: String,
     pre_text: String,
@@ -147,35 +129,20 @@ impl Default for Os {
 }
 
 impl Os {
-    pub async fn get_os(&self, general_readout: &GeneralReadout) -> String {
+    pub fn get_os(&self) -> String {
+        let general_readout = GeneralReadout::new();
         let os: String;
         if cfg!(target_os = "linux") {
-            os = match general_readout.distribution() {
-                Ok(v) => v,
-                Err(r) => {
-                    UserFacingError::new("Failed to find distro")
-                        .reason(r.to_string())
-                        .print_and_exit();
-                    unreachable!()
-                }
-            };
+            os = handle_error!(general_readout.distribution(), "Failed to find distro");
         } else {
-            os = match general_readout.os_name() {
-                Ok(v) => v,
-                Err(r) => {
-                    UserFacingError::new("Failed to find OS name")
-                        .reason(r.to_string())
-                        .print_and_exit();
-                    unreachable!()
-                }
-            };
+            os = handle_error!(general_readout.os_name(), "Failed to find OS name");
         }
         os
     }
-    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
-        let os = self.get_os(general_readout).await;
-        let build_version = Config::run_cmd("sw_vers -buildVersion").await;
-        let arch = Config::run_cmd("uname -m").await;
+    pub fn get_info(&self) -> String {
+        let os = self.get_os();
+        let build_version = Config::run_cmd("sw_vers -buildVersion");
+        let arch = Config::run_cmd("uname -m");
 
         let output_style = Style::from_dotted_str(&self.output_style);
         format!(
@@ -188,9 +155,8 @@ impl Os {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Host {
     pre_text_style: String,
     pre_text: String,
@@ -208,16 +174,9 @@ impl Default for Host {
 }
 
 impl Host {
-    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
-        let machine = match general_readout.machine() {
-            Ok(v) => v,
-            Err(r) => {
-                UserFacingError::new("Failed to find machine name")
-                    .reason(r.to_string())
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let machine = handle_error!(general_readout.machine(), "Failed to find machine name");
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
@@ -225,9 +184,8 @@ impl Host {
         )
     }
 }
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Kernel {
     pre_text_style: String,
     pre_text: String,
@@ -245,16 +203,12 @@ impl Default for Kernel {
 }
 
 impl Kernel {
-    pub async fn get_info(&self, kernel_readout: &KernelReadout) -> String {
-        let kernel = match kernel_readout.pretty_kernel() {
-            Ok(v) => v,
-            Err(r) => {
-                UserFacingError::new("Failed to find kernel version")
-                    .reason(r.to_string())
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
+    pub fn get_info(&self) -> String {
+        let kernel_readout = KernelReadout::new();
+        let kernel = handle_error!(
+            kernel_readout.pretty_kernel(),
+            "Failed to find kernel version"
+        );
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
@@ -263,9 +217,8 @@ impl Kernel {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Uptime {
     pre_text_style: String,
     pre_text: String,
@@ -285,16 +238,9 @@ impl Default for Uptime {
 }
 
 impl Uptime {
-    pub async fn get_info(&self, general_readout: &GeneralReadout) -> String {
-        let uptime = match general_readout.uptime() {
-            Ok(v) => v,
-            Err(r) => {
-                UserFacingError::new("Failed to get uptime")
-                    .reason(r.to_string())
-                    .print_and_exit();
-                unreachable!()
-            }
-        };
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let uptime = handle_error!(general_readout.uptime(), "Failed to get uptime");
         let shr = secfmt::from(uptime as u64);
         let mut time = self.time_format.clone();
         time = time.replace("$years", &shr.years.to_string());
@@ -314,9 +260,8 @@ impl Uptime {
         )
     }
 }
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Packages {
     pre_text_style: String,
     pre_text: String,
@@ -334,7 +279,8 @@ impl Default for Packages {
 }
 
 impl Packages {
-    pub async fn get_info(&self, package_readout: &PackageReadout) -> String {
+    pub fn get_info(&self) -> String {
+        let package_readout = PackageReadout::new();
         let package = package_readout.count_pkgs();
         let mut packages = String::new();
         for (name, num) in package {
@@ -348,9 +294,8 @@ impl Packages {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(default)]
-#[serde(deny_unknown_fields)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Module {
     pre_text_style: String,
     pre_text: String,
@@ -359,8 +304,8 @@ pub struct Module {
 }
 
 impl Module {
-    pub async fn get_info(&self) -> String {
-        let output = Config::run_cmd(&self.command).await;
+    pub fn get_info(&self) -> String {
+        let output = Config::run_cmd(&self.command);
 
         format!(
             "{}{}",
