@@ -24,6 +24,11 @@ pub struct Config {
     kernel: Kernel,
     uptime: Uptime,
     packages: Packages,
+    shell: Shell,
+    resolution: Resolution,
+    desktop_environment: DesktopEnvironment,
+    window_manager: WindowManager,
+    terminal: Terminal,
 
     #[serde(flatten)]
     custom_modules: HashMap<String, Module>,
@@ -113,6 +118,11 @@ impl Config {
         let kernel = self_clone.kernel;
         let uptime = self_clone.uptime;
         let packages = self_clone.packages;
+        let shell = self_clone.shell;
+        let resolution = self_clone.resolution;
+        let desktop_environment = self_clone.desktop_environment;
+        let window_manager = self_clone.window_manager;
+        let terminal = self_clone.terminal;
         let custom = self_clone.custom_modules;
         if modules.contains(&"user") {
             let handle = thread::spawn(move || (String::from("user"), user.get_info()));
@@ -138,6 +148,32 @@ impl Config {
             let handle = thread::spawn(move || (String::from("packages"), packages.get_info()));
             handles.push(handle);
         }
+        if modules.contains(&"shell") {
+            let handle = thread::spawn(move || (String::from("shell"), shell.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"resolution") {
+            let handle = thread::spawn(move || (String::from("resolution"), resolution.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"desktop_environment") {
+            let handle = thread::spawn(move || {
+                (
+                    String::from("desktop_environment"),
+                    desktop_environment.get_info(),
+                )
+            });
+            handles.push(handle);
+        }
+        if modules.contains(&"window_manager") {
+            let handle =
+                thread::spawn(move || (String::from("window_manager"), window_manager.get_info()));
+            handles.push(handle);
+        }
+        if modules.contains(&"terminal") {
+            let handle = thread::spawn(move || (String::from("terminal"), terminal.get_info()));
+            handles.push(handle);
+        }
         for (name, module) in custom {
             let handle = thread::spawn(move || (name, module.get_info()));
             handles.push(handle);
@@ -149,51 +185,17 @@ impl Config {
         let mut vec: Vec<String> = Vec::new();
         for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
-                "user" => vec.push(
-                    modules_unordered
-                        .get(&String::from("user"))
-                        .unwrap()
-                        .to_string(),
-                ),
                 "delimiter" => vec.push(self.delimiter.get_info(measure_text_width(&vec[i - 1]))),
-                "os" => vec.push(
-                    modules_unordered
-                        .get(&String::from("os"))
-                        .unwrap()
-                        .to_string(),
-                ),
-                "host" => vec.push(
-                    modules_unordered
-                        .get(&String::from("host"))
-                        .unwrap()
-                        .to_string(),
-                ),
-                "kernel" => vec.push(
-                    modules_unordered
-                        .get(&String::from("kernel"))
-                        .unwrap()
-                        .to_string(),
-                ),
-                "uptime" => vec.push(
-                    modules_unordered
-                        .get(&String::from("uptime"))
-                        .unwrap()
-                        .to_string(),
-                ),
-                "packages" => vec.push(
-                    modules_unordered
-                        .get(&String::from("packages"))
-                        .unwrap()
-                        .to_string(),
-                ),
                 v => {
                     let error = format!("Unknown module: {}", v);
-                    let module = handle_error!(
-                        modules_unordered.get(v).ok_or(""),
-                        error,
-                        "Make sure you have this module defined."
+                    vec.push(
+                        handle_error!(
+                            modules_unordered.get(&String::from(v)).ok_or(""),
+                            error,
+                            "Make sure you have this module defined"
+                        )
+                        .to_string(),
                     );
-                    vec.push(module.to_string());
                 }
             }
         }
@@ -270,7 +272,7 @@ impl Config {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
             self.logo()
         } else {
-            Config::run_cmd(&self.logo_cmd)
+            Config::run_cmd(&self.logo_cmd, "Failed to run logo command")
                 .lines()
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
@@ -298,17 +300,18 @@ impl Config {
         }
     }
 
-    pub fn run_cmd(cmd: &str) -> String {
+    pub fn run_cmd(cmd: &str, error_msg: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
             let command_run = Command::new("cmd").args(&["/C", cmd]).output();
-            handle_error!(command_run, "Failed to run command")
+            handle_error!(command_run, error_msg)
         } else {
             let command_run = Command::new("sh").args(["-c", cmd]).output();
-            handle_error!(command_run, "Failed to run command")
-        };
+            handle_error!(command_run, error_msg)
+        }
+        .stdout;
         handle_error!(
-            String::from_utf8(output.stdout.clone()),
+            String::from_utf8(output.clone()),
             "Failed to read stdout from command"
         )
         .trim()
@@ -474,7 +477,9 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             offset: 4,
-            module_order: String::from("user delimiter os host kernel uptime packages"),
+            module_order: String::from(
+                "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal",
+            ),
             logo_cmd: String::from("auto"),
             format: Format::default(),
             user: User::default(),
@@ -485,6 +490,11 @@ impl Default for Config {
             uptime: Uptime::default(),
             custom_modules: HashMap::new(),
             packages: Packages::default(),
+            shell: Shell::default(),
+            resolution: Resolution::default(),
+            desktop_environment: DesktopEnvironment::default(),
+            window_manager: WindowManager::default(),
+            terminal: Terminal::default(),
         }
     }
 }

@@ -1,4 +1,4 @@
-module_order = "user delimiter os host kernel uptime packages"
+module_order = "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal"
 offset = 4
 logo_cmd = "auto"
 
@@ -50,4 +50,29 @@ time_format = "$days days, $hours hours, $minutes minutes"
 [packages]
 pre_text_style = "bold.yellow"
 pre_text = "Packages: "
+output_style = "white"
+
+[shell]
+pre_text_style = "bold.yellow"
+pre_text = "Shell: "
+output_style = "white"
+
+[resolution]
+pre_text_style = "bold.yellow"
+pre_text = "Resolution: "
+output_style = "white"
+
+[desktop_environment]
+pre_text_style = "bold.yellow"
+pre_text = "Desktop Environment: "
+output_style = "white"
+
+[window_manager]
+pre_text_style = "bold.yellow"
+pre_text = "Window Manager: "
+output_style = "white"
+
+[terminal]
+pre_text_style = "bold.yellow"
+pre_text = "Terminal: "
 output_style = "white"

@@ -4,11 +4,11 @@ macro_rules! handle_error {
         if let Ok(v) = $err {
             v
         } else {
-            let r = $err.unwrap_err();
+            let r = $err.unwrap_err().to_string();
             if r != "" {
                 UserFacingError::new($err_msg)
                     .help($help_msg)
-                    .reason(r.to_string())
+                    .reason(r)
                     .print_and_exit();
             } else {
                 UserFacingError::new($err_msg)
@@ -22,11 +22,9 @@ macro_rules! handle_error {
         if let Ok(v) = $err {
             v
         } else {
-            let r = $err.unwrap_err();
-            if r.to_string() != "" {
-                UserFacingError::new($err_msg)
-                    .reason(r.to_string())
-                    .print_and_exit();
+            let r = $err.unwrap_err().to_string();
+            if r != "" {
+                UserFacingError::new($err_msg).reason(r).print_and_exit();
             } else {
                 UserFacingError::new($err_msg).print_and_exit();
             }

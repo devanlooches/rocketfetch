@@ -141,8 +141,8 @@ impl Os {
     }
     pub fn get_info(&self) -> String {
         let os = self.get_os();
-        let build_version = Config::run_cmd("sw_vers -buildVersion");
-        let arch = Config::run_cmd("uname -m");
+        let build_version = Config::run_cmd("sw_vers -buildVersion", "Failed to get build version");
+        let arch = Config::run_cmd("uname -m", "Failed to get arch");
 
         let output_style = Style::from_dotted_str(&self.output_style);
         format!(
@@ -296,6 +296,179 @@ impl Packages {
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
 #[serde(deny_unknown_fields, default)]
+pub struct Shell {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Shell {
+    fn default() -> Self {
+        Shell {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Shell: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Shell {
+    pub fn get_info(&self) -> String {
+        use regex::Regex;
+        let ver_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
+        let general_readout = &GeneralReadout::new();
+        let shell = general_readout.shell(
+            libmacchina::traits::ShellFormat::Relative,
+            libmacchina::traits::ShellKind::Default,
+        );
+        let shell = handle_error!(shell, "Failed to get shell");
+        let version = Config::run_cmd(
+            format!("{} --version", shell).as_str(),
+            "Failed to get shell version",
+        );
+        let locations = ver_regex.find(&version).unwrap();
+        let version = &version[locations.start()..locations.end()];
+        format!(
+            "{}{} {}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(shell),
+            Style::from_dotted_str(&self.output_style).apply_to(version)
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
+pub struct Resolution {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Resolution {
+    fn default() -> Self {
+        Resolution {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Resolution: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Resolution {
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let resolution = handle_error!(general_readout.resolution(), "Failed to get resolution");
+
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
+pub struct DesktopEnvironment {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for DesktopEnvironment {
+    fn default() -> Self {
+        DesktopEnvironment {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Desktop Environment: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl DesktopEnvironment {
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let resolution = handle_error!(
+            general_readout.desktop_environment(),
+            "Failed to get desktop environment"
+        );
+
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
+pub struct WindowManager {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for WindowManager {
+    fn default() -> Self {
+        WindowManager {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Window Manager: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl WindowManager {
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let resolution = handle_error!(
+            general_readout.window_manager(),
+            "Failed to get window manager"
+        );
+
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
+pub struct Terminal {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Terminal {
+    fn default() -> Self {
+        Terminal {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("Terminal: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Terminal {
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let resolution = handle_error!(general_readout.terminal(), "Failed to get terminal name");
+
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
 pub struct Module {
     pre_text_style: String,
     pre_text: String,
@@ -305,7 +478,7 @@ pub struct Module {
 
 impl Module {
     pub fn get_info(&self) -> String {
-        let output = Config::run_cmd(&self.command);
+        let output = Config::run_cmd(&self.command, "Failed to run module command");
 
         format!(
             "{}{}",

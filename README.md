@@ -22,6 +22,12 @@
   - [Kernel Header](#kernel_header_configuration)
   - [Uptime Header](#uptime_header_configuration)
   - [Packages Header](#packages_header_configuration)
+  - [Packages Header](#packages_header_configuration)
+  - [Shell Header](#shell_header_configuration)
+  - [Resolution Header](#resolution_header_configuration)
+  - [Desktop Environment Header](#desktop_environment_header_configuration)
+  - [Window Manager Header](#window_manager_header_configuration)
+  - [Terminal Header](#terminal_header_configuration)
   - [Custom Header](#custom_header_configuration)
 - [Default Configuration](#default_configuration)
 - [Todo](#todo)
@@ -131,6 +137,41 @@ OPTIONS:
 | pre_text        | "Packages: "                                 | Text that comes before this module                                                                                        |
 | output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
+### Shell Header <a name="shell_header_configuration"></a>
+| Value           | Default                                      | Description                                                                                                               |
+|-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre_text        | "Shell: "                                    | Text that comes before this module                                                                                        |
+| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+
+### Resolution Header <a name="resolution_header_configuration"></a>
+| Value           | Default                                      | Description                                                                                                               |
+|-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre_text        | "Resolution: "                               | Text that comes before this module                                                                                        |
+| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+
+### Desktop Environment Header <a name="desktop_environment_header_configuration"></a>
+| Value           | Default                                      | Description                                                                                                               |
+|-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre_text        | "Desktop Environment: "                      | Text that comes before this module                                                                                        |
+| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+
+### Window Manager Header <a name="window_manager_header_configuration"></a>
+| Value           | Default                                      | Description                                                                                                               |
+|-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre_text        | "Window Manager: "                           | Text that comes before this module                                                                                        |
+| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+
+### Terminal Header <a name="terminal_header_configuration"></a>
+| Value           | Default                                      | Description                                                                                                               |
+|-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre_text        | "Terminal: "                                 | Text that comes before this module                                                                                        |
+| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+
 ### Custom Header <a name="custom_header_configuration"></a>
 | Value          | Description                                                                                                   |
 |----------------|---------------------------------------------------------------------------------------------------------------|
@@ -142,7 +183,7 @@ OPTIONS:
 # Default Configuration <a name="default_configuration"></a>
 A default Configuration will look like so:
 ```toml
-module_order = "user delimiter os host kernel uptime packages"
+module_order = "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal"
 offset = 4
 logo_cmd = "auto"
 
@@ -195,7 +236,31 @@ time_format = "$days days, $hours hours, $minutes minutes"
 pre_text_style = "bold.yellow"
 pre_text = "Packages: "
 output_style = "white"
-package_manager = "auto"
+
+[shell]
+pre_text_style = "bold.yellow"
+pre_text = "Shell: "
+output_style = "white"
+
+[resolution]
+pre_text_style = "bold.yellow"
+pre_text = "Resolution: "
+output_style = "white"
+
+[desktop_environment]
+pre_text_style = "bold.yellow"
+pre_text = "Desktop Environment: "
+output_style = "white"
+
+[window_manager]
+pre_text_style = "bold.yellow"
+pre_text = "Window Manager: "
+output_style = "white"
+
+[terminal]
+pre_text_style = "bold.yellow"
+pre_text = "Terminal: "
+output_style = "white"
 ```
 
 # Todo <a name="todo"></a>
