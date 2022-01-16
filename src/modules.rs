@@ -27,7 +27,7 @@ pub struct Format {
 
 impl Default for Format {
     fn default() -> Self {
-        Format {
+        Self {
             mode: Mode::Classic,
             top_left_corner_char: '╭',
             top_right_corner_char: '╮',
@@ -54,7 +54,7 @@ pub struct User {
 
 impl Default for User {
     fn default() -> Self {
-        User {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from(""),
             output_style: String::from("bold.yellow"),
@@ -89,7 +89,7 @@ pub struct Delimiter {
 
 impl Default for Delimiter {
     fn default() -> Self {
-        Delimiter {
+        Self {
             style: String::from("white"),
             repeat_num: 0,
             char: '-',
@@ -120,7 +120,7 @@ pub struct Os {
 
 impl Default for Os {
     fn default() -> Self {
-        Os {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("OS: "),
             output_style: String::from("white"),
@@ -129,7 +129,7 @@ impl Default for Os {
 }
 
 impl Os {
-    pub fn get_os(&self) -> String {
+    pub fn get_os() -> String {
         let general_readout = GeneralReadout::new();
         let os: String;
         if cfg!(target_os = "linux") {
@@ -140,9 +140,9 @@ impl Os {
         os
     }
     pub fn get_info(&self) -> String {
-        let os = self.get_os();
+        let os = Os::get_os();
         let build_version = Config::run_cmd("sw_vers -buildVersion", "Failed to get build version");
-        let arch = Config::run_cmd("uname -m", "Failed to get arch");
+        let arch = Config::run_cmd("machine", "Failed to get arch");
 
         let output_style = Style::from_dotted_str(&self.output_style);
         format!(
@@ -165,7 +165,7 @@ pub struct Host {
 
 impl Default for Host {
     fn default() -> Self {
-        Host {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Host: "),
             output_style: String::from("white"),
@@ -194,7 +194,7 @@ pub struct Kernel {
 
 impl Default for Kernel {
     fn default() -> Self {
-        Kernel {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Kernel: "),
             output_style: String::from("white"),
@@ -228,7 +228,7 @@ pub struct Uptime {
 
 impl Default for Uptime {
     fn default() -> Self {
-        Uptime {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Uptime: "),
             output_style: String::from("white"),
@@ -270,7 +270,7 @@ pub struct Packages {
 
 impl Default for Packages {
     fn default() -> Self {
-        Packages {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Packages: "),
             output_style: String::from("white"),
@@ -304,7 +304,7 @@ pub struct Shell {
 
 impl Default for Shell {
     fn default() -> Self {
-        Shell {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Shell: "),
             output_style: String::from("white"),
@@ -347,7 +347,7 @@ pub struct Resolution {
 
 impl Default for Resolution {
     fn default() -> Self {
-        Resolution {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Resolution: "),
             output_style: String::from("white"),
@@ -378,7 +378,7 @@ pub struct DesktopEnvironment {
 
 impl Default for DesktopEnvironment {
     fn default() -> Self {
-        DesktopEnvironment {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Desktop Environment: "),
             output_style: String::from("white"),
@@ -412,7 +412,7 @@ pub struct WindowManager {
 
 impl Default for WindowManager {
     fn default() -> Self {
-        WindowManager {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Window Manager: "),
             output_style: String::from("white"),
@@ -446,7 +446,7 @@ pub struct Terminal {
 
 impl Default for Terminal {
     fn default() -> Self {
-        Terminal {
+        Self {
             pre_text_style: String::from("bold.yellow"),
             pre_text: String::from("Terminal: "),
             output_style: String::from("white"),
@@ -463,6 +463,37 @@ impl Terminal {
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             Style::from_dotted_str(&self.output_style).apply_to(resolution),
+        )
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[serde(deny_unknown_fields, default)]
+pub struct Cpu {
+    pre_text_style: String,
+    pre_text: String,
+    output_style: String,
+}
+
+impl Default for Cpu {
+    fn default() -> Self {
+        Self {
+            pre_text_style: String::from("bold.yellow"),
+            pre_text: String::from("CPU: "),
+            output_style: String::from("white"),
+        }
+    }
+}
+
+impl Cpu {
+    pub fn get_info(&self) -> String {
+        let general_readout = GeneralReadout::new();
+        let cpu = handle_error!(general_readout.cpu_model_name(), "Failed to get CPU name");
+
+        format!(
+            "{}{}",
+            Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
+            Style::from_dotted_str(&self.output_style).apply_to(cpu),
         )
     }
 }
@@ -490,7 +521,7 @@ impl Module {
 
 impl Default for Module {
     fn default() -> Self {
-        Module {
+        Self {
             command: String::from(""),
             output_style: String::from("white"),
             pre_text: String::from(""),

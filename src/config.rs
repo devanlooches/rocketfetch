@@ -1,7 +1,10 @@
 use crate::cli::Mode;
 use crate::cli::Opt;
 use crate::handle_error;
-use crate::modules::*;
+use crate::modules::{
+    Cpu, Delimiter, DesktopEnvironment, Format, Host, Kernel, Module, Os, Packages, Resolution,
+    Shell, Terminal, Uptime, User, WindowManager,
+};
 use console::measure_text_width;
 use console::style;
 use console::Style;
@@ -29,6 +32,7 @@ pub struct Config {
     desktop_environment: DesktopEnvironment,
     window_manager: WindowManager,
     terminal: Terminal,
+    cpu: Cpu,
 
     #[serde(flatten)]
     custom_modules: HashMap<String, Module>,
@@ -84,7 +88,7 @@ impl Config {
 {line_len_sep} |",
                             error = r,
                             line_len_sep = " ".repeat(line.to_string().len()),
-                            col_len_sep = " ".repeat(column as usize),
+                            col_len_sep = " ".repeat(column.try_into().unwrap()),
                             line = line,
                             line_contents =
                                 string.lines().collect::<Vec<&str>>()[(line - 1) as usize],
@@ -123,7 +127,9 @@ impl Config {
         let desktop_environment = self_clone.desktop_environment;
         let window_manager = self_clone.window_manager;
         let terminal = self_clone.terminal;
+        let cpu = self_clone.cpu;
         let custom = self_clone.custom_modules;
+
         if modules.contains(&"user") {
             let handle = thread::spawn(move || (String::from("user"), user.get_info()));
             handles.push(handle);
@@ -174,6 +180,10 @@ impl Config {
             let handle = thread::spawn(move || (String::from("terminal"), terminal.get_info()));
             handles.push(handle);
         }
+        if modules.contains(&"cpu") {
+            let handle = thread::spawn(move || (String::from("cpu"), cpu.get_info()));
+            handles.push(handle);
+        }
         for (name, module) in custom {
             let handle = thread::spawn(move || (name, module.get_info()));
             handles.push(handle);
@@ -202,8 +212,8 @@ impl Config {
         vec
     }
 
-    fn logo(&self) -> Vec<String> {
-        let os = self.os.get_os();
+    fn logo() -> Vec<String> {
+        let os = crate::modules::Os::get_os();
         match os.trim() {
             x if x.contains("macOS") => {
                 let yellow = Style::from_dotted_str("yellow.bold");
@@ -270,18 +280,49 @@ impl Config {
 
     fn get_logo(&self) -> Vec<String> {
         if self.logo_cmd.is_empty() || self.logo_cmd == "auto" {
-            self.logo()
+            Config::logo()
         } else {
             Config::run_cmd(&self.logo_cmd, "Failed to run logo command")
                 .lines()
-                .map(|v| v.to_string())
+                .map(str::to_string)
                 .collect::<Vec<String>>()
         }
     }
 
+    fn wrap_lines(module_order: &[String], logo: &[String]) -> Vec<String> {
+        use any_terminal_size::{any_terminal_size, Width};
+
+        let size = any_terminal_size();
+        let mut terminal_width: usize = 0;
+        if let Some((Width(width), _)) = size {
+            terminal_width = width as usize;
+        }
+        let mut module_order_wrapped = Vec::new();
+
+        for (i, string) in module_order.iter().enumerate() {
+            if string.len() >= terminal_width - logo[i].len() {
+                use std::str;
+                let mut subs = string
+                    .as_bytes()
+                    .chunks(terminal_width - logo[i].len())
+                    .map(str::from_utf8)
+                    .collect::<Result<Vec<&str>, _>>()
+                    .unwrap();
+
+                module_order_wrapped.append(&mut subs);
+            } else {
+                module_order_wrapped.push(string);
+            }
+        }
+        module_order_wrapped
+            .iter()
+            .map(|&x| x.to_string())
+            .collect::<Vec<String>>()
+    }
+
     fn print_classic(&self) {
         let mut sidelogo = self.get_logo();
-        let mut order = self.module_order();
+        let mut order = Config::wrap_lines(&self.module_order(), &sidelogo);
 
         let maxlength = self.logo_maxlength();
 
@@ -319,35 +360,30 @@ impl Config {
     }
 
     fn logo_maxlength(&self) -> usize {
-        match self
+        if let Some(v) = self
             .get_logo()
             .iter()
             .max_by_key(|&x| measure_text_width(x))
         {
-            Some(v) => measure_text_width(v),
-            None => {
-                UserFacingError::new("Failed to find logo line with greatest length")
-                    .print_and_exit();
-                unreachable!()
-            }
+            return measure_text_width(v);
         }
+        UserFacingError::new("Failed to find logo line with greatest length").print_and_exit();
+        unreachable!()
     }
 
     fn info_maxlength(info: &[String]) -> usize {
-        match info.iter().max_by_key(|&x| measure_text_width(x)) {
-            Some(v) => measure_text_width(v),
-            None => {
-                UserFacingError::new("Failed to find info line with the greatest length")
-                    .help("Make sure that you have some modules defined.")
-                    .print_and_exit();
-                unreachable!()
-            }
+        if let Some(v) = info.iter().max_by_key(|&x| measure_text_width(x)) {
+            return measure_text_width(v);
         }
+        UserFacingError::new("Failed to find info line with the greatest length")
+            .help("Make sure that you have some modules defined.")
+            .print_and_exit();
+        unreachable!()
     }
 
     fn print_side_table(&self) {
         let mut sidelogo = self.get_logo();
-        let mut info = self.module_order();
+        let mut info = Config::wrap_lines(&self.module_order(), &sidelogo);
         let mut counter = 0;
         info.resize(sidelogo.len() + self.format.padding_top, String::from(""));
         sidelogo.resize(info.len() + self.format.padding_top, String::from(""));
@@ -412,7 +448,7 @@ impl Config {
 
     fn print_bottom_table(&self) {
         let sidelogo = self.get_logo();
-        let info = self.module_order();
+        let info = Config::wrap_lines(&self.module_order(), &sidelogo);
         let info_maxlength = Config::info_maxlength(&info);
 
         for line in sidelogo {
@@ -432,7 +468,7 @@ impl Config {
                 "{vertical}{}{vertical}",
                 " ".repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
                 vertical = self.format.vertical_char
-            )
+            );
         }
         for line in info {
             println!(
@@ -457,19 +493,18 @@ impl Config {
 
     pub fn print(&self) {
         let matches = Config::get_args();
-        if let Some(v) = matches.mode {
-            match v {
+        matches.mode.map_or_else(
+            || match self.format.mode {
                 Mode::Classic => self.print_classic(),
                 Mode::BottomBlock => self.print_bottom_table(),
                 Mode::SideBlock => self.print_side_table(),
-            }
-        } else {
-            match self.format.mode {
+            },
+            |v| match v {
                 Mode::Classic => self.print_classic(),
                 Mode::BottomBlock => self.print_bottom_table(),
                 Mode::SideBlock => self.print_side_table(),
-            }
-        }
+            },
+        );
     }
 }
 
@@ -478,7 +513,7 @@ impl Default for Config {
         Config {
             offset: 4,
             module_order: String::from(
-                "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal",
+                "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal cpu",
             ),
             logo_cmd: String::from("auto"),
             format: Format::default(),
@@ -495,6 +530,7 @@ impl Default for Config {
             desktop_environment: DesktopEnvironment::default(),
             window_manager: WindowManager::default(),
             terminal: Terminal::default(),
+            cpu: Cpu::default(),
         }
     }
 }

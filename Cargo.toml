@@ -12,6 +12,7 @@ keywords = ["system", "cli", "fetch", "asynchronous", "asynch"]
 categories = ["command-line-utilities"]
 
 [dependencies]
+any_terminal_size = {version = "0.1.21", default-features = false}
 console = { version = "0.15.0", default-features = false, features = ["ansi-parsing"] }
 dirs = { version = "4.0.0", default-features = false }
 libmacchina = { version = "3.8.6", default-features = false }

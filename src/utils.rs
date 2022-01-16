@@ -5,14 +5,14 @@ macro_rules! handle_error {
             v
         } else {
             let r = $err.unwrap_err().to_string();
-            if r != "" {
+            if r == "" {
                 UserFacingError::new($err_msg)
                     .help($help_msg)
-                    .reason(r)
                     .print_and_exit();
             } else {
                 UserFacingError::new($err_msg)
                     .help($help_msg)
+                    .reason(r)
                     .print_and_exit();
             }
             unreachable!()
@@ -23,10 +23,10 @@ macro_rules! handle_error {
             v
         } else {
             let r = $err.unwrap_err().to_string();
-            if r != "" {
-                UserFacingError::new($err_msg).reason(r).print_and_exit();
-            } else {
+            if r == "" {
                 UserFacingError::new($err_msg).print_and_exit();
+            } else {
+                UserFacingError::new($err_msg).reason(r).print_and_exit();
             }
             unreachable!()
         }

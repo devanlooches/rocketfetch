@@ -3,3 +3,4 @@ bacon.toml
 Cargo.lock
 .DS_Store
 Dockerfile
+.idea/

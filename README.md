@@ -178,7 +178,7 @@ OPTIONS:
 | pre_text_style | A format string with each word separated by dots that describes the style of the text that before this module |
 | pre_text       | Text that comes before this module                                                                            |
 | output_style   | A format string with each word separated by dots that describes the style of the output text                  |
-| Command        | The command to run to get the output of the module                                                            |
+| command        | The command to run to get the output of the module                                                            |
 
 # Default Configuration <a name="default_configuration"></a>
 A default Configuration will look like so:

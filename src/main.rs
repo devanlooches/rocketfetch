@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 mod cli;
 mod config;
 mod modules;
