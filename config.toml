@@ -1,82 +1,83 @@
-module_order = "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal test"
+module-order = "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager terminal cpu"
 offset = 4
-logo_cmd = "auto"
+logo-cmd = "auto"
 
 [format]
 mode = "classic"
-top_left_corner_char = "╭"
-top_right_corner_char = "╮"
-bottom_left_corner_char = "╰"
-bottom_right_corner_char = "╯"
-horizontal_char = "─"
-vertical_char = "│"
-padding_left = 1
-padding_right = 1
-padding_top = 0
+top-left-corner-char = "╭"
+top-right-corner-char = "╮"
+bottom-left-corner-char = "╰"
+bottom-right-corner-char = "╯"
+horizontal-char = "─"
+vertical-char = "│"
+padding-left = 1
+padding-right = 1
+padding-top = 0
 
 [user]
-pre_text_style = "bold.yellow"
-pre_text = ""
-output_style = "bold.yellow"
-separator_style = "white"
-separator_char = "@"
+pre-text-style = "bold.yellow"
+pre-text = ""
+output-style = "bold.yellow"
+separator-style = "white"
+separator-char = "@"
 
 [delimiter]
 style = "white"
-repeat_num = 0
+repeat-num = 0
 char = "-"
 
 [os]
-pre_text_style = "bold.yellow"
-pre_text = "OS: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "OS: "
+output-style = "white"
 
 [host]
-pre_text_style = "bold.yellow"
-pre_text = "Host: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Host: "
+output-style = "white"
 
 [kernel]
-pre_text_style = "bold.yellow"
-pre_text = "Kernel: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Kernel: "
+output-style = "white"
 
 [uptime]
-pre_text_style = "bold.yellow"
-pre_text = "Uptime: "
-output_style = "white"
-time_format = "$days days, $hours hours, $minutes minutes"
+pre-text-style = "bold.yellow"
+pre-text = "Uptime: "
+output-style = "white"
+time-format = "$days days, $hours hours, $minutes minutes"
 
 [packages]
-pre_text_style = "bold.yellow"
-pre_text = "Packages: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Packages: "
+output-style = "white"
 
 [shell]
-pre_text_style = "bold.yellow"
-pre_text = "Shell: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Shell: "
+output-style = "white"
 
 [resolution]
-pre_text_style = "bold.yellow"
-pre_text = "Resolution: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Resolution: "
+output-style = "white"
 
-[desktop_environment]
-pre_text_style = "bold.yellow"
-pre_text = "Desktop Environment: "
-output_style = "white"
+[desktop-environment]
+pre-text-style = "bold.yellow"
+pre-text = "Desktop Environment: "
+output-style = "white"
 
-[window_manager]
-pre_text_style = "bold.yellow"
-pre_text = "Window Manager: "
-output_style = "white"
+[window-manager]
+pre-text-style = "bold.yellow"
+pre-text = "Window Manager: "
+output-style = "white"
 
 [terminal]
-pre_text_style = "bold.yellow"
-pre_text = "Terminal: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Terminal: "
+output-style = "white"
 
-[test]
-command = "echo 'tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'"
-pre_text   = "Text: "
+[cpu]
+pre-text-style = "bold.yellow"
+pre-text = "CPU: "
+output-style = "white"

@@ -1,6 +1,3 @@
-use crate::cli::Mode;
-use crate::config::Config;
-use crate::handle_error;
 // use crate::utils::handle_error_result;
 use console::Style;
 use libmacchina::traits::GeneralReadout as _;
@@ -10,8 +7,13 @@ use libmacchina::GeneralReadout;
 use libmacchina::KernelReadout;
 use libmacchina::PackageReadout;
 use user_error::{UserFacingError, UFE};
+
+use crate::cli::Mode;
+use crate::config::Config;
+use crate::handle_error;
+
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Format {
     pub mode: Mode,
     pub top_left_corner_char: char,
@@ -43,7 +45,7 @@ impl Default for Format {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct User {
     pre_text_style: String,
     pre_text: String,
@@ -80,7 +82,7 @@ impl User {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Delimiter {
     style: String,
     repeat_num: usize,
@@ -111,7 +113,7 @@ impl Delimiter {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Os {
     pre_text_style: String,
     pre_text: String,
@@ -156,7 +158,7 @@ impl Os {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Host {
     pre_text_style: String,
     pre_text: String,
@@ -184,8 +186,9 @@ impl Host {
         )
     }
 }
+
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Kernel {
     pre_text_style: String,
     pre_text: String,
@@ -218,7 +221,7 @@ impl Kernel {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Uptime {
     pre_text_style: String,
     pre_text: String,
@@ -260,8 +263,9 @@ impl Uptime {
         )
     }
 }
+
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Packages {
     pre_text_style: String,
     pre_text: String,
@@ -295,7 +299,7 @@ impl Packages {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Shell {
     pre_text_style: String,
     pre_text: String,
@@ -338,7 +342,7 @@ impl Shell {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Resolution {
     pre_text_style: String,
     pre_text: String,
@@ -369,7 +373,7 @@ impl Resolution {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct DesktopEnvironment {
     pre_text_style: String,
     pre_text: String,
@@ -403,7 +407,7 @@ impl DesktopEnvironment {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct WindowManager {
     pre_text_style: String,
     pre_text: String,
@@ -437,7 +441,7 @@ impl WindowManager {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Terminal {
     pre_text_style: String,
     pre_text: String,
@@ -468,7 +472,7 @@ impl Terminal {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Cpu {
     pre_text_style: String,
     pre_text: String,
@@ -499,7 +503,7 @@ impl Cpu {
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, default)]
+#[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Module {
     pre_text_style: String,
     pre_text: String,

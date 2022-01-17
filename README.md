@@ -67,200 +67,205 @@ OPTIONS:
  ### Top Level <a name="top_level_configuration"></a>
 | Value        | Default             | Description                                                                                                                                                                                                              |
 |--------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| module_order | "user delimiter os host kernel uptime packages" | Specify the order in which the modules will go in separated by spaces. Possible modules are: user, delimiter, os, host, kernel, uptime, packages, as well as any custom modules you have defined. You may specify some more than once. More coming soon! |
+| module-order | "user delimiter os host kernel uptime packages" | Specify the order in which the modules will go in separated by spaces. Possible modules are: user, delimiter, os, host, kernel, uptime, packages, as well as any custom modules you have defined. You may specify some more than once. More coming soon! |
 | offset       | 4                   | Specify the number of spaces between the logo and the information.                                                                                                                                                       |
-| logo_cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo based on the result. (Only macos and Arch Linux is supported as of right now.)                                                                             |
+| logo-cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo based on the result. (Only macos and Arch Linux is supported as of right now.)                                                                             |
 
 ### Format Header <a name="format_header_configuration"></a>
 | Value                    | Default     | Description                                                                                                                                                             |
 | ----------------------   | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| mode                     | "classic"   | Set the mode of output. Could be one of classic (neofetch style), side_block (with a block around the info), or bottom_block (with the logo above the block of info).   |
-| top_left_corner_char     | "╭"         | Set the character to use as the top left corner of the block (Only works in and bottom_block modes).                                                                    |
-| top_right_corner_char    | "╮"         | Set the character to use as the top right corner of the block (Only works in side_block and bottom_block modes).                                                        |
-| bottom_left_corner_char  | "╰"         | Set the character to use as the bottom left corner of the block (Only works in side_block and bottom_block modes).                                                      |
-| bottom_right_corner_char | "╯"         | Set the character to use as the bottom right corner of the block (Only works in side_block and bottom_block modes).                                                     |
-| horizontal_char          | "─"         | Set the character to use as the top and bottom parts of the block (Only works in side_block and bottom_block modes).                                                    |
-| vertical_char            | "│"         | Set the character to use as the right and left parts of the block (Only works in side_block and bottom_block modes).                                                    |
-| padding_left             | 1           | Set the number of spaces to put before each module inside the block (Only works in side_block and bottom_block modes).                                                  |
-| padding_right            | 1           | Set the number of spaces to put after each module inside the block (Only works in side_block and bottom_block modes).                                                   |
-| padding_top              | 0           | Set the number of lines to put above the modules inside the block (Only works in side_block and bottom_block modes).                                                    |
+| mode                     | "classic"   | Set the mode of output. Could be one of classic (neofetch style), side-block (with a block around the info), or bottom-block (with the logo above the block of info).   |
+| top-left-corner-char     | "╭"         | Set the character to use as the top left corner of the block (Only works in and bottom-block modes).                                                                    |
+| top-right-corner-char    | "╮"         | Set the character to use as the top right corner of the block (Only works in side-block and bottom-block modes).                                                        |
+| bottom-left-corner-char  | "╰"         | Set the character to use as the bottom left corner of the block (Only works in side-block and bottom-block modes).                                                      |
+| bottom-right-corner-char | "╯"         | Set the character to use as the bottom right corner of the block (Only works in side-block and bottom-block modes).                                                     |
+| horizontal-char          | "─"         | Set the character to use as the top and bottom parts of the block (Only works in side-block and bottom-block modes).                                                    |
+| vertical-char            | "│"         | Set the character to use as the right and left parts of the block (Only works in side-block and bottom-block modes).                                                    |
+| padding-left             | 1           | Set the number of spaces to put before each module inside the block (Only works in side-block and bottom-block modes).                                                  |
+| padding-right            | 1           | Set the number of spaces to put after each module inside the block (Only works in side-block and bottom-block modes).                                                   |
+| padding-top              | 0           | Set the number of lines to put above the modules inside the block (Only works in side-block and bottom-block modes).                                                    |
 
 ### User Header <a name="user_header_configuration"></a>
 | Value           | Default       | Description                                                                                                         |
 |-----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
-| pre_text        | ""            | Text that comes before this module                                                                                  |
-| output_style    | "white"       | A format string with each word separated by dots that describes the style of the text                               |
-| separator_style | "white"       | A format string with each word separated by dots that describes the style of the between username and hostname      |
-| separator_char  | "@"           | A character that separates between the username and hostname                                                        |
+| pre-text-style  | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
+| pre-text        | ""            | Text that comes before this module                                                                                  |
+| output-style    | "white"       | A format string with each word separated by dots that describes the style of the text                               |
+| separator-style | "white"       | A format string with each word separated by dots that describes the style of the between username and hostname      |
+| separator-char  | "@"           | A character that separates between the username and hostname                                                        |
 
 ### Delimiter Header <a name="delimiter_header_configuration"></a>
 | Value        | Default   | Description                                                                                                                                                 |
 | ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | style        | "white"   | A format string with each word separated by dots that describes the style of the delimiter                                                                  |
-| repeat_num   | 0         | The number of times to repeat the delimiter char to form the delimiter. If set to 0, it will the repeat number to the length of the module above this one   |
+| repeat-num   | 0         | The number of times to repeat the delimiter char to form the delimiter. If set to 0, it will the repeat number to the length of the module above this one   |
 | char         | "-"       | The character to use as the delimiter                                                                                                                       |
 
 ### OS Header <a name="os_header_configuration"></a>
 | Value            | Default         | Description                                                                                                           |
 | ---------------- | --------------- | --------------------------------------------------------------------------------------------------------------------- |
-| pre_text_style   | "bold.yellow"   | A format string with each word separated by dots that describes the style of the text that comes before this module   |
-| pre_text         | "OS: "          | Text that comes before this module                                                                                    |
-| output_style     | "white"         | A format string with each word separated by dots that describes the style of the text                                 |
+| pre-text-style   | "bold.yellow"   | A format string with each word separated by dots that describes the style of the text that comes before this module   |
+| pre-text         | "OS: "          | Text that comes before this module                                                                                    |
+| output-style     | "white"         | A format string with each word separated by dots that describes the style of the text                                 |
 
 ### Host Header <a name="host_header_configuration"></a>
 | Value          | Default       | Description                                                                                                         |
 |----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
-| pre_text       | "Host: "      | Text that comes before this module                                                                                  |
-| output_style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
+| pre-text-style | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
+| pre-text       | "Host: "      | Text that comes before this module                                                                                  |
+| output-style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
 
 ### Kernel Header <a name="kernel_header_configuration"></a>
 | Value          | Default       | Description                                                                                                         |
 |----------------|---------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
-| pre_text       | "Kernel: "    | Text that comes before this module                                                                                  |
-| output_style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
+| pre-text-style | "bold.yellow" | A format string with each word separated by dots that describes the style of the text that comes before this module |
+| pre-text       | "Kernel: "    | Text that comes before this module                                                                                  |
+| output-style   | "white"       | A format string with each word separated by dots that describes the style of the output text                        |
 
 ### Uptime Header <a name="uptime_header_configuration"></a>
 | Value          | Default                                      | Description                                                                                                         |
 |----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| pre_text_style | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module |
-| pre_text       | "Uptime: "                                   | Text that comes before this module                                                                                  |
-| output_style   | "white"                                      | A format string with each word separated by dots that describes the style of the output text                        |
-| time_format    | "$days days, $hours hours, $minutes minutes" | A String that describes the format of the time. Variables are: $years, $days, $hours, $minutes, $seconds.           |
+| pre-text-style | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module |
+| pre-text       | "Uptime: "                                   | Text that comes before this module                                                                                  |
+| output-style   | "white"                                      | A format string with each word separated by dots that describes the style of the output text                        |
+| time-format    | "$days days, $hours hours, $minutes minutes" | A String that describes the format of the time. Variables are: $years, $days, $hours, $minutes, $seconds.           |
 
 ### Packages Header <a name="packages_header_configuration"></a>
 | Value           | Default                                      | Description                                                                                                               |
 |-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
-| pre_text        | "Packages: "                                 | Text that comes before this module                                                                                        |
-| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| pre-text-style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre-text        | "Packages: "                                 | Text that comes before this module                                                                                        |
+| output-style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
 ### Shell Header <a name="shell_header_configuration"></a>
 | Value           | Default                                      | Description                                                                                                               |
 |-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
-| pre_text        | "Shell: "                                    | Text that comes before this module                                                                                        |
-| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| pre-text-style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre-text        | "Shell: "                                    | Text that comes before this module                                                                                        |
+| output-style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
 ### Resolution Header <a name="resolution_header_configuration"></a>
 | Value           | Default                                      | Description                                                                                                               |
 |-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
-| pre_text        | "Resolution: "                               | Text that comes before this module                                                                                        |
-| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| pre-text-style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre-text        | "Resolution: "                               | Text that comes before this module                                                                                        |
+| output-style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
 ### Desktop Environment Header <a name="desktop_environment_header_configuration"></a>
 | Value           | Default                                      | Description                                                                                                               |
 |-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
-| pre_text        | "Desktop Environment: "                      | Text that comes before this module                                                                                        |
-| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| pre-text-style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre-text        | "Desktop Environment: "                      | Text that comes before this module                                                                                        |
+| output-style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
 ### Window Manager Header <a name="window_manager_header_configuration"></a>
 | Value           | Default                                      | Description                                                                                                               |
 |-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
-| pre_text        | "Window Manager: "                           | Text that comes before this module                                                                                        |
-| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| pre-text-style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre-text        | "Window Manager: "                           | Text that comes before this module                                                                                        |
+| output-style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
 ### Terminal Header <a name="terminal_header_configuration"></a>
 | Value           | Default                                      | Description                                                                                                               |
 |-----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| pre_text_style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
-| pre_text        | "Terminal: "                                 | Text that comes before this module                                                                                        |
-| output_style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
+| pre-text-style  | "bold.yellow"                                | A format string with each word separated by dots that describes the style of the text that comes before this module       |
+| pre-text        | "Terminal: "                                 | Text that comes before this module                                                                                        |
+| output-style    | "white"                                      | A format string with each word separated by dots that describes the style of the output text                              |
 
 ### Custom Header <a name="custom_header_configuration"></a>
 | Value          | Description                                                                                                   |
 |----------------|---------------------------------------------------------------------------------------------------------------|
-| pre_text_style | A format string with each word separated by dots that describes the style of the text that before this module |
-| pre_text       | Text that comes before this module                                                                            |
-| output_style   | A format string with each word separated by dots that describes the style of the output text                  |
+| pre-text-style | A format string with each word separated by dots that describes the style of the text that before this module |
+| pre-text       | Text that comes before this module                                                                            |
+| output-style   | A format string with each word separated by dots that describes the style of the output text                  |
 | command        | The command to run to get the output of the module                                                            |
 
 # Default Configuration <a name="default_configuration"></a>
 A default Configuration will look like so:
 ```toml
-module_order = "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal"
+module-order = "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager terminal cpu"
 offset = 4
-logo_cmd = "auto"
+logo-cmd = "auto"
 
 [format]
 mode = "classic"
-top_left_corner_char = "╭"
-top_right_corner_char = "╮"
-bottom_left_corner_char = "╰"
-bottom_right_corner_char = "╯"
-horizontal_char = "─"
-vertical_char = "│"
-padding_left = 1
-padding_right = 1
-padding_top = 0
+top-left-corner-char = "╭"
+top-right-corner-char = "╮"
+bottom-left-corner-char = "╰"
+bottom-right-corner-char = "╯"
+horizontal-char = "─"
+vertical-char = "│"
+padding-left = 1
+padding-right = 1
+padding-top = 0
 
 [user]
-pre_text_style = "bold.yellow"
-pre_text = ""
-output_style = "bold.yellow"
-separator_style = "white"
-separator_char = "@"
+pre-text-style = "bold.yellow"
+pre-text = ""
+output-style = "bold.yellow"
+separator-style = "white"
+separator-char = "@"
 
 [delimiter]
 style = "white"
-repeat_num = 0
+repeat-num = 0
 char = "-"
 
 [os]
-pre_text_style = "bold.yellow"
-pre_text = "OS: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "OS: "
+output-style = "white"
 
 [host]
-pre_text_style = "bold.yellow"
-pre_text = "Host: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Host: "
+output-style = "white"
 
 [kernel]
-pre_text_style = "bold.yellow"
-pre_text = "Kernel: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Kernel: "
+output-style = "white"
 
 [uptime]
-pre_text_style = "bold.yellow"
-pre_text = "Uptime: "
-output_style = "white"
-time_format = "$days days, $hours hours, $minutes minutes"
+pre-text-style = "bold.yellow"
+pre-text = "Uptime: "
+output-style = "white"
+time-format = "$days days, $hours hours, $minutes minutes"
 
 [packages]
-pre_text_style = "bold.yellow"
-pre_text = "Packages: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Packages: "
+output-style = "white"
 
 [shell]
-pre_text_style = "bold.yellow"
-pre_text = "Shell: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Shell: "
+output-style = "white"
 
 [resolution]
-pre_text_style = "bold.yellow"
-pre_text = "Resolution: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Resolution: "
+output-style = "white"
 
-[desktop_environment]
-pre_text_style = "bold.yellow"
-pre_text = "Desktop Environment: "
-output_style = "white"
+[desktop-environment]
+pre-text-style = "bold.yellow"
+pre-text = "Desktop Environment: "
+output-style = "white"
 
-[window_manager]
-pre_text_style = "bold.yellow"
-pre_text = "Window Manager: "
-output_style = "white"
+[window-manager]
+pre-text-style = "bold.yellow"
+pre-text = "Window Manager: "
+output-style = "white"
 
 [terminal]
-pre_text_style = "bold.yellow"
-pre_text = "Terminal: "
-output_style = "white"
+pre-text-style = "bold.yellow"
+pre-text = "Terminal: "
+output-style = "white"
+
+[cpu]
+pre-text-style = "bold.yellow"
+pre-text = "CPU: "
+output-style = "white"
 ```
 
 # Todo <a name="todo"></a>

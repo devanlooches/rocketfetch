@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use any_terminal_size::any_terminal_size;
 use console::style;
 use console::Style;
-use console::{measure_text_width, strip_ansi_codes};
+use console::measure_text_width;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
@@ -17,7 +17,7 @@ use crate::modules::{
 };
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(rename_all = "snake_case", default)]
+#[serde(deny_unknown_fields, rename_all = "kebab-case", default)]
 pub struct Config {
     module_order: String,
     offset: usize,
@@ -165,18 +165,18 @@ impl Config {
             let handle = thread::spawn(move || (String::from("resolution"), resolution.get_info()));
             handles.push(handle);
         }
-        if modules.contains(&"desktop_environment") {
+        if modules.contains(&"desktop-environment") {
             let handle = thread::spawn(move || {
                 (
-                    String::from("desktop_environment"),
+                    String::from("desktop-environment"),
                     desktop_environment.get_info(),
                 )
             });
             handles.push(handle);
         }
-        if modules.contains(&"window_manager") {
+        if modules.contains(&"window-manager") {
             let handle =
-                thread::spawn(move || (String::from("window_manager"), window_manager.get_info()));
+                thread::spawn(move || (String::from("window-manager"), window_manager.get_info()));
             handles.push(handle);
         }
         if modules.contains(&"terminal") {
@@ -383,10 +383,20 @@ impl Config {
 
     fn print_side_table(&self) {
         let mut sidelogo = self.get_logo();
-        let mut info = Config::wrap_lines(self.offset, &self.module_order(), &sidelogo);
+        let mut info = Config::wrap_lines(
+            self.offset + self.format.padding_top + self.format.padding_left + 1 + 2,
+            &self.module_order(),
+            &sidelogo,
+        );
+
+        match (sidelogo.len() + self.format.padding_top)
+            .cmp(&(info.len() + self.format.padding_top))
+        {
+            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
+            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
+            Ordering::Equal => (),
+        }
         let mut counter = 0;
-        info.resize(sidelogo.len() + self.format.padding_top, String::from(""));
-        sidelogo.resize(info.len() + self.format.padding_top, String::from(""));
 
         let logo_maxlength = self.logo_maxlength();
         let info_maxlength = Config::info_maxlength(&info);
@@ -513,7 +523,7 @@ impl Default for Config {
         Config {
             offset: 4,
             module_order: String::from(
-                "user delimiter os host kernel uptime packages shell resolution desktop_environment window_manager terminal cpu",
+                "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager terminal cpu",
             ),
             logo_cmd: String::from("auto"),
             format: Format::default(),
