@@ -1,3 +1,13 @@
+use std::cmp::Ordering;
+use std::collections::HashMap;
+
+use any_terminal_size::any_terminal_size;
+use console::style;
+use console::Style;
+use console::{measure_text_width, strip_ansi_codes};
+use structopt::StructOpt;
+use user_error::{UserFacingError, UFE};
+
 use crate::cli::Mode;
 use crate::cli::Opt;
 use crate::handle_error;
@@ -5,13 +15,6 @@ use crate::modules::{
     Cpu, Delimiter, DesktopEnvironment, Format, Host, Kernel, Module, Os, Packages, Resolution,
     Shell, Terminal, Uptime, User, WindowManager,
 };
-use console::measure_text_width;
-use console::style;
-use console::Style;
-use std::cmp::Ordering;
-use std::collections::HashMap;
-use structopt::StructOpt;
-use user_error::{UserFacingError, UFE};
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
 #[serde(rename_all = "snake_case", default)]
@@ -289,27 +292,24 @@ impl Config {
         }
     }
 
-    fn wrap_lines(module_order: &[String], logo: &[String]) -> Vec<String> {
-        use any_terminal_size::{any_terminal_size, Width};
+    fn wrap_lines(offset: usize, module_order: &[String], logo: &[String]) -> Vec<String> {
+        let terminal_width =
+            handle_error!(any_terminal_size().ok_or(""), "Failed to get terminal size")
+                .0
+                 .0 as usize;
 
-        let size = any_terminal_size();
-        let mut terminal_width: usize = 0;
-        if let Some((Width(width), _)) = size {
-            terminal_width = width as usize;
-        }
         let mut module_order_wrapped = Vec::new();
 
         for (i, string) in module_order.iter().enumerate() {
-            if string.len() >= terminal_width - logo[i].len() {
-                use std::str;
-                let mut subs = string
-                    .as_bytes()
-                    .chunks(terminal_width - logo[i].len())
-                    .map(str::from_utf8)
-                    .collect::<Result<Vec<&str>, _>>()
-                    .unwrap();
-
-                module_order_wrapped.append(&mut subs);
+            let max_length = terminal_width - measure_text_width(&logo[i]) - offset;
+            if measure_text_width(string) >= max_length {
+                let mut pos = 0;
+                for (i, _) in string.chars().enumerate() {
+                    if measure_text_width(&string[pos..i]) == max_length {
+                        module_order_wrapped.push(&string[pos..i]);
+                        pos = i;
+                    }
+                }
             } else {
                 module_order_wrapped.push(string);
             }
@@ -322,7 +322,7 @@ impl Config {
 
     fn print_classic(&self) {
         let mut sidelogo = self.get_logo();
-        let mut order = Config::wrap_lines(&self.module_order(), &sidelogo);
+        let mut order = Config::wrap_lines(self.offset, &self.module_order(), &sidelogo);
 
         let maxlength = self.logo_maxlength();
 
@@ -383,7 +383,7 @@ impl Config {
 
     fn print_side_table(&self) {
         let mut sidelogo = self.get_logo();
-        let mut info = Config::wrap_lines(&self.module_order(), &sidelogo);
+        let mut info = Config::wrap_lines(self.offset, &self.module_order(), &sidelogo);
         let mut counter = 0;
         info.resize(sidelogo.len() + self.format.padding_top, String::from(""));
         sidelogo.resize(info.len() + self.format.padding_top, String::from(""));
@@ -448,7 +448,7 @@ impl Config {
 
     fn print_bottom_table(&self) {
         let sidelogo = self.get_logo();
-        let info = Config::wrap_lines(&self.module_order(), &sidelogo);
+        let info = Config::wrap_lines(self.offset, &self.module_order(), &sidelogo);
         let info_maxlength = Config::info_maxlength(&info);
 
         for line in sidelogo {
@@ -537,8 +537,9 @@ impl Default for Config {
 
 #[cfg(test)]
 mod test {
-    use super::Config;
     use pretty_assertions::assert_eq;
+
+    use super::Config;
 
     #[test]
     fn check_default_config() {
