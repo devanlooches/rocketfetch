@@ -76,7 +76,7 @@ impl User {
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
             Style::from_dotted_str(&self.output_style).apply_to(username),
             Style::from_dotted_str(&self.separator_style).apply_to(&self.separator_char),
-            Style::from_dotted_str(&self.output_style).apply_to(hostname)
+            Style::from_dotted_str(&self.output_style).apply_to(hostname.trim())
         )
     }
 }
@@ -150,9 +150,9 @@ impl Os {
         format!(
             "{}{} {} {}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            output_style.apply_to(os),
-            output_style.apply_to(build_version),
-            output_style.apply_to(arch)
+            output_style.apply_to(os.trim()),
+            output_style.apply_to(build_version.trim()),
+            output_style.apply_to(arch.trim())
         )
     }
 }
@@ -182,7 +182,7 @@ impl Host {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(machine)
+            Style::from_dotted_str(&self.output_style).apply_to(machine.trim())
         )
     }
 }
@@ -215,7 +215,7 @@ impl Kernel {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(kernel)
+            Style::from_dotted_str(&self.output_style).apply_to(kernel.trim())
         )
     }
 }
@@ -259,7 +259,7 @@ impl Uptime {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(time)
+            Style::from_dotted_str(&self.output_style).apply_to(time.trim())
         )
     }
 }
@@ -293,7 +293,7 @@ impl Packages {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(packages)
+            Style::from_dotted_str(&self.output_style).apply_to(packages.trim())
         )
     }
 }
@@ -335,8 +335,8 @@ impl Shell {
         format!(
             "{}{} {}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(shell),
-            Style::from_dotted_str(&self.output_style).apply_to(version)
+            Style::from_dotted_str(&self.output_style).apply_to(shell.trim()),
+            Style::from_dotted_str(&self.output_style).apply_to(version.trim())
         )
     }
 }
@@ -367,7 +367,7 @@ impl Resolution {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+            Style::from_dotted_str(&self.output_style).apply_to(resolution.trim()),
         )
     }
 }
@@ -393,7 +393,7 @@ impl Default for DesktopEnvironment {
 impl DesktopEnvironment {
     pub fn get_info(&self) -> String {
         let general_readout = GeneralReadout::new();
-        let resolution = handle_error!(
+        let desktop_environment = handle_error!(
             general_readout.desktop_environment(),
             "Failed to get desktop environment"
         );
@@ -401,7 +401,7 @@ impl DesktopEnvironment {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+            Style::from_dotted_str(&self.output_style).apply_to(desktop_environment.trim()),
         )
     }
 }
@@ -427,7 +427,7 @@ impl Default for WindowManager {
 impl WindowManager {
     pub fn get_info(&self) -> String {
         let general_readout = GeneralReadout::new();
-        let resolution = handle_error!(
+        let window_manager = handle_error!(
             general_readout.window_manager(),
             "Failed to get window manager"
         );
@@ -435,7 +435,7 @@ impl WindowManager {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+            Style::from_dotted_str(&self.output_style).apply_to(window_manager.trim()),
         )
     }
 }
@@ -461,12 +461,12 @@ impl Default for Terminal {
 impl Terminal {
     pub fn get_info(&self) -> String {
         let general_readout = GeneralReadout::new();
-        let resolution = handle_error!(general_readout.terminal(), "Failed to get terminal name");
+        let terminal = handle_error!(general_readout.terminal(), "Failed to get terminal name");
 
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(resolution),
+            Style::from_dotted_str(&self.output_style).apply_to(terminal.trim()),
         )
     }
 }
@@ -497,7 +497,7 @@ impl Cpu {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(cpu),
+            Style::from_dotted_str(&self.output_style).apply_to(cpu.trim()),
         )
     }
 }
@@ -518,7 +518,7 @@ impl Module {
         format!(
             "{}{}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
-            Style::from_dotted_str(&self.output_style).apply_to(output)
+            Style::from_dotted_str(&self.output_style).apply_to(output.trim())
         )
     }
 }
