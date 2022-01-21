@@ -63,7 +63,7 @@ OPTIONS:
 
  # Configuration <a name="configuration"></a>
  You can configure rocketfetch either through the default path of ~/.config/rocketfetch or pass a path in cli by
- specifying the _c option.
+ specifying the -c option.
  ### Top Level <a name="top_level_configuration"></a>
 | Value        | Default             | Description                                                                                                                                                                                                              |
 |--------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
