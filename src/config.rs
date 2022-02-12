@@ -2,9 +2,9 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use any_terminal_size::any_terminal_size;
+use console::measure_text_width;
 use console::style;
 use console::Style;
-use console::measure_text_width;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
@@ -17,7 +17,7 @@ use crate::modules::{
 };
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
-#[serde(deny_unknown_fields, rename_all = "kebab-case", default)]
+#[serde(rename_all = "kebab-case", default)]
 pub struct Config {
     module_order: String,
     offset: usize,
@@ -113,7 +113,7 @@ impl Config {
         }
     }
 
-    fn module_order(&self) -> Vec<String> {
+    fn get_module_order(&self) -> Vec<String> {
         use std::thread;
         let modules = self.module_order.split_whitespace().collect::<Vec<&str>>();
         let mut modules_unordered = HashMap::new();
@@ -134,61 +134,89 @@ impl Config {
         let custom = self_clone.custom_modules;
 
         if modules.contains(&"user") {
-            let handle = thread::spawn(move || (String::from("user"), user.get_info()));
+            let handle =
+                thread::spawn(move || (String::from("user"), user.get_info().replace("\n", " ")));
             handles.push(handle);
         }
         if modules.contains(&"os") {
-            let handle = thread::spawn(move || (String::from("os"), os.get_info()));
+            let handle =
+                thread::spawn(move || (String::from("os"), os.get_info().replace("\n", " ")));
             handles.push(handle);
         }
         if modules.contains(&"host") {
-            let handle = thread::spawn(move || (String::from("host"), host.get_info()));
+            let handle =
+                thread::spawn(move || (String::from("host"), host.get_info().replace("\n", " ")));
             handles.push(handle);
         }
         if modules.contains(&"kernel") {
-            let handle = thread::spawn(move || (String::from("kernel"), kernel.get_info()));
+            let handle = thread::spawn(move || {
+                (String::from("kernel"), kernel.get_info().replace("\n", " "))
+            });
             handles.push(handle);
         }
         if modules.contains(&"uptime") {
-            let handle = thread::spawn(move || (String::from("uptime"), uptime.get_info()));
+            let handle = thread::spawn(move || {
+                (String::from("uptime"), uptime.get_info().replace("\n", " "))
+            });
             handles.push(handle);
         }
         if modules.contains(&"packages") {
-            let handle = thread::spawn(move || (String::from("packages"), packages.get_info()));
+            let handle = thread::spawn(move || {
+                (
+                    String::from("packages"),
+                    packages.get_info().replace("\n", " "),
+                )
+            });
             handles.push(handle);
         }
         if modules.contains(&"shell") {
-            let handle = thread::spawn(move || (String::from("shell"), shell.get_info()));
+            let handle =
+                thread::spawn(move || (String::from("shell"), shell.get_info().replace("\n", " ")));
             handles.push(handle);
         }
         if modules.contains(&"resolution") {
-            let handle = thread::spawn(move || (String::from("resolution"), resolution.get_info()));
+            let handle = thread::spawn(move || {
+                (
+                    String::from("resolution"),
+                    resolution.get_info().replace("\n", " "),
+                )
+            });
             handles.push(handle);
         }
         if modules.contains(&"desktop-environment") {
             let handle = thread::spawn(move || {
                 (
                     String::from("desktop-environment"),
-                    desktop_environment.get_info(),
+                    desktop_environment.get_info().replace("\n", " "),
                 )
             });
             handles.push(handle);
         }
         if modules.contains(&"window-manager") {
-            let handle =
-                thread::spawn(move || (String::from("window-manager"), window_manager.get_info()));
+            let handle = thread::spawn(move || {
+                (
+                    String::from("window-manager"),
+                    window_manager.get_info().replace("\n", " "),
+                )
+            });
             handles.push(handle);
         }
         if modules.contains(&"terminal") {
-            let handle = thread::spawn(move || (String::from("terminal"), terminal.get_info()));
+            let handle = thread::spawn(move || {
+                (
+                    String::from("terminal"),
+                    terminal.get_info().replace("\n", " "),
+                )
+            });
             handles.push(handle);
         }
         if modules.contains(&"cpu") {
-            let handle = thread::spawn(move || (String::from("cpu"), cpu.get_info()));
+            let handle =
+                thread::spawn(move || (String::from("cpu"), cpu.get_info().replace("\n", " ")));
             handles.push(handle);
         }
         for (name, module) in custom {
-            let handle = thread::spawn(move || (name, module.get_info()));
+            let handle = thread::spawn(move || (name, module.get_info().replace("\n", " ")));
             handles.push(handle);
         }
         for handle in handles {
@@ -198,7 +226,11 @@ impl Config {
         let mut vec: Vec<String> = Vec::new();
         for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
-                "delimiter" => vec.push(self.delimiter.get_info(measure_text_width(&vec[i - 1]))),
+                "delimiter" => vec.push(
+                    self.delimiter
+                        .get_info(measure_text_width(&vec[i - 1]))
+                        .replace("\n", " "),
+                ),
                 v => {
                     let error = format!("Unknown module: {}", v);
                     vec.push(
@@ -322,15 +354,16 @@ impl Config {
 
     fn print_classic(&self) {
         let mut sidelogo = self.get_logo();
-        let mut order = Config::wrap_lines(self.offset, &self.module_order(), &sidelogo);
-
-        let maxlength = self.logo_maxlength();
-
+        let mut order = self.get_module_order();
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
             Ordering::Equal => (),
         }
+        order = Config::wrap_lines(self.offset, &order, &sidelogo);
+
+        let maxlength = self.logo_maxlength();
+
         for (i, line) in sidelogo.iter().enumerate() {
             println!(
                 "{}{}{}",
@@ -381,14 +414,9 @@ impl Config {
         unreachable!()
     }
 
-    fn print_side_table(&self) {
+    fn print_side_block(&self) {
         let mut sidelogo = self.get_logo();
-        let mut info = Config::wrap_lines(
-            self.offset + self.format.padding_top + self.format.padding_left + 1 + 2,
-            &self.module_order(),
-            &sidelogo,
-        );
-
+        let mut info = self.get_module_order();
         match (sidelogo.len() + self.format.padding_top)
             .cmp(&(info.len() + self.format.padding_top))
         {
@@ -396,6 +424,12 @@ impl Config {
             Ordering::Less => sidelogo.resize(info.len(), String::from("")),
             Ordering::Equal => (),
         }
+        info = Config::wrap_lines(
+            self.offset + self.format.padding_top + self.format.padding_left + 1 + 2,
+            &info,
+            &sidelogo,
+        );
+
         let mut counter = 0;
 
         let logo_maxlength = self.logo_maxlength();
@@ -456,9 +490,17 @@ impl Config {
         );
     }
 
-    fn print_bottom_table(&self) {
-        let sidelogo = self.get_logo();
-        let info = Config::wrap_lines(self.offset, &self.module_order(), &sidelogo);
+    fn print_bottom_block(&self) {
+        let mut sidelogo = self.get_logo();
+        let mut info = self.get_module_order();
+        match (sidelogo.len() + self.format.padding_top)
+            .cmp(&(info.len() + self.format.padding_top))
+        {
+            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
+            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
+            Ordering::Equal => (),
+        }
+        info = Config::wrap_lines(self.offset, &info, &sidelogo);
         let info_maxlength = Config::info_maxlength(&info);
 
         for line in sidelogo {
@@ -506,13 +548,13 @@ impl Config {
         matches.mode.map_or_else(
             || match self.format.mode {
                 Mode::Classic => self.print_classic(),
-                Mode::BottomBlock => self.print_bottom_table(),
-                Mode::SideBlock => self.print_side_table(),
+                Mode::BottomBlock => self.print_bottom_block(),
+                Mode::SideBlock => self.print_side_block(),
             },
             |v| match v {
                 Mode::Classic => self.print_classic(),
-                Mode::BottomBlock => self.print_bottom_table(),
-                Mode::SideBlock => self.print_side_table(),
+                Mode::BottomBlock => self.print_bottom_block(),
+                Mode::SideBlock => self.print_side_block(),
             },
         );
     }
