@@ -1,6 +1,6 @@
 [package]
 name = "rocketfetch"
-version = "0.6.2"
+version = "0.6.3"
 authors = ["Devan Looches <devan.looches@gmail.com>"]
 edition = "2021"
 include = ["src/**/*"]
@@ -12,16 +12,16 @@ keywords = ["system", "cli", "fetch", "asynchronous", "asynch"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-any_terminal_size = {version = "0.1.21", default-features = false}
+any_terminal_size = { version = "0.1.21", default-features = false }
 console = { version = "0.15.0", default-features = false, features = ["ansi-parsing"] }
 dirs = { version = "4.0.0", default-features = false }
-libmacchina = { version = "3.8.6", default-features = false }
-regex = {version = "1.5.4", default-features = false, features = ["unicode-perl"] }
+libmacchina = { version = "6.1.0", default-features = false }
+regex = { version = "1.5.4", default-features = false, features = ["unicode-perl"] }
 secfmt = { version = "0.1.1", default-features = false }
-serde = { version = "1.0.130", default-features = false }
-serde_derive = { version = "1.0.130", default-features = false }
-simple_logger = { version = "1.13.0", default-features = false }
-structopt = { version = "0.3.25", default-features = false }
+serde = { version = "1.0.136", default-features = false }
+serde_derive = { version = "1.0.136", default-features = false }
+simple_logger = { version = "2.1.0", default-features = false }
+structopt = { version = "0.3.26", default-features = false }
 toml = { version = "0.5.8", default-features = false }
 user-error = { version = "1.2.8", default-features = false }
 
@@ -30,4 +30,4 @@ opt-level = 3
 lto = "fat"
 
 [dev-dependencies]
-pretty_assertions = "1.0.0"
+pretty_assertions = "1.1.0"
