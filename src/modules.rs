@@ -133,16 +133,13 @@ impl Default for Os {
 impl Os {
     pub fn get_os() -> String {
         let general_readout = GeneralReadout::new();
-        let os: String;
         if cfg!(target_os = "linux") {
-            os = handle_error!(general_readout.distribution(), "Failed to find distro");
-        } else {
-            os = handle_error!(general_readout.os_name(), "Failed to find OS name");
+            return handle_error!(general_readout.distribution(), "Failed to find distro");
         }
-        os
+        handle_error!(general_readout.os_name(), "Failed to find OS name")
     }
     pub fn get_info(&self) -> String {
-        let os = Os::get_os();
+        let os = Self::get_os();
         let build_version = Config::run_cmd("sw_vers -buildVersion", "Failed to get build version");
         let arch = Config::run_cmd("machine", "Failed to get arch");
 

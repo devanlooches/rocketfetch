@@ -33,9 +33,9 @@ impl std::str::FromStr for Mode {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "classic" => Ok(Mode::Classic),
-            "side-block" | "sideblock" => Ok(Mode::SideBlock),
-            "bottom-block" | "bottomblock" => Ok(Mode::BottomBlock),
+            "classic" => Ok(Self::Classic),
+            "side-block" | "sideblock" => Ok(Self::SideBlock),
+            "bottom-block" | "bottomblock" => Ok(Self::BottomBlock),
             v => Err(format!(
                 "\n{}",
                 UserFacingError::new("Unable to parse mode string")
