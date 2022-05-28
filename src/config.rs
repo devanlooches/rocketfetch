@@ -351,9 +351,6 @@ impl Config {
         let mut order = self.get_module_order();
         let maxlength = self.logo_maxlength();
         order = Self::wrap_lines(self.offset, &order, maxlength);
-        for i in &order {
-            println!("{}{i}", " ".repeat(maxlength));
-        }
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
@@ -422,9 +419,9 @@ impl Config {
         match (sidelogo.len() + self.format.padding_top)
             .cmp(&(info.len() + self.format.padding_top))
         {
-            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
+            // Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(info.len(), String::from("")),
-            Ordering::Equal => (),
+            _ => (),
         }
 
         let mut counter = 0;
@@ -460,15 +457,15 @@ impl Config {
             counter += 1;
         }
 
-        for i in info.iter().take(info.len() - 2) {
+        for line in &info {
             println!(
                 "{}{}{vertical}{}{}{}{}{vertical}",
                 sidelogo[counter],
                 " ".repeat(logo_maxlength - measure_text_width(&sidelogo[counter]) + self.offset),
                 " ".repeat(self.format.padding_left),
-                i,
+                line,
                 " ".repeat(self.format.padding_right),
-                " ".repeat(info_maxlength - measure_text_width(i)),
+                " ".repeat(info_maxlength - measure_text_width(line)),
                 vertical = self.format.vertical_char
             );
             counter += 1;
@@ -484,19 +481,19 @@ impl Config {
                 .repeat(info_maxlength + self.format.padding_left + self.format.padding_right),
             self.format.bottom_right_corner_char,
         );
+        counter += 1;
+
+        if counter < sidelogo.len() {
+            for i in sidelogo.iter().skip(counter) {
+                println!("{}", i);
+            }
+        }
     }
 
     fn print_bottom_block(&self) {
-        let mut sidelogo = self.get_logo();
+        let sidelogo = self.get_logo();
         let mut info = self.get_module_order();
         info = Self::wrap_lines(self.offset, &info, 0);
-        match (sidelogo.len() + self.format.padding_top)
-            .cmp(&(info.len() + self.format.padding_top))
-        {
-            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
-            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
-            Ordering::Equal => (),
-        }
         let info_maxlength = Self::info_maxlength(&info);
 
         for line in sidelogo {
