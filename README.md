@@ -270,3 +270,26 @@ output-style = "white"
 
 # Todo <a name="todo"></a>
 - [ ] Add more Modules (For starters: the ones that neofetch supports)
+    - [x] Os
+    - [x] Host
+    - [x] Kernel
+    - [x] Uptime
+    - [x] Shell
+    - [x] Resolution
+    - [x] Desktop Environment
+    - [x] Window Manager
+    - [x] Terminal
+    - [x] CPU
+    - [ ] Window Manager Theme
+    - [ ] GPU
+    - [ ] Memory
+    - [ ] GPU Driver
+    - [ ] CPU Usage
+    - [ ] Disk
+    - [ ] Battery
+    - [ ] Current Playing Song
+    - [ ] Music Player
+    - [ ] Local IP
+    - [ ] Users
+    - [ ] Locale
+    - [ ] Colors
