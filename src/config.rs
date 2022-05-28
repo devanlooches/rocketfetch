@@ -351,9 +351,6 @@ impl Config {
         let mut order = self.get_module_order();
         let maxlength = self.logo_maxlength();
         order = Self::wrap_lines(self.offset, &order, maxlength);
-        for i in &order {
-            println!("{}{i}", " ".repeat(maxlength));
-        }
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
@@ -487,16 +484,9 @@ impl Config {
     }
 
     fn print_bottom_block(&self) {
-        let mut sidelogo = self.get_logo();
+        let sidelogo = self.get_logo();
         let mut info = self.get_module_order();
         info = Self::wrap_lines(self.offset, &info, 0);
-        match (sidelogo.len() + self.format.padding_top)
-            .cmp(&(info.len() + self.format.padding_top))
-        {
-            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
-            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
-            Ordering::Equal => (),
-        }
         let info_maxlength = Self::info_maxlength(&info);
 
         for line in sidelogo {
