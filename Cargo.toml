@@ -12,23 +12,19 @@ keywords = ["system", "cli", "fetch", "multithreaded", "multithreading"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-any_terminal_size = { version = "0.1.21", default-features = false }
-console = { version = "0.15.0", default-features = false, features = ["ansi-parsing"] }
-dirs = { version = "4.0.0", default-features = false }
-libmacchina = { version = "6.1.1", default-features = false }
-regex = { version = "1.5.6", default-features = false, features = ["unicode-perl"] }
-secfmt = { version = "0.1.1", default-features = false }
-serde = { version = "1.0.137", default-features = false }
-serde_derive = { version = "1.0.137", default-features = false }
-simple_logger = { version = "2.1.0", default-features = false }
-structopt = { version = "0.3.26", default-features = false }
-textwrap = { version = "0.15.0", features = ["unicode-width", "unicode-linebreak"] }
-toml = { version = "0.5.9", default-features = false }
-user-error = { version = "1.2.8", default-features = false }
-
-[profile.release]
-opt-level = 3
-lto = "fat"
+any_terminal_size = { version = "0.1.21" }
+console = { version = "0.15.2"}
+dirs = { version = "4.0.0"}
+libmacchina = { version = "6.3.1"}
+regex = { version = "1.6.0"}
+secfmt = { version = "0.1.1"}
+serde = { version = "1.0.145"}
+serde_derive = { version = "1.0.145"}
+simple_logger = { version = "2.3.0"}
+structopt = { version = "0.3.26"}
+textwrap = { version = "0.15.1"}
+toml = { version = "0.5.9"}
+user-error = { version = "1.2.8"}
 
 [dev-dependencies]
-pretty_assertions = "1.2.1"
+pretty_assertions = "1.3.0"
