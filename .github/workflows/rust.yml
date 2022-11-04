@@ -31,4 +31,4 @@ jobs:
       - name: Build
         run: cargo build
       - name: Run
-        run: ./target/debug/rocketfetch --no-line-wrap
+        run: ./target/debug/rocketfetch -c workflow_config.toml

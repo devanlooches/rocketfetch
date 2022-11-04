@@ -1,0 +1,84 @@
+module-order = "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager cpu"
+offset = 4
+logo-cmd = "auto"
+wrap-lines = false
+
+[format]
+mode = "classic"
+top-left-corner-char = "╭"
+top-right-corner-char = "╮"
+bottom-left-corner-char = "╰"
+bottom-right-corner-char = "╯"
+horizontal-char = "─"
+vertical-char = "│"
+padding-left = 1
+padding-right = 1
+padding-top = 0
+
+[user]
+pre-text-style = "bold.yellow"
+pre-text = ""
+output-style = "bold.yellow"
+separator-style = "white"
+separator-char = "@"
+
+[delimiter]
+style = "white"
+repeat-num = 0
+char = "-"
+
+[os]
+pre-text-style = "bold.yellow"
+pre-text = "OS: "
+output-style = "white"
+
+[host]
+pre-text-style = "bold.yellow"
+pre-text = "Host: "
+output-style = "white"
+
+[kernel]
+pre-text-style = "bold.yellow"
+pre-text = "Kernel: "
+output-style = "white"
+
+[uptime]
+pre-text-style = "bold.yellow"
+pre-text = "Uptime: "
+output-style = "white"
+time-format = "$days days, $hours hours, $minutes minutes"
+
+[packages]
+pre-text-style = "bold.yellow"
+pre-text = "Packages: "
+output-style = "white"
+
+[shell]
+pre-text-style = "bold.yellow"
+pre-text = "Shell: "
+output-style = "white"
+
+[resolution]
+pre-text-style = "bold.yellow"
+pre-text = "Resolution: "
+output-style = "white"
+
+[desktop-environment]
+pre-text-style = "bold.yellow"
+pre-text = "Desktop Environment: "
+output-style = "white"
+
+[window-manager]
+pre-text-style = "bold.yellow"
+pre-text = "Window Manager: "
+output-style = "white"
+
+[terminal]
+pre-text-style = "bold.yellow"
+pre-text = "Terminal: "
+output-style = "white"
+
+[cpu]
+pre-text-style = "bold.yellow"
+pre-text = "CPU: "
+output-style = "white"
