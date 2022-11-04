@@ -20,6 +20,7 @@ use crate::modules::{
 #[serde(rename_all = "kebab-case", default)]
 pub struct Config {
     module_order: String,
+    wrap_lines: bool,
     offset: usize,
     logo_cmd: String,
     format: Format,
@@ -350,7 +351,9 @@ impl Config {
         let mut sidelogo = self.get_logo();
         let mut order = self.get_module_order();
         let maxlength = self.logo_maxlength();
-        order = Self::wrap_lines(self.offset, &order, maxlength);
+        if self.wrap_lines {
+            order = Self::wrap_lines(self.offset, &order, maxlength);
+        }
         match sidelogo.len().cmp(&order.len()) {
             Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
             Ordering::Less => sidelogo.resize(order.len(), String::from("")),
@@ -411,11 +414,13 @@ impl Config {
         let mut sidelogo = self.get_logo();
         let mut info = self.get_module_order();
         let logo_maxlength = self.logo_maxlength();
-        info = Self::wrap_lines(
-            self.offset + self.format.padding_top + self.format.padding_left + 1 + 2,
-            &info,
-            logo_maxlength,
-        );
+        if self.wrap_lines {
+            info = Self::wrap_lines(
+                self.offset + self.format.padding_top + self.format.padding_left + 1 + 2,
+                &info,
+                logo_maxlength,
+            );
+        }
         match (sidelogo.len() + self.format.padding_top)
             .cmp(&(info.len() + self.format.padding_top))
         {
@@ -486,7 +491,9 @@ impl Config {
     fn print_bottom_block(&self) {
         let sidelogo = self.get_logo();
         let mut info = self.get_module_order();
-        info = Self::wrap_lines(self.offset, &info, 0);
+        if self.wrap_lines {
+            info = Self::wrap_lines(self.offset, &info, 0);
+        }
         let info_maxlength = Self::info_maxlength(&info);
 
         for line in sidelogo {
@@ -550,6 +557,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             offset: 4,
+            wrap_lines: true,
             module_order: String::from(
                 "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager terminal cpu",
             ),
