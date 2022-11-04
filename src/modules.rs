@@ -588,4 +588,21 @@ mod module_tests {
         }
         println!("Packages: {}", packages);
     }
+
+    #[test]
+    fn get_shell() {
+        use regex::Regex;
+        let ver_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
+        let general_readout = &GeneralReadout::new();
+        let shell = general_readout
+            .shell(
+                libmacchina::traits::ShellFormat::Relative,
+                libmacchina::traits::ShellKind::Default,
+            )
+            .unwrap();
+        let version = Config::run_cmd_unsafe(format!("{} --version", shell).as_str());
+        let locations = ver_regex.find(&version).unwrap();
+        let version = &version[locations.start()..locations.end()];
+        println!("Shell: {} version {}", shell, version);
+    }
 }
