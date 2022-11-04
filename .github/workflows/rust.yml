@@ -33,6 +33,6 @@ jobs:
 
       - name: Publish Crate
         uses: katyo/publish-crates@v1
-          with:
-            ignore-unpublished-changes: true
-            dry-run: true
+        with:
+          ignore-unpublished-changes: true
+          dry-run: true
