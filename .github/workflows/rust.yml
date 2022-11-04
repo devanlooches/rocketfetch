@@ -30,3 +30,9 @@ jobs:
 
       - name: Test
         run: cargo test -- --nocapture
+
+      - name: Publish to crates.io
+        uses: katyo/publish-crates@v1
+          with:
+            ignore-unpublished-changes: true
+            dry-run: true
