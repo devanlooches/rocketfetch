@@ -433,11 +433,11 @@ impl Config {
                 logo_maxlength,
             );
         }
-        match (sidelogo.len() + self.format.padding_top)
-            .cmp(&(info.len() + self.format.padding_top))
-        {
+        match (sidelogo.len()).cmp(&(info.len() + self.format.padding_top + 2)) {
             Ordering::Greater => info.resize(sidelogo.len(), String::new()),
-            Ordering::Less => sidelogo.resize(info.len(), String::new()),
+            Ordering::Less => {
+                sidelogo.resize(info.len() + self.format.padding_top + 2, String::new());
+            }
             Ordering::Equal => (),
         }
 
@@ -458,13 +458,11 @@ impl Config {
         );
         counter += 1;
 
-        for i in 0..self.format.padding_top {
+        for _ in 0..self.format.padding_top {
             println!(
                 "{}{}{vertical}{}{vertical}",
-                sidelogo[i + counter],
-                " ".repeat(
-                    logo_maxlength - measure_text_width(&sidelogo[i + counter]) + self.offset
-                ),
+                sidelogo[counter],
+                " ".repeat(logo_maxlength - measure_text_width(&sidelogo[counter]) + self.offset),
                 " ".repeat(info_maxlength + self.format.padding_right + self.format.padding_left),
                 vertical = self.format.vertical_char
             );
