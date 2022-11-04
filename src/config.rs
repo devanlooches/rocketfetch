@@ -447,10 +447,7 @@ impl Config {
 
         println!(
             "{}{}{}{}{}",
-            handle_error!(
-                sidelogo.first().ok_or(""),
-                "Failed to get first line of sidelogo"
-            ),
+            sidelogo[0],
             " ".repeat(logo_maxlength - measure_text_width(&sidelogo[0]) + self.offset),
             self.format.top_left_corner_char,
             self.format
