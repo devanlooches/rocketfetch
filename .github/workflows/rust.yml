@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        os: [macos-latest, archlinux-latest]
+        os: [macos-latest]
 
     steps:
       - name: Checkout
@@ -28,7 +28,5 @@ jobs:
           default: true
           override: true
 
-      - name: Build
-        run: cargo build
-      - name: Run
-        run: ./target/debug/rocketfetch -c workflow_config.toml
+      - name: Test
+        run: cargo test

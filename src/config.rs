@@ -388,6 +388,18 @@ impl Config {
         .to_string()
     }
 
+    // For tests
+    pub fn run_cmd_unsafe(cmd: &str) -> String {
+        use std::process::Command;
+        let output = if cfg!(target_os = "windows") {
+            Command::new("cmd").args(["/C", cmd]).output().unwrap()
+        } else {
+            Command::new("sh").args(["-c", cmd]).output().unwrap()
+        }
+        .stdout;
+        String::from_utf8(output).unwrap().trim().to_string()
+    }
+
     fn logo_maxlength(&self) -> usize {
         if let Some(v) = self
             .get_logo()

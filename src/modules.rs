@@ -58,7 +58,7 @@ impl Default for User {
     fn default() -> Self {
         Self {
             pre_text_style: String::from("bold.yellow"),
-            pre_text: String::from(""),
+            pre_text: String::new(),
             output_style: String::from("bold.yellow"),
             separator_style: String::from("white"),
             separator_char: String::from("@"),
@@ -528,5 +528,64 @@ impl Default for Module {
             pre_text: String::new(),
             pre_text_style: String::from("bold.yellow"),
         }
+    }
+}
+
+#[cfg(test)]
+mod module_tests {
+    use super::*;
+    #[test]
+    fn get_username() {
+        let general_readout = GeneralReadout::new();
+        println!("Username: {}", general_readout.username().unwrap());
+    }
+
+    #[test]
+    fn get_hostname() {
+        let general_readout = GeneralReadout::new();
+        println!("Hostname: {}", general_readout.hostname().unwrap());
+    }
+
+    #[test]
+    fn get_os() {
+        let general_readout = GeneralReadout::new();
+        if cfg!(target_os = "linux") {
+            println!("Linux Distro: {}", general_readout.distribution().unwrap());
+        }
+        println!("OS Name: {}", general_readout.os_name().unwrap());
+        println!(
+            "Build Version: {}",
+            Config::run_cmd_unsafe("sw_vers -buildVersion")
+        );
+        println!("Arch: {}", Config::run_cmd_unsafe("machine"));
+    }
+
+    #[test]
+    fn get_host() {
+        let general_readout = GeneralReadout::new();
+        println!("Host: {}", general_readout.machine().unwrap());
+    }
+
+    #[test]
+    fn get_kernel() {
+        let kernel_readout = KernelReadout::new();
+        println!("Kernel: {}", kernel_readout.pretty_kernel().unwrap());
+    }
+
+    #[test]
+    fn get_uptime() {
+        let general_readout = GeneralReadout::new();
+        println!("Uptime: {}", general_readout.uptime().unwrap());
+    }
+
+    #[test]
+    fn get_packages() {
+        let package_readout = PackageReadout::new();
+        let package = package_readout.count_pkgs();
+        let mut packages = String::new();
+        for (name, num) in package {
+            packages.push_str(format!("{} ({}) ", num, name.to_string()).as_str());
+        }
+        println!("Packages: {}", packages);
     }
 }
