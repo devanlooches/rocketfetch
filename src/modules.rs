@@ -605,4 +605,39 @@ mod module_tests {
         let version = &version[locations.start()..locations.end()];
         println!("Shell: {} version {}", shell, version);
     }
+
+    #[test]
+    fn get_resolution() {
+        let general_readout = GeneralReadout::new();
+        println!("Resolution: {}", general_readout.resolution().unwrap());
+    }
+    #[test]
+    fn get_desktop_environment() {
+        let general_readout = GeneralReadout::new();
+        println!(
+            "Desktop Environment: {}",
+            general_readout.desktop_environment().unwrap()
+        );
+    }
+    #[test]
+    fn get_window_manager() {
+        let general_readout = GeneralReadout::new();
+        println!(
+            "Window Manager: {}",
+            general_readout.window_manager().unwrap()
+        );
+    }
+
+    #[test]
+    #[ignore = "Metric not available on virtual machines"]
+    fn get_terminal_name() {
+        let general_readout = GeneralReadout::new();
+        println!("Terminal: {}", general_readout.terminal().unwrap());
+    }
+
+    #[test]
+    fn get_cpu() {
+        let general_readout = GeneralReadout::new();
+        println!("CPU: {}", general_readout.cpu_model_name().unwrap());
+    }
 }
