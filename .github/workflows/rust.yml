@@ -29,6 +29,6 @@ jobs:
           override: true
 
       - name: Build
-        run: cargo build --release
+        run: cargo build
       - name: Run
-        run: ./rocketfetch -c config
+        run: ./target/debug/rocketfetch -c config
