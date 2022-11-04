@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [macos-latest, archlinux-latex]
 
     steps:
       - name: Checkout
