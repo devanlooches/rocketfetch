@@ -46,19 +46,20 @@ If this fails to install, please make sure you have the most recent Rust version
 
 # Command Line <a name="cli"></a>
 ```bash
-rocketfetch 0.5.3
-A WIP command line system information tool (neofetch) rewritten in Rust for performance with TOML file configuration.
+rocketfetch 0.6.9
+A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration.
 
 USAGE:
-    rocketfetch [OPTIONS]
+    rocketfetch [FLAGS] [OPTIONS]
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -h, --help            Prints help information
+        --no-line-wrap    Disables Line Wrapping
+    -V, --version         Prints version information
 
 OPTIONS:
     -c, --config <FILE>    Sets custom configuration file.
-        --mode <mode>      Set the printing mode. Can be one of `side-table`, `bottom-table`, or `classic`
+    -m, --mode <mode>      Set the printing mode. Can be one of `side-block`, `bottom-block`, or `classic`
  ```
 
  # Configuration <a name="configuration"></a>
@@ -69,6 +70,7 @@ OPTIONS:
 |--------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | module-order | "user delimiter os host kernel uptime packages" | Specify the order in which the modules will go in separated by spaces. Possible modules are: user, delimiter, os, host, kernel, uptime, packages, as well as any custom modules you have defined. You may specify some more than once. More coming soon! |
 | offset       | 4                   | Specify the number of spaces between the logo and the information.                                                                                                                                                       |
+| wrap-lines   | true                | Wether or not to wrap the output lines.|
 | logo-cmd     | "auto"              | The command to run in order to get the logo. If set to auto or nothing, it will automatically detect the operating system and choose a logo based on the result. (Only macos and Arch Linux is supported as of right now.)                                                                             |
 
 ### Format Header <a name="format_header_configuration"></a>

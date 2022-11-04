@@ -6,18 +6,16 @@ use user_error::UserFacingError;
     about = "A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration."
 )]
 pub struct Opt {
-    #[structopt(
-        short = "c",
-        long,
-        name = "FILE",
-        help = "Sets custom configuration file."
-    )]
+    #[structopt(short, long, name = "FILE", help = "Sets custom configuration file.")]
     pub config: Option<String>,
     #[structopt(
+        short,
         long,
         help = "Set the printing mode. Can be one of `side-block`, `bottom-block`, or `classic`"
     )]
     pub mode: Option<Mode>,
+    #[structopt(long, help = "Disables Line Wrapping")]
+    pub no_line_wrap: bool,
 }
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]

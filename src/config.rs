@@ -49,11 +49,11 @@ impl Config {
     pub fn path() -> String {
         let matches = Self::get_args();
         let home_dir = handle_error!(dirs::home_dir().ok_or(""), "Failed to find home directory");
-        let path = matches.config.unwrap_or(format!(
+
+        matches.config.unwrap_or(format!(
             "{}/.config/rocketfetch/config.toml",
             home_dir.to_string_lossy()
-        ));
-        path
+        ))
     }
     pub fn from_config(path: String) -> Self {
         match std::fs::read_to_string(path) {
@@ -347,16 +347,16 @@ impl Config {
             .collect::<Vec<String>>()
     }
 
-    fn print_classic(&self) {
+    fn print_classic(&self, wrap_lines: bool) {
         let mut sidelogo = self.get_logo();
         let mut order = self.get_module_order();
         let maxlength = self.logo_maxlength();
-        if self.wrap_lines {
+        if self.wrap_lines && wrap_lines {
             order = Self::wrap_lines(self.offset, &order, maxlength);
         }
         match sidelogo.len().cmp(&order.len()) {
-            Ordering::Greater => order.resize(sidelogo.len(), String::from("")),
-            Ordering::Less => sidelogo.resize(order.len(), String::from("")),
+            Ordering::Greater => order.resize(sidelogo.len(), String::new()),
+            Ordering::Less => sidelogo.resize(order.len(), String::new()),
             Ordering::Equal => (),
         }
 
@@ -373,7 +373,7 @@ impl Config {
     pub fn run_cmd(cmd: &str, error_msg: &str) -> String {
         use std::process::Command;
         let output = if cfg!(target_os = "windows") {
-            let command_run = Command::new("cmd").args(&["/C", cmd]).output();
+            let command_run = Command::new("cmd").args(["/C", cmd]).output();
             handle_error!(command_run, error_msg)
         } else {
             let command_run = Command::new("sh").args(["-c", cmd]).output();
@@ -410,11 +410,11 @@ impl Config {
         unreachable!()
     }
 
-    fn print_side_block(&self) {
+    fn print_side_block(&self, wrap_lines: bool) {
         let mut sidelogo = self.get_logo();
         let mut info = self.get_module_order();
         let logo_maxlength = self.logo_maxlength();
-        if self.wrap_lines {
+        if self.wrap_lines && wrap_lines {
             info = Self::wrap_lines(
                 self.offset + self.format.padding_top + self.format.padding_left + 1 + 2,
                 &info,
@@ -424,8 +424,8 @@ impl Config {
         match (sidelogo.len() + self.format.padding_top)
             .cmp(&(info.len() + self.format.padding_top))
         {
-            Ordering::Greater => info.resize(sidelogo.len(), String::from("")),
-            Ordering::Less => sidelogo.resize(info.len(), String::from("")),
+            Ordering::Greater => info.resize(sidelogo.len(), String::new()),
+            Ordering::Less => sidelogo.resize(info.len(), String::new()),
             Ordering::Equal => (),
         }
 
@@ -488,10 +488,10 @@ impl Config {
         );
     }
 
-    fn print_bottom_block(&self) {
+    fn print_bottom_block(&self, wrap_lines: bool) {
         let sidelogo = self.get_logo();
         let mut info = self.get_module_order();
-        if self.wrap_lines {
+        if self.wrap_lines && wrap_lines {
             info = Self::wrap_lines(self.offset, &info, 0);
         }
         let info_maxlength = Self::info_maxlength(&info);
@@ -538,16 +538,17 @@ impl Config {
 
     pub fn print(&self) {
         let matches = Self::get_args();
+        let wrap_lines = !matches.no_line_wrap;
         matches.mode.map_or_else(
             || match self.format.mode {
-                Mode::Classic => self.print_classic(),
-                Mode::BottomBlock => self.print_bottom_block(),
-                Mode::SideBlock => self.print_side_block(),
+                Mode::Classic => self.print_classic(wrap_lines),
+                Mode::BottomBlock => self.print_bottom_block(wrap_lines),
+                Mode::SideBlock => self.print_side_block(wrap_lines),
             },
             |v| match v {
-                Mode::Classic => self.print_classic(),
-                Mode::BottomBlock => self.print_bottom_block(),
-                Mode::SideBlock => self.print_side_block(),
+                Mode::Classic => self.print_classic(wrap_lines),
+                Mode::BottomBlock => self.print_bottom_block(wrap_lines),
+                Mode::SideBlock => self.print_side_block(wrap_lines),
             },
         );
     }

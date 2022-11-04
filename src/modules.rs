@@ -523,9 +523,9 @@ impl Module {
 impl Default for Module {
     fn default() -> Self {
         Self {
-            command: String::from(""),
+            command: String::new(),
             output_style: String::from("white"),
-            pre_text: String::from(""),
+            pre_text: String::new(),
             pre_text_style: String::from("bold.yellow"),
         }
     }
