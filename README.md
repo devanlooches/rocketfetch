@@ -188,6 +188,7 @@ A default Configuration will look like so:
 module-order = "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager terminal cpu"
 offset = 4
 logo-cmd = "auto"
+wrap-lines = true
 
 [format]
 mode = "classic"

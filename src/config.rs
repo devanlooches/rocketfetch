@@ -433,12 +433,8 @@ impl Config {
                 logo_maxlength,
             );
         }
-        match (sidelogo.len()).cmp(&(info.len() + self.format.padding_top + 2)) {
-            Ordering::Greater => info.resize(sidelogo.len(), String::new()),
-            Ordering::Less => {
-                sidelogo.resize(info.len() + self.format.padding_top + 2, String::new());
-            }
-            Ordering::Equal => (),
+        if (sidelogo.len()).cmp(&(info.len() + self.format.padding_top + 2)) == Ordering::Less {
+            sidelogo.resize(info.len() + self.format.padding_top + 2, String::new());
         }
 
         let mut counter = 0;
@@ -469,7 +465,7 @@ impl Config {
             counter += 1;
         }
 
-        for i in info.iter().take(info.len() - 2) {
+        for i in &info {
             println!(
                 "{}{}{vertical}{}{}{}{}{vertical}",
                 sidelogo[counter],
@@ -482,6 +478,7 @@ impl Config {
             );
             counter += 1;
         }
+
         println!(
             "{}{}{}{}{}",
             sidelogo[counter],
@@ -493,6 +490,11 @@ impl Config {
                 .repeat(info_maxlength + self.format.padding_left + self.format.padding_right),
             self.format.bottom_right_corner_char,
         );
+        counter += 1;
+
+        sidelogo.iter().skip(counter).for_each(|i| {
+            println!("{}", i);
+        });
     }
 
     fn print_bottom_block(&self, wrap_lines: bool) {
