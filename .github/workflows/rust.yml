@@ -32,7 +32,7 @@ jobs:
         run: cargo test -- --nocapture
 
       - name: Publish Crate
+        if: ${{ matrix.os == macos-latest }}
         uses: katyo/publish-crates@v1
         with:
           ignore-unpublished-changes: true
-        if: ${{ matrix.os == macos-latest }}
