@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [macos-latest, ubuntu-latest]
 
     steps:
       - name: Checkout
@@ -29,5 +29,4 @@ jobs:
           override: true
 
       - name: Test
-        run: cargo test -- --nocapture
-       
+        run: cargo test       
