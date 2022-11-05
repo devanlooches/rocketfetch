@@ -12,7 +12,7 @@ use crate::cli::Mode;
 use crate::config::Config;
 use crate::handle_error;
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Format {
     pub mode: Mode,
@@ -44,7 +44,7 @@ impl Default for Format {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct User {
     pre_text_style: String,
@@ -81,7 +81,7 @@ impl User {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Delimiter {
     style: String,
@@ -112,7 +112,7 @@ impl Delimiter {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Os {
     pre_text_style: String,
@@ -154,7 +154,7 @@ impl Os {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Host {
     pre_text_style: String,
@@ -184,7 +184,7 @@ impl Host {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Kernel {
     pre_text_style: String,
@@ -217,7 +217,7 @@ impl Kernel {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Uptime {
     pre_text_style: String,
@@ -261,7 +261,7 @@ impl Uptime {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Packages {
     pre_text_style: String,
@@ -295,7 +295,7 @@ impl Packages {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Shell {
     pre_text_style: String,
@@ -338,7 +338,7 @@ impl Shell {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Resolution {
     pre_text_style: String,
@@ -369,7 +369,7 @@ impl Resolution {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct DesktopEnvironment {
     pre_text_style: String,
@@ -403,7 +403,7 @@ impl DesktopEnvironment {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct WindowManager {
     pre_text_style: String,
@@ -437,7 +437,7 @@ impl WindowManager {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Terminal {
     pre_text_style: String,
@@ -468,7 +468,7 @@ impl Terminal {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Cpu {
     pre_text_style: String,
@@ -499,7 +499,7 @@ impl Cpu {
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(deny_unknown_fields, default, rename_all = "kebab-case")]
 pub struct Module {
     pre_text_style: String,
@@ -534,6 +534,18 @@ impl Default for Module {
 #[cfg(test)]
 mod module_tests {
     use super::*;
+
+    fn run_cmd_unsafe(cmd: &str) -> String {
+        use std::process::Command;
+        let output = if cfg!(target_os = "windows") {
+            Command::new("cmd").args(["/C", cmd]).output().unwrap()
+        } else {
+            Command::new("sh").args(["-c", cmd]).output().unwrap()
+        }
+        .stdout;
+        String::from_utf8(output).unwrap().trim().to_string()
+    }
+
     #[test]
     fn get_username() {
         let general_readout = GeneralReadout::new();
@@ -553,11 +565,8 @@ mod module_tests {
             println!("Linux Distro: {}", general_readout.distribution().unwrap());
         }
         println!("OS Name: {}", general_readout.os_name().unwrap());
-        println!(
-            "Build Version: {}",
-            Config::run_cmd_unsafe("sw_vers -buildVersion")
-        );
-        println!("Arch: {}", Config::run_cmd_unsafe("machine"));
+        println!("Build Version: {}", run_cmd_unsafe("sw_vers -buildVersion"));
+        println!("Arch: {}", run_cmd_unsafe("machine"));
     }
 
     #[test]
@@ -600,7 +609,7 @@ mod module_tests {
                 libmacchina::traits::ShellKind::Default,
             )
             .unwrap();
-        let version = Config::run_cmd_unsafe(format!("{} --version", shell).as_str());
+        let version = run_cmd_unsafe(format!("{} --version", shell).as_str());
         let locations = ver_regex.find(&version).unwrap();
         let version = &version[locations.start()..locations.end()];
         println!("Shell: {} version {}", shell, version);

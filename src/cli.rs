@@ -18,7 +18,7 @@ pub struct Opt {
     pub no_line_wrap: bool,
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub enum Mode {
     Classic,

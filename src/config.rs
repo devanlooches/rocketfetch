@@ -16,7 +16,7 @@ use crate::modules::{
     Shell, Terminal, Uptime, User, WindowManager,
 };
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(rename_all = "kebab-case", default)]
 pub struct Config {
     module_order: String,
@@ -60,8 +60,8 @@ impl Config {
             Ok(string) => match toml::from_str::<Self>(&string) {
                 Ok(v) => v,
                 Err(r) => {
-                    let mut line: u64 = 0;
-                    let mut column: u64 = 0;
+                    let mut line: usize = 0;
+                    let mut column: usize = 0;
                     let mut last = String::new();
                     let r = r.to_string();
                     println!("{}", r);
@@ -72,12 +72,12 @@ impl Config {
                     for word in error.split_whitespace() {
                         if last == "line" {
                             line = handle_error!(
-                                word.parse::<u64>(),
+                                word.parse::<usize>(),
                                 "Failed to get line number of configuration error"
                             );
                         } else if last == "column" {
                             column = handle_error!(
-                                word.parse::<u64>(),
+                                word.parse::<usize>(),
                                 "Failed to get column number of configuration error"
                             );
                         }
@@ -92,10 +92,9 @@ impl Config {
 {line_len_sep} |",
                             error = r,
                             line_len_sep = " ".repeat(line.to_string().len()),
-                            col_len_sep = " ".repeat(column.try_into().unwrap()),
+                            col_len_sep = " ".repeat(column),
                             line = line,
-                            line_contents =
-                                string.lines().collect::<Vec<&str>>()[(line - 1) as usize],
+                            line_contents = string.lines().collect::<Vec<&str>>()[line - 1],
                             col = column,
                         ))
                         .print_and_exit();
@@ -386,18 +385,6 @@ impl Config {
         )
         .trim()
         .to_string()
-    }
-
-    // For tests
-    pub fn run_cmd_unsafe(cmd: &str) -> String {
-        use std::process::Command;
-        let output = if cfg!(target_os = "windows") {
-            Command::new("cmd").args(["/C", cmd]).output().unwrap()
-        } else {
-            Command::new("sh").args(["-c", cmd]).output().unwrap()
-        }
-        .stdout;
-        String::from_utf8(output).unwrap().trim().to_string()
     }
 
     fn logo_maxlength(&self) -> usize {
