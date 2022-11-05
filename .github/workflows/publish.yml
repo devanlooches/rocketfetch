@@ -21,4 +21,6 @@ jobs:
           override: true
 
       - name: Publish
-        run: cargo publish --token ${{ secrets.CARGO_TOKEN }}
+        run: cargo publish --token ${CARGO_TOKEN}
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
