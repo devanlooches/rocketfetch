@@ -35,3 +35,4 @@ jobs:
         uses: katyo/publish-crates@v1
         with:
           ignore-unpublished-changes: true
+        if: ${{ matrix.os == macos-latest }}
