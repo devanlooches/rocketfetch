@@ -30,8 +30,4 @@ jobs:
 
       - name: Test
         run: cargo test -- --nocapture
-        
-      - name: Publish to crates.io
-        run: cargo publish --token ${CRATES_TOKEN}
-        env:
-          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+       

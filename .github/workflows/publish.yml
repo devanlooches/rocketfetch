@@ -20,7 +20,8 @@ jobs:
           toolchain: nightly
           override: true
 
-      - name: Publish
-        run: cargo publish --token ${CARGO_TOKEN}
+      - name: Publish to crates.io
+        run: cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+
