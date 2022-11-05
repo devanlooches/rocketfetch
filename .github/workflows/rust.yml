@@ -30,3 +30,8 @@ jobs:
 
       - name: Test
         run: cargo test -- --nocapture
+        
+      - run: cargo publish --token ${CRATES_TOKEN}
+        if: ${{ matrix.os == macos-latest }}
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
