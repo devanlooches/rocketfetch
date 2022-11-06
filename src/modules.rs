@@ -563,13 +563,15 @@ mod module_tests {
         let general_readout = GeneralReadout::new();
         if cfg!(target_os = "linux") {
             println!("Linux Distro: {}", general_readout.distribution().unwrap());
+        } else {
+            println!("OS Name: {}", general_readout.os_name().unwrap());
         }
-        println!("OS Name: {}", general_readout.os_name().unwrap());
         println!("Build Version: {}", run_cmd_unsafe("sw_vers -buildVersion"));
         println!("Arch: {}", run_cmd_unsafe("machine"));
     }
 
     #[test]
+    #[ignore = "Metric not available on virtual machines"]
     fn get_host() {
         let general_readout = GeneralReadout::new();
         println!("Host: {}", general_readout.machine().unwrap());
@@ -620,7 +622,9 @@ mod module_tests {
         let general_readout = GeneralReadout::new();
         println!("Resolution: {}", general_readout.resolution().unwrap());
     }
+
     #[test]
+    #[ignore = "Metric not available on virtual machines"]
     fn get_desktop_environment() {
         let general_readout = GeneralReadout::new();
         println!(
@@ -628,7 +632,9 @@ mod module_tests {
             general_readout.desktop_environment().unwrap()
         );
     }
+
     #[test]
+    #[ignore = "Metric not available on virtual machines"]
     fn get_window_manager() {
         let general_readout = GeneralReadout::new();
         println!(
