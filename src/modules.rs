@@ -571,7 +571,6 @@ mod module_tests {
     }
 
     #[test]
-    #[ignore = "Metric not available on virtual machines"]
     fn get_host() {
         let general_readout = GeneralReadout::new();
         println!("Host: {}", general_readout.machine().unwrap());
@@ -624,7 +623,6 @@ mod module_tests {
     }
 
     #[test]
-    #[ignore = "Metric not available on virtual machines"]
     fn get_desktop_environment() {
         let general_readout = GeneralReadout::new();
         println!(
@@ -634,7 +632,6 @@ mod module_tests {
     }
 
     #[test]
-    #[ignore = "Metric not available on virtual machines"]
     fn get_window_manager() {
         let general_readout = GeneralReadout::new();
         println!(
