@@ -247,6 +247,35 @@ impl Config {
         vec
     }
 
+    #[cfg(target_os = "macos")]
+    fn logo() -> Vec<String> {
+        let yellow = Style::from_dotted_str("yellow.bold");
+        let red = Style::from_dotted_str("red.bold");
+        let blue = Style::from_dotted_str("blue.bold");
+        let green = Style::from_dotted_str("green.bold");
+        let purple = Style::new().color256(5).bold();
+        vec![
+            green.apply_to("                 ,xNMM.").to_string(),
+            green.apply_to("               .OMMMMo").to_string(),
+            green.apply_to("               OMMM0,").to_string(),
+            yellow.apply_to("     .;loddo:' loolloddol;.").to_string(),
+            yellow.apply_to("   cKMMMMMMMMMMNWMMMMMMMMMM0:").to_string(),
+            yellow.apply_to(" .KMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
+            yellow.apply_to(" XMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
+            yellow.apply_to(";MMMMMMMMMMMMMMMMMMMMMMMM:").to_string(),
+            red.apply_to(":MMMMMMMMMMMMMMMMMMMMMMMM:").to_string(),
+            red.apply_to(".MMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
+            red.apply_to(" kMMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
+            red.apply_to(" .XMMMMMMMMMMMMMMMMMMMMMMMMMMk").to_string(),
+            purple
+                .apply_to("  .XMMMMMMMMMMMMMMMMMMMMMMMMK.")
+                .to_string(),
+            purple.apply_to("    kMMMMMMMMMMMMMMMMMMMMMMd").to_string(),
+            blue.apply_to("     ;KMMMMMMMWXXWMMMMMMMk.").to_string(),
+            blue.apply_to("       .cooc,.    .,coo:.").to_string(),
+        ]
+    }
+
     #[cfg(target_os = "linux")]
     fn logo() -> Vec<String> {
         let os = crate::modules::Os::get_os();
