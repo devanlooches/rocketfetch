@@ -247,7 +247,7 @@ impl Config {
         vec
     }
 
-    #[cfg(target = "linux")]
+    #[cfg(target_os = "linux")]
     fn logo() -> Vec<String> {
         let os = crate::modules::Os::get_os();
         match os.trim() {
