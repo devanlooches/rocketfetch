@@ -769,6 +769,13 @@ mod module_tests {
     }
 
     #[test]
+    #[ignore = "Metric unavailable on virtual machine"]
+    fn get_host() {
+        let general_readout = GeneralReadout::new();
+        println!("Host: {}", general_readout.machine().unwrap());
+    }
+
+    #[test]
     fn get_kernel() {
         let kernel_readout = KernelReadout::new();
         println!("Kernel: {}", kernel_readout.pretty_kernel().unwrap());
@@ -820,6 +827,15 @@ mod module_tests {
         println!(
             "Desktop Environment: {}",
             general_readout.desktop_environment().unwrap()
+        );
+    }
+
+    #[test]
+    fn get_window_manager() {
+        let general_readout = GeneralReadout::new();
+        println!(
+            "Window Manager: {}",
+            general_readout.window_manager().unwrap()
         );
     }
 
