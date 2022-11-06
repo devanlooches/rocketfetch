@@ -824,15 +824,6 @@ mod module_tests {
     }
 
     #[test]
-    fn get_window_manager() {
-        let general_readout = GeneralReadout::new();
-        println!(
-            "Window Manager: {}",
-            general_readout.window_manager().unwrap()
-        );
-    }
-
-    #[test]
     #[ignore = "Metric not available on virtual machines"]
     fn get_terminal_name() {
         let general_readout = GeneralReadout::new();
