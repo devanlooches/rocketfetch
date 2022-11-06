@@ -749,13 +749,7 @@ mod test {
     #[test]
     #[ignore = "Metrics not available on virtual machines"]
     fn check_side_block_print() {
-        let config = Config {
-            module_order: String::from(
-                "user delimiter os kernel uptime packages shell resolution window-manager cpu",
-            ),
-            wrap_lines: false,
-            ..Config::default()
-        };
+        let config = Config::default();
         config.print_side_block(false);
     }
 
