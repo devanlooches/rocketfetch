@@ -135,6 +135,12 @@ impl Os {
         let general_readout = GeneralReadout::new();
         if cfg!(target_os = "linux") {
             return handle_error!(general_readout.distribution(), "Failed to find distro");
+        } else if cfg!(target_os = "windows") {
+            let version = handle_error!(
+                KernelReadout::new().os_release(),
+                "Failed to get windows version"
+            );
+            return format!("Windows {}", version);
         }
         handle_error!(general_readout.os_name(), "Failed to find OS name")
     }
