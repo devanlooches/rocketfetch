@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/devanlooches/rocketfetch/compare/v0.6.13...HEAD) (2022-11-06)
+
+### Features
+
+* **OS:** Added windows support 7f6c559
+* **OS:** Add ubuntu OS Support 0de451e
+
+### Fixes
+
+* **windows:** Fix os name for windows 0fa2bed
+* **windows:** Setup for windows to work without unimplemented features out of the box 799d46b
+* **macos:** Fix macos logo fetching function 6aa488d
+* **windows:** fix windows logo function 2eb5f0c
+* **os-detection:** Fix os-detection on linux e6c36f8
+
+
 ### [v0.6.13](https://github.com/devanlooches/rocketfetch/compare/v0.6.12...v0.6.13) (2022-11-05)
 
 
