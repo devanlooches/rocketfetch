@@ -999,7 +999,7 @@ mod test {
 
     #[test]
     fn check_default_config() {
-        let config = Config::from_config(String::from("config.toml"));
+        let config = Config::from_config(String::from("windows_default.toml"));
         assert_eq!(Config::default(), config);
     }
 
