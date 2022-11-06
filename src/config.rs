@@ -897,7 +897,7 @@ mod test {
     fn check_classic_print() {
         let config = Config {
             module_order: String::from(
-                "user delimiter os host kernel uptime packages shell resolution window-manager cpu",
+                "user delimiter os kernel uptime packages shell resolution cpu",
             ),
             wrap_lines: false,
             ..Config::default()
@@ -929,7 +929,7 @@ mod test {
     fn check_side_block_print() {
         let config = Config {
             module_order: String::from(
-                "user delimiter os host kernel uptime packages shell resolution window-manager cpu",
+                "user delimiter os kernel uptime packages shell resolution cpu",
             ),
             wrap_lines: false,
             ..Config::default()
@@ -961,7 +961,7 @@ mod test {
     fn check_bottom_block_print() {
         let config = Config {
             module_order: String::from(
-                "user delimiter os host kernel uptime packages shell resolution window-manager cpu",
+                "user delimiter os kernel uptime packages shell resolution cpu",
             ),
             wrap_lines: false,
             ..Config::default()
