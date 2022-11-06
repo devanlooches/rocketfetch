@@ -719,13 +719,10 @@ mod test {
         println!("\n\n{}", Config::default().get_logo().join("\n"));
     }
 
+    #[ignore = "Metrics not available on virtual machines"]
     #[test]
     fn check_classic_print() {
-        let config = Config {
-            module_order: String::from("user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager cpu"),
-            wrap_lines: false,
-            ..Config::default()
-        };
+        let config = Config::default();
         config.print_classic(false);
     }
 
@@ -750,9 +747,12 @@ mod test {
     }
 
     #[test]
+    #[ignore = "Metrics not available on virtual machines"]
     fn check_side_block_print() {
         let config = Config {
-            module_order: String::from("user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager cpu"),
+            module_order: String::from(
+                "user delimiter os kernel uptime packages shell resolution window-manager cpu",
+            ),
             wrap_lines: false,
             ..Config::default()
         };
@@ -780,12 +780,9 @@ mod test {
     }
 
     #[test]
+    #[ignore = "Metrics not available on virtual machines"]
     fn check_bottom_block_print() {
-        let config = Config {
-            module_order: String::from("user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager cpu"),
-            wrap_lines: false,
-            ..Config::default()
-        };
+        let config = Config::default();
         config.print_bottom_block(false);
     }
 
