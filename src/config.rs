@@ -713,6 +713,7 @@ impl Config {
 }
 
 impl Default for Config {
+    #[cfg(not(target_os = "windows"))]
     fn default() -> Self {
         Self {
             offset: 4,
@@ -720,6 +721,31 @@ impl Default for Config {
             module_order: String::from(
                 "user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager terminal cpu",
             ),
+            logo_cmd: String::from("auto"),
+            format: Format::default(),
+            user: User::default(),
+            delimiter: Delimiter::default(),
+            os: Os::default(),
+            host: Host::default(),
+            kernel: Kernel::default(),
+            uptime: Uptime::default(),
+            custom_modules: HashMap::new(),
+            packages: Packages::default(),
+            shell: Shell::default(),
+            resolution: Resolution::default(),
+            desktop_environment: DesktopEnvironment::default(),
+            window_manager: WindowManager::default(),
+            terminal: Terminal::default(),
+            cpu: Cpu::default(),
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    fn default() -> Self {
+        Self {
+            offset: 4,
+            wrap_lines: true,
+            module_order: String::from("user delimiter os host kernel uptime packages cpu"),
             logo_cmd: String::from("auto"),
             format: Format::default(),
             user: User::default(),
