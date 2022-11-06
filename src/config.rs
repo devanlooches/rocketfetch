@@ -409,7 +409,7 @@ impl Config {
         }
     }
 
-    #[cfg(target_os = "macos")]
+    #[cfg(target_os = "windows")]
     fn logo() -> Vec<String> {
         let c1 = Style::new().color256(6).bold();
         vec![
