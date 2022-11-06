@@ -822,6 +822,7 @@ mod module_tests {
     }
 
     #[test]
+    #[ignore = "Metric unavailable on virtual machine"]
     fn get_desktop_environment() {
         let general_readout = GeneralReadout::new();
         println!(
@@ -831,6 +832,7 @@ mod module_tests {
     }
 
     #[test]
+    #[ignore = "Metric unavailable on virtual machine"]
     fn get_window_manager() {
         let general_readout = GeneralReadout::new();
         println!(
