@@ -767,7 +767,7 @@ impl Default for Config {
 }
 
 #[cfg(test)]
-#[cfg(not(target_os = "windows"))]
+#[cfg(target_os = "macos")]
 mod test {
     use pretty_assertions::assert_eq;
 
@@ -848,6 +848,121 @@ mod test {
     fn check_bottom_block_print() {
         let config = Config {
             module_order: String::from("user delimiter os host kernel uptime packages shell resolution desktop-environment window-manager cpu"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_bottom_block(false);
+    }
+
+    #[test]
+    fn check_bottom_block_print_longer_info() {
+        let config = Config {
+            module_order: String::from("user user user user user user user user user user user user user user user user user user user user user user user"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_bottom_block(false);
+    }
+
+    #[test]
+    fn check_bottom_block_print_longer_logo() {
+        let config = Config {
+            module_order: String::from("user"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_bottom_block(false);
+    }
+}
+
+#[cfg(test)]
+#[cfg(target_os = "linux")]
+mod test {
+    use pretty_assertions::assert_eq;
+
+    use super::Config;
+
+    #[test]
+    fn check_default_config() {
+        let config = Config::from_config(String::from("config.toml"));
+        assert_eq!(Config::default(), config);
+    }
+
+    #[test]
+    fn check_os() {
+        println!("\n\n{}", Config::default().get_logo().join("\n"));
+    }
+
+    #[test]
+    fn check_classic_print() {
+        let config = Config {
+            module_order: String::from(
+                "user delimiter os host kernel uptime packages shell resolution window-manager cpu",
+            ),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_classic(false);
+    }
+
+    #[test]
+    fn check_classic_print_longer_info() {
+        let config = Config {
+            module_order: String::from("user user user user user user user user user user user user user user user user user user user user user user user"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_classic(false);
+    }
+
+    #[test]
+    fn check_classic_print_longer_logo() {
+        let config = Config {
+            module_order: String::from("user"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_classic(false);
+    }
+
+    #[test]
+    fn check_side_block_print() {
+        let config = Config {
+            module_order: String::from(
+                "user delimiter os host kernel uptime packages shell resolution window-manager cpu",
+            ),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_side_block(false);
+    }
+
+    #[test]
+    fn check_side_block_print_longer_info() {
+        let config = Config {
+            module_order: String::from("user user user user user user user user user user user user user user user user user user user user user user user"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_side_block(false);
+    }
+
+    #[test]
+    fn check_side_block_print_longer_logo() {
+        let config = Config {
+            module_order: String::from("user"),
+            wrap_lines: false,
+            ..Config::default()
+        };
+        config.print_side_block(false);
+    }
+
+    #[test]
+    fn check_bottom_block_print() {
+        let config = Config {
+            module_order: String::from(
+                "user delimiter os host kernel uptime packages shell resolution window-manager cpu",
+            ),
             wrap_lines: false,
             ..Config::default()
         };
