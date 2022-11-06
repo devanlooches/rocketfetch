@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/devanlooches/rocketfetch/compare/v0.6.13...HEAD) (2022-11-06)
+## [0.7.0](https://github.com/devanlooches/rocketfetch/compare/v0.6.13...HEAD) (2022-11-06)
 
 ### Features
 
