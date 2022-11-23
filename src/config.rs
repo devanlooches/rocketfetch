@@ -117,112 +117,43 @@ impl Config {
         use std::thread;
         let modules = self.module_order.split_whitespace().collect::<Vec<&str>>();
         let mut modules_unordered = HashMap::new();
-        let mut handles = Vec::new();
-        let self_clone = self.clone();
-        let user = self_clone.user;
-        let os = self_clone.os;
-        let host = self_clone.host;
-        let kernel = self_clone.kernel;
-        let uptime = self_clone.uptime;
-        let packages = self_clone.packages;
-        let shell = self_clone.shell;
-        let resolution = self_clone.resolution;
-        let desktop_environment = self_clone.desktop_environment;
-        let window_manager = self_clone.window_manager;
-        let terminal = self_clone.terminal;
-        let cpu = self_clone.cpu;
-        let custom = self_clone.custom_modules;
 
-        if modules.contains(&"user") {
-            let handle =
-                thread::spawn(move || (String::from("user"), user.get_info().replace('\n', " ")));
-            handles.push(handle);
-        }
-        if modules.contains(&"os") {
-            let handle =
-                thread::spawn(move || (String::from("os"), os.get_info().replace('\n', " ")));
-            handles.push(handle);
-        }
-        if modules.contains(&"host") {
-            let handle =
-                thread::spawn(move || (String::from("host"), host.get_info().replace('\n', " ")));
-            handles.push(handle);
-        }
-        if modules.contains(&"kernel") {
-            let handle = thread::spawn(move || -> (String, String) {
-                (String::from("kernel"), kernel.get_info().replace('\n', " "))
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"uptime") {
-            let handle = thread::spawn(move || {
-                (String::from("uptime"), uptime.get_info().replace('\n', " "))
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"packages") {
-            let handle = thread::spawn(move || {
-                (
-                    String::from("packages"),
-                    packages.get_info().replace('\n', " "),
-                )
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"shell") {
-            let handle =
-                thread::spawn(move || (String::from("shell"), shell.get_info().replace('\n', " ")));
-            handles.push(handle);
-        }
-        if modules.contains(&"resolution") {
-            let handle = thread::spawn(move || {
-                (
-                    String::from("resolution"),
-                    resolution.get_info().replace('\n', " "),
-                )
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"desktop-environment") {
-            let handle = thread::spawn(move || {
-                (
-                    String::from("desktop-environment"),
-                    desktop_environment.get_info().replace('\n', " "),
-                )
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"window-manager") {
-            let handle = thread::spawn(move || {
-                (
-                    String::from("window-manager"),
-                    window_manager.get_info().replace('\n', " "),
-                )
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"terminal") {
-            let handle = thread::spawn(move || {
-                (
-                    String::from("terminal"),
-                    terminal.get_info().replace('\n', " "),
-                )
-            });
-            handles.push(handle);
-        }
-        if modules.contains(&"cpu") {
-            let handle =
-                thread::spawn(move || (String::from("cpu"), cpu.get_info().replace('\n', " ")));
-            handles.push(handle);
-        }
-        for (name, module) in custom {
-            let handle = thread::spawn(move || (name, module.get_info().replace('\n', " ")));
-            handles.push(handle);
-        }
-        for handle in handles {
-            let joined_handle = handle.join().unwrap();
-            modules_unordered.insert(joined_handle.0, joined_handle.1);
-        }
+        thread::scope(|s| {
+            let mut handles = Vec::new();
+            macro_rules! add_module {
+                ($name:expr, $name_lit:literal) => {
+                    if modules.contains(&$name_lit) {
+                        let handle = s.spawn(|| -> (String, String) {
+                            (String::from($name_lit), $name.get_info().replace('\n', " "))
+                        });
+                        handles.push(handle);
+                    }
+                };
+            }
+            add_module!(self.user, "user");
+            add_module!(self.os, "os");
+            add_module!(self.host, "host");
+            add_module!(self.kernel, "kernel");
+            add_module!(self.uptime, "uptime");
+            add_module!(self.packages, "packages");
+            add_module!(self.shell, "shell");
+            add_module!(self.resolution, "resolution");
+            add_module!(self.desktop_environment, "desktop-environment");
+            add_module!(self.window_manager, "window-manager");
+            add_module!(self.terminal, "terminal");
+            add_module!(self.cpu, "cpu");
+            for (name, module) in &self.custom_modules {
+                let handle = s.spawn(|| -> (String, String) {
+                    (name.clone(), module.get_info().replace('\n', " "))
+                });
+                handles.push(handle);
+            }
+            for handle in handles {
+                let joined_handle = handle.join().unwrap();
+                modules_unordered.insert(joined_handle.0, joined_handle.1);
+            }
+        });
+        // let modules_unordered = modules_unordered.into_inner().unwrap();
         let mut vec: Vec<String> = Vec::new();
         for (i, module) in self.module_order.split_whitespace().enumerate() {
             match module {
