@@ -39,10 +39,15 @@ neofetch while also improving the configuration. I modeled my configuration afte
 [Starship](https://github.com/starship/starship).
 
 # Installation <a name="installation"></a>
+- Using Cargo:
 ```bash
 cargo install rocketfetch
 ```
 If this fails to install, please make sure you have the most recent Rust version installed.
+- Using Homebrew For MacOSX:
+```bash
+brew install devanlooches/rocketfetch/rocketfetch
+```
 
 # Command Line <a name="cli"></a>
 ```bash
