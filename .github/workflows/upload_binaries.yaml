@@ -25,6 +25,7 @@ jobs:
         id: latest-tag
         run: |
           echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          echo $(git describe --tags --abbrev=0)
         shell: bash
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
