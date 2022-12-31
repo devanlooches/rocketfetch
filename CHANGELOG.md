@@ -1,6 +1,14 @@
 
 
-## Unreleased
+## 0.7.3 (2022-12-31)
+
+<csr-id-0a453ced50237363b7a77b06434f17f425b831ad/>
+<csr-id-b43b69f2beea1da1ef2876c4f8a5773eddef4dc9/>
+<csr-id-b96f0c3710e16c5b26b14d04f0b356c1d1a3f09a/>
+<csr-id-4c12302ad6d82c401fbeb9a4d956e645139522b3/>
+<csr-id-73a22ab9d2c9a857e3e5ea22ea16082c39ded65c/>
+<csr-id-07816a703d148ac5a56dcef8769cc464d80652fb/>
+<csr-id-0587426ad5553e21e1594e411c7eba6d6fc981a4/>
 
 ### Chore
 
@@ -13,6 +21,29 @@
 
 ### Other
 
+ - <csr-id-d112910cb88e9bcaafe7234907e6e3091f00d13d/> Fix semver prefix for homebrew version
+ - <csr-id-ce9abcace17781bc07bd8614cf01880a7ff78386/> Fix semver prefix for homebrew version
+ - <csr-id-26444d91d904a95678b8d007ad5968d9be459e10/> Fix bug with shasum output
+ - <csr-id-2c165732dbdd84bb003d636548a92ca19f7d504d/> add verbose flag to bump-formula-pr command
+ - <csr-id-dd23b2626101b2d6a2c5ae24b7d1a97e3d7c4f4e/> cd into tap directory
+ - <csr-id-ccdd0d2fcad91b3c67866167f990298eaf3fac4c/> Update tap name
+ - <csr-id-8a359236274a9987debf459235b5947e24d86fea/> Add space to last command
+ - <csr-id-3bb8b8f8d21b738254108a268ca37d6ba8e69a39/> Update tap name
+ - <csr-id-2c0faf3a98a8cb36ad7f1eb9547f118d64ec52ca/> Add clone repository step
+ - <csr-id-ceac2164cd00663bf59cc650321ec90a8ac2b1d8/> Debug version number
+ - <csr-id-755eabb8ce0fbff94b155249b1523d4095bd434e/> Update tap name
+ - <csr-id-904e222f43994378888f9f258a14b3e761f1dd38/> Change to macos platform and update tap name
+ - <csr-id-f8369ad11f6f573027abaaec5ea86d37d87c225a/> Add bump homebrew tap to upload_binaries workflow
+ - <csr-id-279ecfb78beaa2643ab9fe6c4d489e560208121f/> Add upload binaries to github release workflow
+
+### Chore
+
+ - <csr-id-3be5ae2aa71c33e279774aa614be1deca6f357d7/> Upgrade dependencies
+ - <csr-id-023802cf66445df0d91c9b880a788954ada355ee/> Add brew installation to README
+ - <csr-id-4eeab3632c037582bc93260667039e89b9b1c40f/> Update CHANGELOG
+
+### Other
+
  - <csr-id-0587426ad5553e21e1594e411c7eba6d6fc981a4/> Remove publishing workflow
 
 ### Commit Details
@@ -22,6 +53,23 @@
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Upgrade dependencies ([`3be5ae2`](https://github.com/devanlooches/rocketfetch/commit/3be5ae2aa71c33e279774aa614be1deca6f357d7))
+    - Fix semver prefix for homebrew version ([`d112910`](https://github.com/devanlooches/rocketfetch/commit/d112910cb88e9bcaafe7234907e6e3091f00d13d))
+    - Fix semver prefix for homebrew version ([`ce9abca`](https://github.com/devanlooches/rocketfetch/commit/ce9abcace17781bc07bd8614cf01880a7ff78386))
+    - Fix bug with shasum output ([`26444d9`](https://github.com/devanlooches/rocketfetch/commit/26444d91d904a95678b8d007ad5968d9be459e10))
+    - add verbose flag to bump-formula-pr command ([`2c16573`](https://github.com/devanlooches/rocketfetch/commit/2c165732dbdd84bb003d636548a92ca19f7d504d))
+    - cd into tap directory ([`dd23b26`](https://github.com/devanlooches/rocketfetch/commit/dd23b2626101b2d6a2c5ae24b7d1a97e3d7c4f4e))
+    - Update tap name ([`ccdd0d2`](https://github.com/devanlooches/rocketfetch/commit/ccdd0d2fcad91b3c67866167f990298eaf3fac4c))
+    - Add space to last command ([`8a35923`](https://github.com/devanlooches/rocketfetch/commit/8a359236274a9987debf459235b5947e24d86fea))
+    - Update tap name ([`3bb8b8f`](https://github.com/devanlooches/rocketfetch/commit/3bb8b8f8d21b738254108a268ca37d6ba8e69a39))
+    - Add clone repository step ([`2c0faf3`](https://github.com/devanlooches/rocketfetch/commit/2c0faf3a98a8cb36ad7f1eb9547f118d64ec52ca))
+    - Debug version number ([`ceac216`](https://github.com/devanlooches/rocketfetch/commit/ceac2164cd00663bf59cc650321ec90a8ac2b1d8))
+    - Update tap name ([`755eabb`](https://github.com/devanlooches/rocketfetch/commit/755eabb8ce0fbff94b155249b1523d4095bd434e))
+    - Change to macos platform and update tap name ([`904e222`](https://github.com/devanlooches/rocketfetch/commit/904e222f43994378888f9f258a14b3e761f1dd38))
+    - Add bump homebrew tap to upload_binaries workflow ([`f8369ad`](https://github.com/devanlooches/rocketfetch/commit/f8369ad11f6f573027abaaec5ea86d37d87c225a))
+    - Add brew installation to README ([`023802c`](https://github.com/devanlooches/rocketfetch/commit/023802cf66445df0d91c9b880a788954ada355ee))
+    - Add upload binaries to github release workflow ([`279ecfb`](https://github.com/devanlooches/rocketfetch/commit/279ecfb78beaa2643ab9fe6c4d489e560208121f))
+    - Update CHANGELOG ([`4eeab36`](https://github.com/devanlooches/rocketfetch/commit/4eeab3632c037582bc93260667039e89b9b1c40f))
     - Update CHANGELOG ([`0a453ce`](https://github.com/devanlooches/rocketfetch/commit/0a453ced50237363b7a77b06434f17f425b831ad))
     - Remove cliff.toml file ([`b43b69f`](https://github.com/devanlooches/rocketfetch/commit/b43b69f2beea1da1ef2876c4f8a5773eddef4dc9))
     - Update CHANGELOG ([`b96f0c3`](https://github.com/devanlooches/rocketfetch/commit/b96f0c3710e16c5b26b14d04f0b356c1d1a3f09a))
@@ -32,6 +80,8 @@
 </details>
 
 ## v0.7.2 (2022-11-24)
+
+<csr-id-d7a023b764c69e209c155a93e840c6da16482760/>
 
 ### Other
 
@@ -55,6 +105,10 @@
 
 ## v0.7.1 (2022-11-06)
 
+<csr-id-5665006b39ea38991784c7278e272e6f0a3a3928/>
+<csr-id-1f6c8bebb354b039ddf9ca600a0b43f2a776a439/>
+<csr-id-155452da8d55f933299d29cbe0a262b94be9a35e/>
+
 ### Chore
 
  - <csr-id-5665006b39ea38991784c7278e272e6f0a3a3928/> Release new version
@@ -74,6 +128,27 @@
 </details>
 
 ## v0.7.0 (2022-11-06)
+
+<csr-id-85c2d00ddf8d355c639fd47589e1f783feee2ea0/>
+<csr-id-5a0d8cf0c85a8218c34f48dde1f6024212f1787b/>
+<csr-id-fe55d16585dfc3b385c1fc5df6a2db767bbd9c3b/>
+<csr-id-85cd368c75bd39454c2d8bcb4c2b10ae4589e53f/>
+<csr-id-865df1ab19bc82491bc04fe0cea0c071c52cc12d/>
+<csr-id-6550dbda692983c5e43d7ad80d49f2a2c97104de/>
+<csr-id-12bfa8a36dc8bb130e7284c866f83feb38394d03/>
+<csr-id-4cf4b2848636cbc695e549c425caee97fdcdc74d/>
+<csr-id-9345314fe7e64f6c659439122aacc96250879a59/>
+<csr-id-c1d47bdf405adda543181feea144d0f6839a94c8/>
+<csr-id-de24cf54b1308467ae9f952193fbfb6621cfdb9c/>
+<csr-id-6ee2026dfaee58026d7981d98b56102e3818926a/>
+<csr-id-d32c9d6457db811f93df4b150e98769219e86d4a/>
+<csr-id-b2d5eceed56f8c4f20af2d3017821a28f4b1b319/>
+<csr-id-da18ea1e198723c7558e5bacfbc45c9ae79fe4a5/>
+<csr-id-8d6e3a88523ab601bed981234642f27c2f1d7d8c/>
+<csr-id-109d7feeb88ffad281d0862bfb750eab4e29d270/>
+<csr-id-0a53c0d0903553ec6c7b21dd4ce2b499c815b21d/>
+<csr-id-971e622f033f6066e8628712a01e55c208d71d71/>
+<csr-id-b8769d229e7730519b9696dd7dee972542276098/>
 
 ### Chore
 
@@ -158,6 +233,10 @@
 
 ## v0.6.13 (2022-11-05)
 
+<csr-id-a3efd60047d7eb19490b961faead6e09c94cf432/>
+<csr-id-ff9e0996cb617ba832afbd347ce35704f48eb3b2/>
+<csr-id-94b6781b9926fff66de636926d8da93811aedd20/>
+
 ### Other
 
  - <csr-id-a3efd60047d7eb19490b961faead6e09c94cf432/> Fix publish workflow
@@ -180,6 +259,28 @@
 </details>
 
 ## v0.6.12 (2022-11-05)
+
+<csr-id-cb0062c92582f3e1bb40db5904dae4f317c2b796/>
+<csr-id-9b85f05234e38d5bb6bf9d3f15cfef2a3a74f151/>
+<csr-id-bdb71b8984cdcf8d3b9e3c49b022ae804d3592e4/>
+<csr-id-8c7252bea2de41f6e0e029ea4ee891ddca1072f8/>
+<csr-id-b3d796607864486dba457605f7679d146bec8ff2/>
+<csr-id-d830fd5fa4071c408f68265f06dd7c4579958c7f/>
+<csr-id-0772fd37882dcde348759ac091aacb74b7719024/>
+<csr-id-afdae4d4d1c6e8b3ddadea6ac20dbfa06ae08166/>
+<csr-id-e4d50e9431a74536a955ad25423c92c73c954ad4/>
+<csr-id-1c4dd8b9626f08996752b52c12889ca435aa5131/>
+<csr-id-9cf064366ef7a47fcf3bc2dd75ef0fb169888418/>
+<csr-id-73157b796bba9dcc1574ed836bd632a523d5ef3e/>
+<csr-id-4062ed8f948fcab666e218375eae48fd42e51ab0/>
+<csr-id-3dd643cfb69f48183e33c5c2e021340780365a60/>
+<csr-id-45f1046b4332e49c24a8dc72535fe216a4115c40/>
+<csr-id-11e95d89c48d1de17b85b9cc2cff10fd099a446d/>
+<csr-id-b9901a4a4c2e6ae8fbc6e5691d2dcb18abf27f6c/>
+<csr-id-218670a75e3680ae827bb1abf1a07729f0f5fef1/>
+<csr-id-da0c66f04601d8ef6e58f13ac81e1830cadcb461/>
+<csr-id-d1ade04fc789acc94a531b531a8299e36f198046/>
+<csr-id-c14c5f946a60931329fd4a554c72ebf12794f7e9/>
 
 ### Chore
 
@@ -262,6 +363,9 @@
 </details>
 
 ## v0.6.9 (2022-10-01)
+
+<csr-id-632789a09c34f73e428c8d15fd7028038e9b79d3/>
+<csr-id-a9340f27b997d7a69fc2a5666c5ceba41ffe1083/>
 
 ### Chore
 
@@ -413,23 +517,6 @@
     - Update version ([`63fb6fa`](https://github.com/devanlooches/rocketfetch/commit/63fb6fae01c6ed05c3ec4151e9613d861b52993e))
 </details>
 
-## v0.2.0 (2021-07-18)
-
-### Commit Details
-
-<csr-read-only-do-not-edit/>
-
-<details><summary>view details</summary>
-
- * **Uncategorized**
-    - Update README.md ([`7228604`](https://github.com/devanlooches/rocketfetch/commit/72286045563371736fe376f664b7f7300ab9aaa1))
-    - Fix Side-Table and remove bottom padding option ([`0607f50`](https://github.com/devanlooches/rocketfetch/commit/0607f5023ccd14eebbc7ba1fe3f5db62a4b9c4d5))
-    - Fix Side-Table and remove bottom padding option ([`f209b7d`](https://github.com/devanlooches/rocketfetch/commit/f209b7d1bb7b8393d15f8f1098d09fca7e87dce0))
-    - Fix Side-Table and remove bottom padding option ([`ead9609`](https://github.com/devanlooches/rocketfetch/commit/ead9609a8a3641fc96cd1e49e35a1e788a6d4dfd))
-    - Fix Side-Table and remove bottom padding option ([`64b055b`](https://github.com/devanlooches/rocketfetch/commit/64b055b63e3d57b6cdd3c51a6aa1f657534a798f))
-    - Fix Side-Table and remove bottom padding option ([`7057c41`](https://github.com/devanlooches/rocketfetch/commit/7057c41ff3ccea8444f4714c6241f1807e3cbe37))
-</details>
-
 ## v0.2.5 (2021-07-17)
 
 ### Commit Details
@@ -492,5 +579,22 @@
     - Added from_config method ([`0c54470`](https://github.com/devanlooches/rocketfetch/commit/0c54470dd50643b6df2f853e464095f1c6797c34))
     - Update Gitignore ([`5234893`](https://github.com/devanlooches/rocketfetch/commit/523489345ce85bae8fde186a41025eba1437f83c))
     - Initial Commit ([`446b98c`](https://github.com/devanlooches/rocketfetch/commit/446b98c5fe231e835ba4f30c80a668ac4cb73939))
+</details>
+
+## v0.2.0 (2021-07-18)
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Update README.md ([`7228604`](https://github.com/devanlooches/rocketfetch/commit/72286045563371736fe376f664b7f7300ab9aaa1))
+    - Fix Side-Table and remove bottom padding option ([`0607f50`](https://github.com/devanlooches/rocketfetch/commit/0607f5023ccd14eebbc7ba1fe3f5db62a4b9c4d5))
+    - Fix Side-Table and remove bottom padding option ([`f209b7d`](https://github.com/devanlooches/rocketfetch/commit/f209b7d1bb7b8393d15f8f1098d09fca7e87dce0))
+    - Fix Side-Table and remove bottom padding option ([`ead9609`](https://github.com/devanlooches/rocketfetch/commit/ead9609a8a3641fc96cd1e49e35a1e788a6d4dfd))
+    - Fix Side-Table and remove bottom padding option ([`64b055b`](https://github.com/devanlooches/rocketfetch/commit/64b055b63e3d57b6cdd3c51a6aa1f657534a798f))
+    - Fix Side-Table and remove bottom padding option ([`7057c41`](https://github.com/devanlooches/rocketfetch/commit/7057c41ff3ccea8444f4714c6241f1807e3cbe37))
 </details>
 
