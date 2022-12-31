@@ -49,7 +49,7 @@ jobs:
       env: 
         HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
       run: |
-        brew tap extrawurst/tap
+        brew tap devanlooches/rocketfetch
         brew bump-formula-pr -f --version=${{ steps.latest-tag.outputs.tag }} --no-browse --no-audit \
         --sha256=${{ steps.shasum.outputs.sha }} \
-        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz" devanlooches/rocketfetch
+        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz" devanlooches/rocketfetch/rocketfetch
