@@ -33,7 +33,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           archive: $bin-$target-$tag
   bump-brew-tap:
-    runs-on: ubuntu-latest
+    needs: upload-assets
+    runs-on: macos-latest
     steps:
     - name: Get Latest Tag
       id: latest-tag
@@ -51,5 +52,4 @@ jobs:
         brew tap extrawurst/tap
         brew bump-formula-pr -f --version=${{ steps.latest-tag.outputs.tag }} --no-browse --no-audit \
         --sha256=${{ steps.shasum.outputs.sha }} \
-        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz" \
-        extrawurst/tap/gitui
+        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz" devanlooches/rocketfetch
