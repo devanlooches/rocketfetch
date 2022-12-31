@@ -48,12 +48,13 @@ jobs:
     - name: Set SHA
       id: shasum
       run: |
-        echo "sha=$(wget -O rocketfetch https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz && shasum -a 256 rocketfetch)" >> $GITHUB_OUTPUT
+        echo "sha=$(wget -O rocketfetch https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz && shasum -a 256 rocketfetch | awk '{ print $1 }')" >> $GITHUB_OUTPUT
     - name: Bump Brew
       env: 
         HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
       run: |
         brew tap devanlooches/rocketfetch && cd $(brew --repo devanlooches/rocketfetch)
-        brew bump-formula-pr -f --version=${{ steps.latest-tag.outputs.tag }} --no-browse --no-audit \
-        --sha256=$( echo ${{ steps.shasum.outputs.sha }} | sed 's/^.//' ) \
-        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz"
+        brew bump-formula-pr -f --version=$( echo ${{ steps.latest-tag.outputs.tag }} | sed 's/^.//' ) --no-browse --no-audit \
+        --sha256=${{ steps.shasum.outputs.sha }} \
+        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz" \
+        rocketfetch
