@@ -13,16 +13,16 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 any_terminal_size = { version = "0.1.21" }
-console = "0.15.2"
+console = "0.15.3"
 dirs = { version = "4.0.0" }
 libmacchina = { version = "6.3.1" }
 regex = { version = "1.7.0" }
 secfmt = { version = "0.1.1" }
-serde = { version = "1.0.147" }
-serde_derive = { version = "1.0.147" }
+serde = { version = "1.0.152" }
+serde_derive = { version = "1.0.152" }
 structopt = { version = "0.3.26" }
 textwrap = { version = "0.16.0" }
-toml = { version = "0.5.9" }
+toml = { version = "0.5.10" }
 user-error = { version = "1.2.8" }
 
 [dev-dependencies]
