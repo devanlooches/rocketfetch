@@ -32,3 +32,24 @@ jobs:
           bin: rocketfetch
           token: ${{ secrets.GITHUB_TOKEN }}
           archive: $bin-$target-$tag
+  bump-brew-tap:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get Latest Tag
+      id: latest-tag
+      run: |
+        echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Set SHA
+      id: shasum
+      run: |
+        echo "sha=$(wget -O rocketfetch https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz && shasum -a 256 rocketfetch)" >> $GITHUB_OUTPUT
+    - name: Bump Brew
+      env: 
+        HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
+      run: |
+        brew tap extrawurst/tap
+        brew bump-formula-pr -f --version=${{ steps.latest-tag.outputs.tag }} --no-browse --no-audit \
+        --sha256=${{ steps.shasum.outputs.sha }} \
+        --url="https://github.com/devanlooches/rocketfetch/releases/download/${{ steps.latest-tag.outputs.tag }}/rocketfetch-x86_64-apple-darwin-${{ steps.latest-tag.outputs.tag }}.tar.gz" \
+        extrawurst/tap/gitui
