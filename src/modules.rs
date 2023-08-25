@@ -140,7 +140,7 @@ impl Os {
                 KernelReadout::new().os_release(),
                 "Failed to get windows version"
             );
-            return format!("Windows {}", version);
+            return format!("Windows {version}");
         }
         handle_error!(general_readout.os_name(), "Failed to find OS name")
     }
@@ -606,7 +606,7 @@ mod module_tests {
         for (name, num) in package {
             packages.push_str(format!("{} ({}) ", num, name.to_string()).as_str());
         }
-        println!("Packages: {}", packages);
+        println!("Packages: {packages}");
     }
 
     #[test]
@@ -620,10 +620,10 @@ mod module_tests {
                 libmacchina::traits::ShellKind::Default,
             )
             .unwrap();
-        let version = run_cmd_unsafe(format!("{} --version", shell).as_str());
+        let version = run_cmd_unsafe(format!("{shell} --version").as_str());
         let locations = ver_regex.find(&version).unwrap();
         let version = &version[locations.start()..locations.end()];
-        println!("Shell: {} version {}", shell, version);
+        println!("Shell: {shell} version {version}");
     }
 
     #[test]

@@ -64,7 +64,7 @@ impl Config {
                     let mut column: usize = 0;
                     let mut last = String::new();
                     let r = r.to_string();
-                    println!("{}", r);
+                    println!("{r}");
                     let error = handle_error!(
                         r.split("at").last().ok_or(""),
                         "Failed to get line and column number of configuration error"
@@ -163,7 +163,7 @@ impl Config {
                         .replace('\n', " "),
                 ),
                 v => {
-                    let error = format!("Unknown module: {}", v);
+                    let error = format!("Unknown module: {v}");
                     vec.push(
                         handle_error!(
                             modules_unordered.get(&String::from(v)).ok_or(""),
@@ -573,7 +573,7 @@ impl Config {
         counter += 1;
 
         sidelogo.iter().skip(counter).for_each(|i| {
-            println!("{}", i);
+            println!("{i}");
         });
     }
 
@@ -586,7 +586,7 @@ impl Config {
         let info_maxlength = Self::info_maxlength(&info);
 
         for line in sidelogo {
-            println!("{}", line);
+            println!("{line}");
         }
         println!(
             "{}{}{}",
