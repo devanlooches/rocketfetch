@@ -322,19 +322,23 @@ impl Default for Shell {
 impl Shell {
     pub fn get_info(&self) -> String {
         use regex::Regex;
-        let ver_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
+        let ver_regex = Regex::new(r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.?(0|[1-9]\d*)?(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?").unwrap();
         let general_readout = &GeneralReadout::new();
         let shell = general_readout.shell(
             libmacchina::traits::ShellFormat::Relative,
             libmacchina::traits::ShellKind::Default,
         );
         let shell = handle_error!(shell, "Failed to get shell");
-        let version = Config::run_cmd(
-            format!("{} --version", shell).as_str(),
+        let version_output = Config::run_cmd(
+            format!("{shell} --version").as_str(),
             "Failed to get shell version",
         );
-        let locations = ver_regex.find(&version).unwrap();
-        let version = &version[locations.start()..locations.end()];
+        let version: String;
+        if let Some(locations) = ver_regex.find(&version_output) {
+            version = version_output[locations.start()..locations.end()].to_string();
+        } else {
+            version = String::from("(Unknown Version)");
+        }
         format!(
             "{}{} {}",
             Style::from_dotted_str(&self.pre_text_style).apply_to(&self.pre_text),
