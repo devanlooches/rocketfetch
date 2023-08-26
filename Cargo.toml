@@ -13,17 +13,17 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 any_terminal_size = { version = "0.1.21" }
-console = "0.15.3"
-dirs = { version = "4.0.0" }
+console = "0.15.7"
+dirs = "5.0.1"
 libmacchina = "7.1.0"
-regex = { version = "1.7.0" }
-secfmt = { version = "0.1.1" }
-serde = { version = "1.0.152" }
-serde_derive = { version = "1.0.152" }
-structopt = { version = "0.3.26" }
-textwrap = { version = "0.16.0" }
-toml = { version = "0.5.10" }
-user-error = { version = "1.2.8" }
+regex = "1.9.4"
+secfmt = "0.1.1"
+serde = "1.0.188"
+serde_derive = "1.0.188"
+structopt = "0.3.26"
+textwrap = "0.16.0"
+toml = "0.7.6"
+user-error = "1.2.8"
 
 [dev-dependencies]
 pretty_assertions = "1.3.0"
