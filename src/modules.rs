@@ -542,7 +542,6 @@ impl Default for Module {
 }
 
 #[cfg(test)]
-#[cfg(target_os = "macos")]
 mod module_tests {
     use super::*;
 
@@ -575,12 +574,22 @@ mod module_tests {
             println!("Linux Distro: {}", general_readout.distribution().unwrap());
         } else {
             println!("OS Name: {}", general_readout.os_name().unwrap());
+            println!("OS Release: {}", KernelReadout::new().os_release().unwrap());
         }
+    }
+
+    #[test]
+    fn get_build_version() {
         println!("Build Version: {}", run_cmd_unsafe("sw_vers -buildVersion"));
+    }
+
+    #[test]
+    fn get_arch() {
         println!("Arch: {}", run_cmd_unsafe("machine"));
     }
 
     #[test]
+    #[cfg(not(target_os = "linux"))]
     fn get_host() {
         let general_readout = GeneralReadout::new();
         println!("Host: {}", general_readout.machine().unwrap());
@@ -599,6 +608,7 @@ mod module_tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "linux"))]
     fn get_packages() {
         let package_readout = PackageReadout::new();
         let package = package_readout.count_pkgs();
@@ -610,9 +620,10 @@ mod module_tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "windows"))]
     fn get_shell() {
         use regex::Regex;
-        let ver_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
+        let ver_regex = Regex::new(r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.?(0|[1-9]\d*)?(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?").unwrap();
         let general_readout = &GeneralReadout::new();
         let shell = general_readout
             .shell(
@@ -627,12 +638,14 @@ mod module_tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "windows"))]
     fn get_resolution() {
         let general_readout = GeneralReadout::new();
         println!("Resolution: {}", general_readout.resolution().unwrap());
     }
 
     #[test]
+    #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
     fn get_desktop_environment() {
         let general_readout = GeneralReadout::new();
         println!(
@@ -642,6 +655,7 @@ mod module_tests {
     }
 
     #[test]
+    #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
     fn get_window_manager() {
         let general_readout = GeneralReadout::new();
         println!(
@@ -651,208 +665,7 @@ mod module_tests {
     }
 
     #[test]
-    #[ignore = "Metric not available on virtual machines"]
-    fn get_terminal_name() {
-        let general_readout = GeneralReadout::new();
-        println!("Terminal: {}", general_readout.terminal().unwrap());
-    }
-
-    #[test]
-    fn get_cpu() {
-        let general_readout = GeneralReadout::new();
-        println!("CPU: {}", general_readout.cpu_model_name().unwrap());
-    }
-}
-
-#[cfg(test)]
-#[cfg(target_os = "windows")]
-mod module_tests {
-    use super::*;
-
-    fn run_cmd_unsafe(cmd: &str) -> String {
-        use std::process::Command;
-        let output = Command::new("sh")
-            .args(["-c", cmd])
-            .output()
-            .unwrap()
-            .stdout;
-        String::from_utf8(output).unwrap().trim().to_string()
-    }
-
-    #[test]
-    fn get_username() {
-        let general_readout = GeneralReadout::new();
-        println!("Username: {}", general_readout.username().unwrap());
-    }
-
-    #[test]
-    fn get_hostname() {
-        let general_readout = GeneralReadout::new();
-        println!("Hostname: {}", general_readout.hostname().unwrap());
-    }
-
-    #[test]
-    fn get_os() {
-        let general_readout = GeneralReadout::new();
-        if cfg!(target_os = "linux") {
-            println!("Linux Distro: {}", general_readout.distribution().unwrap());
-        } else {
-            println!("OS Name: {}", general_readout.os_name().unwrap());
-        }
-        println!("Build Version: {}", run_cmd_unsafe("sw_vers -buildVersion"));
-        println!("Arch: {}", run_cmd_unsafe("machine"));
-    }
-
-    #[test]
-    fn get_host() {
-        let general_readout = GeneralReadout::new();
-        println!("Host: {}", general_readout.machine().unwrap());
-    }
-
-    #[test]
-    fn get_kernel() {
-        let kernel_readout = KernelReadout::new();
-        println!("Kernel: {}", kernel_readout.pretty_kernel().unwrap());
-    }
-
-    #[test]
-    fn get_uptime() {
-        let general_readout = GeneralReadout::new();
-        println!("Uptime: {}", general_readout.uptime().unwrap());
-    }
-
-    #[test]
-    fn get_packages() {
-        let package_readout = PackageReadout::new();
-        let package = package_readout.count_pkgs();
-        let mut packages = String::new();
-        for (name, num) in package {
-            packages.push_str(format!("{} ({}) ", num, name.to_string()).as_str());
-        }
-        println!("Packages: {}", packages);
-    }
-
-    #[test]
-    fn get_cpu() {
-        let general_readout = GeneralReadout::new();
-        println!("CPU: {}", general_readout.cpu_model_name().unwrap());
-    }
-}
-
-#[cfg(test)]
-#[cfg(target_os = "linux")]
-mod module_tests {
-    use super::*;
-
-    fn run_cmd_unsafe(cmd: &str) -> String {
-        use std::process::Command;
-        let output = Command::new("sh")
-            .args(["-c", cmd])
-            .output()
-            .unwrap()
-            .stdout;
-        String::from_utf8(output).unwrap().trim().to_string()
-    }
-
-    #[test]
-    fn get_username() {
-        let general_readout = GeneralReadout::new();
-        println!("Username: {}", general_readout.username().unwrap());
-    }
-
-    #[test]
-    fn get_hostname() {
-        let general_readout = GeneralReadout::new();
-        println!("Hostname: {}", general_readout.hostname().unwrap());
-    }
-
-    #[test]
-    fn get_os() {
-        let general_readout = GeneralReadout::new();
-        if cfg!(target_os = "linux") {
-            println!("Linux Distro: {}", general_readout.distribution().unwrap());
-        } else {
-            println!("OS Name: {}", general_readout.os_name().unwrap());
-        }
-        println!("Build Version: {}", run_cmd_unsafe("sw_vers -buildVersion"));
-        println!("Arch: {}", run_cmd_unsafe("machine"));
-    }
-
-    #[test]
-    #[ignore = "Metric unavailable on virtual machine"]
-    fn get_host() {
-        let general_readout = GeneralReadout::new();
-        println!("Host: {}", general_readout.machine().unwrap());
-    }
-
-    #[test]
-    fn get_kernel() {
-        let kernel_readout = KernelReadout::new();
-        println!("Kernel: {}", kernel_readout.pretty_kernel().unwrap());
-    }
-
-    #[test]
-    fn get_uptime() {
-        let general_readout = GeneralReadout::new();
-        println!("Uptime: {}", general_readout.uptime().unwrap());
-    }
-
-    #[test]
-    fn get_packages() {
-        let package_readout = PackageReadout::new();
-        let package = package_readout.count_pkgs();
-        let mut packages = String::new();
-        for (name, num) in package {
-            packages.push_str(format!("{} ({}) ", num, name.to_string()).as_str());
-        }
-        println!("Packages: {}", packages);
-    }
-
-    #[test]
-    fn get_shell() {
-        use regex::Regex;
-        let ver_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
-        let general_readout = &GeneralReadout::new();
-        let shell = general_readout
-            .shell(
-                libmacchina::traits::ShellFormat::Relative,
-                libmacchina::traits::ShellKind::Default,
-            )
-            .unwrap();
-        let version = run_cmd_unsafe(format!("{} --version", shell).as_str());
-        let locations = ver_regex.find(&version).unwrap();
-        let version = &version[locations.start()..locations.end()];
-        println!("Shell: {} version {}", shell, version);
-    }
-
-    #[test]
-    fn get_resolution() {
-        let general_readout = GeneralReadout::new();
-        println!("Resolution: {}", general_readout.resolution().unwrap());
-    }
-
-    #[test]
-    #[ignore = "Metric unavailable on virtual machine"]
-    fn get_desktop_environment() {
-        let general_readout = GeneralReadout::new();
-        println!(
-            "Desktop Environment: {}",
-            general_readout.desktop_environment().unwrap()
-        );
-    }
-
-    #[test]
-    #[ignore = "Metric unavailable on virtual machine"]
-    fn get_window_manager() {
-        let general_readout = GeneralReadout::new();
-        println!(
-            "Window Manager: {}",
-            general_readout.window_manager().unwrap()
-        );
-    }
-
-    #[test]
-    #[ignore = "Metric not available on virtual machines"]
+    #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
     fn get_terminal_name() {
         let general_readout = GeneralReadout::new();
         println!("Terminal: {}", general_readout.terminal().unwrap());
