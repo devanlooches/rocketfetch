@@ -1,5 +1,33 @@
 
 
+## 0.7.4 (2023-08-27)
+
+### Chore
+
+ - <csr-id-7c6c94ae13926cc1050116af518436e67f4d9e6d/> Update dependencies
+ - <csr-id-be12a3452cd189d2dda361fa75652bb86394603c/> Update Libmacchina dependency
+
+### Bug Fixes
+
+ - <csr-id-5054f9f964212947e45886ec3a298d3ea77d1555/> Don't panic when shell version not found
+
+### Test
+
+ - <csr-id-a8a0fb071d37c71cd4de20d75f9a53da88f27b6c/> Update module tests
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Update dependencies ([`7c6c94a`](https://github.com/devanlooches/rocketfetch/commit/7c6c94ae13926cc1050116af518436e67f4d9e6d))
+    - Update module tests ([`a8a0fb0`](https://github.com/devanlooches/rocketfetch/commit/a8a0fb071d37c71cd4de20d75f9a53da88f27b6c))
+    - Update Libmacchina dependency ([`be12a34`](https://github.com/devanlooches/rocketfetch/commit/be12a3452cd189d2dda361fa75652bb86394603c))
+    - Don't panic when shell version not found ([`5054f9f`](https://github.com/devanlooches/rocketfetch/commit/5054f9f964212947e45886ec3a298d3ea77d1555))
+</details>
+
 ## 0.7.3 (2022-12-31)
 
 <csr-id-0a453ced50237363b7a77b06434f17f425b831ad/>
@@ -9,6 +37,23 @@
 <csr-id-73a22ab9d2c9a857e3e5ea22ea16082c39ded65c/>
 <csr-id-07816a703d148ac5a56dcef8769cc464d80652fb/>
 <csr-id-0587426ad5553e21e1594e411c7eba6d6fc981a4/>
+<csr-id-d112910cb88e9bcaafe7234907e6e3091f00d13d/>
+<csr-id-ce9abcace17781bc07bd8614cf01880a7ff78386/>
+<csr-id-26444d91d904a95678b8d007ad5968d9be459e10/>
+<csr-id-2c165732dbdd84bb003d636548a92ca19f7d504d/>
+<csr-id-dd23b2626101b2d6a2c5ae24b7d1a97e3d7c4f4e/>
+<csr-id-ccdd0d2fcad91b3c67866167f990298eaf3fac4c/>
+<csr-id-8a359236274a9987debf459235b5947e24d86fea/>
+<csr-id-3bb8b8f8d21b738254108a268ca37d6ba8e69a39/>
+<csr-id-2c0faf3a98a8cb36ad7f1eb9547f118d64ec52ca/>
+<csr-id-ceac2164cd00663bf59cc650321ec90a8ac2b1d8/>
+<csr-id-755eabb8ce0fbff94b155249b1523d4095bd434e/>
+<csr-id-904e222f43994378888f9f258a14b3e761f1dd38/>
+<csr-id-f8369ad11f6f573027abaaec5ea86d37d87c225a/>
+<csr-id-279ecfb78beaa2643ab9fe6c4d489e560208121f/>
+<csr-id-3be5ae2aa71c33e279774aa614be1deca6f357d7/>
+<csr-id-023802cf66445df0d91c9b880a788954ada355ee/>
+<csr-id-4eeab3632c037582bc93260667039e89b9b1c40f/>
 
 ### Chore
 
@@ -53,12 +98,13 @@
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release rocketfetch v0.7.3 ([`e5e9dbe`](https://github.com/devanlooches/rocketfetch/commit/e5e9dbedeb3a490275513117b6c5ca1429c06f87))
     - Upgrade dependencies ([`3be5ae2`](https://github.com/devanlooches/rocketfetch/commit/3be5ae2aa71c33e279774aa614be1deca6f357d7))
     - Fix semver prefix for homebrew version ([`d112910`](https://github.com/devanlooches/rocketfetch/commit/d112910cb88e9bcaafe7234907e6e3091f00d13d))
     - Fix semver prefix for homebrew version ([`ce9abca`](https://github.com/devanlooches/rocketfetch/commit/ce9abcace17781bc07bd8614cf01880a7ff78386))
     - Fix bug with shasum output ([`26444d9`](https://github.com/devanlooches/rocketfetch/commit/26444d91d904a95678b8d007ad5968d9be459e10))
-    - add verbose flag to bump-formula-pr command ([`2c16573`](https://github.com/devanlooches/rocketfetch/commit/2c165732dbdd84bb003d636548a92ca19f7d504d))
-    - cd into tap directory ([`dd23b26`](https://github.com/devanlooches/rocketfetch/commit/dd23b2626101b2d6a2c5ae24b7d1a97e3d7c4f4e))
+    - Add verbose flag to bump-formula-pr command ([`2c16573`](https://github.com/devanlooches/rocketfetch/commit/2c165732dbdd84bb003d636548a92ca19f7d504d))
+    - Cd into tap directory ([`dd23b26`](https://github.com/devanlooches/rocketfetch/commit/dd23b2626101b2d6a2c5ae24b7d1a97e3d7c4f4e))
     - Update tap name ([`ccdd0d2`](https://github.com/devanlooches/rocketfetch/commit/ccdd0d2fcad91b3c67866167f990298eaf3fac4c))
     - Add space to last command ([`8a35923`](https://github.com/devanlooches/rocketfetch/commit/8a359236274a9987debf459235b5947e24d86fea))
     - Update tap name ([`3bb8b8f`](https://github.com/devanlooches/rocketfetch/commit/3bb8b8f8d21b738254108a268ca37d6ba8e69a39))
@@ -215,7 +261,7 @@
     - Setup for windows to work without unimplemented features out of the box ([`799d46b`](https://github.com/devanlooches/rocketfetch/commit/799d46bf468f97792a52c28aa97de891b57c86a1))
     - Add seperate windows tests taking out unimplemented features ([`8d6e3a8`](https://github.com/devanlooches/rocketfetch/commit/8d6e3a88523ab601bed981234642f27c2f1d7d8c))
     - Fix macos logo fetching function ([`6aa488d`](https://github.com/devanlooches/rocketfetch/commit/6aa488dba9e9a045e9a48d10c600f496e68db48d))
-    - fix windows logo function ([`2eb5f0c`](https://github.com/devanlooches/rocketfetch/commit/2eb5f0c4f9e2599f9c65b50d45b9b543fd2519e2))
+    - Fix windows logo function ([`2eb5f0c`](https://github.com/devanlooches/rocketfetch/commit/2eb5f0c4f9e2599f9c65b50d45b9b543fd2519e2))
     - Added windows support ([`7f6c559`](https://github.com/devanlooches/rocketfetch/commit/7f6c5593f028e34dff7fe04b4d2c8a0248848b66))
     - Fix os-detection on linux ([`e6c36f8`](https://github.com/devanlooches/rocketfetch/commit/e6c36f8f74b83474dc74649d0e3198a5da607374))
     - Refactor logo fetching functions ([`4cf4b28`](https://github.com/devanlooches/rocketfetch/commit/4cf4b2848636cbc695e549c425caee97fdcdc74d))
