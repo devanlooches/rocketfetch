@@ -360,6 +360,12 @@ impl Config {
                     c1.apply_to(r"                .-\+oossssoo+/-.").to_string(),
                 ]
             }
+            x if x.contains("Debian") => {
+                include_str!("logos/debian")
+                    .lines()
+                    .map(str::to_string)
+                    .collect()
+            }
             v => {
                 UserFacingError::new(format!("Unknown OS: {}", v))
                     .help("Please file a new issue on github to request support for a new OS: https://github.com/devanlooches/rocketfetch/issues/new")
