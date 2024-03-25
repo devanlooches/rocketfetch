@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use any_terminal_size::any_terminal_size;
 use console::measure_text_width;
 use console::style;
-use console::Style;
 use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
@@ -180,186 +179,24 @@ impl Config {
 
     #[cfg(target_os = "macos")]
     fn logo() -> Vec<String> {
-        let yellow = Style::from_dotted_str("yellow.bold");
-        let red = Style::from_dotted_str("red.bold");
-        let blue = Style::from_dotted_str("blue.bold");
-        let green = Style::from_dotted_str("green.bold");
-        let purple = Style::new().color256(5).bold();
-        vec![
-            green.apply_to("                 ,xNMM.").to_string(),
-            green.apply_to("               .OMMMMo").to_string(),
-            green.apply_to("               OMMM0,").to_string(),
-            yellow.apply_to("     .;loddo:' loolloddol;.").to_string(),
-            yellow.apply_to("   cKMMMMMMMMMMNWMMMMMMMMMM0:").to_string(),
-            yellow.apply_to(" .KMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
-            yellow.apply_to(" XMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
-            yellow.apply_to(";MMMMMMMMMMMMMMMMMMMMMMMM:").to_string(),
-            red.apply_to(":MMMMMMMMMMMMMMMMMMMMMMMM:").to_string(),
-            red.apply_to(".MMMMMMMMMMMMMMMMMMMMMMMMX.").to_string(),
-            red.apply_to(" kMMMMMMMMMMMMMMMMMMMMMMMMWd.").to_string(),
-            red.apply_to(" .XMMMMMMMMMMMMMMMMMMMMMMMMMMk").to_string(),
-            purple
-                .apply_to("  .XMMMMMMMMMMMMMMMMMMMMMMMMK.")
-                .to_string(),
-            purple.apply_to("    kMMMMMMMMMMMMMMMMMMMMMMd").to_string(),
-            blue.apply_to("     ;KMMMMMMMWXXWMMMMMMMk.").to_string(),
-            blue.apply_to("       .cooc,.    .,coo:.").to_string(),
-        ]
+        include_str!("logos/macos")
+            .lines()
+            .map(str::to_string)
+            .collect()
     }
 
     #[cfg(target_os = "linux")]
     fn logo() -> Vec<String> {
         let os = crate::modules::Os::get_os();
         match os.trim() {
-            "Arch Linux" => {
-                let lightblue = Style::new().blue().bright();
-                vec![
-                    "                     -`                 ",
-                    "                    .o+`                ",
-                    "                   `ooo/                ",
-                    "                  `+oooo:               ",
-                    "                 `+oooooo:              ",
-                    "                 -+oooooo+:             ",
-                    "               `/:-:++oooo+:            ",
-                    "              `/++++/+++++++:           ",
-                    "             `/++++++++++++++:          ",
-                    "            `/+++ooooooooooooo/`        ",
-                    "           ./ooosssso++osssssso+`       ",
-                    "          .oossssso-````/ossssss+`      ",
-                    "         -osssssso.      :ssssssso.     ",
-                    "        :osssssss/        osssso+++.    ",
-                    "       /ossssssss/        +ssssooo/-    ",
-                    "     `/ossssso+/:-        -:/+osssso+-  ",
-                    "    `+sso+:-`                 `.-/+oso: ",
-                    "   `++:.                           `-/+/",
-                    "   .`                                 `/",
-                ]
-                .iter()
-                .map(|&x| lightblue.apply_to(x).to_string())
-                .collect()
-            }
-            x if x.contains("Ubuntu") => {
-                let c1 = Style::new().color256(1).bold();
-                let c2 = Style::new().color256(7).bold();
-                vec![
-                    c1.apply_to(r"            .-/+oossssoo+\-.").to_string(),
-                    c1.apply_to("            ´:+ssssssssssssssssss+:`")
-                        .to_string(),
-                    c1.apply_to("          -+ssssssssssssssssssyyssss+-")
-                        .to_string(),
-                    format!(
-                        "{}{}{}",
-                        c1.apply_to("        .ossssssssssssssssss"),
-                        c2.apply_to("dMMMNy"),
-                        c1.apply_to("sssso.")
-                    ),
-                    format!(
-                        "{}{}{}",
-                        c1.apply_to("       /sssssssssss"),
-                        c2.apply_to("hdmmNNmmyNMMMMh"),
-                        c1.apply_to(r"ssssss\")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("      +sssssssss"),
-                        c2.apply_to("hm"),
-                        c1.apply_to("yd"),
-                        c2.apply_to("MMMMMMMNddddy"),
-                        c1.apply_to("ssssssss+")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("     /ssssssss"),
-                        c2.apply_to("hNMMM"),
-                        c1.apply_to("yh"),
-                        c2.apply_to("hyyyyhmNMMMNh"),
-                        c1.apply_to(r"ssssssss\")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("    .ssssssss"),
-                        c2.apply_to("dMMMNh"),
-                        c1.apply_to("ssssssssss"),
-                        c2.apply_to("hNMMMd"),
-                        c1.apply_to("ssssssss.")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("    +ssss"),
-                        c2.apply_to("hhhyNMMNy"),
-                        c1.apply_to("ssssssssssss"),
-                        c2.apply_to("yNMMMy"),
-                        c1.apply_to("sssssss+")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("    ss"),
-                        c2.apply_to("yNMMMNyMMh"),
-                        c1.apply_to("ssssssssssssss"),
-                        c2.apply_to("hmmmh"),
-                        c1.apply_to("ssssssso")
-                    ),
-                    format!(
-                        "{}{}{}",
-                        c1.apply_to("    ss"),
-                        c2.apply_to("yNMMMNyMMh"),
-                        c1.apply_to("sssssssssssssshmmmhssssssso")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("    +ssss"),
-                        c2.apply_to("hhhyNMMNy"),
-                        c1.apply_to("ssssssssssss"),
-                        c2.apply_to("yNMMMy"),
-                        c1.apply_to("sssssss+")
-                    ),
-                    format!(
-                        "{}{}{}{}{}.",
-                        c1.apply_to("    .ssssssss"),
-                        c2.apply_to("dMMMNh"),
-                        c1.apply_to("ssssssssss"),
-                        c2.apply_to("hNMMMd"),
-                        c1.apply_to("ssssssss")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to(r"     \ssssssss"),
-                        c2.apply_to("hNMMM"),
-                        c1.apply_to("yh"),
-                        c2.apply_to("hyyyyhdNMMMNh"),
-                        c1.apply_to("ssssssss/")
-                    ),
-                    format!(
-                        "{}{}{}{}{}",
-                        c1.apply_to("      +sssssssss"),
-                        c2.apply_to("dm"),
-                        c1.apply_to("yd"),
-                        c2.apply_to("MMMMMMMMddddy"),
-                        c1.apply_to("ssssssss+")
-                    ),
-                    format!(
-                        "{}{}{}",
-                        c1.apply_to(r"       \sssssssssss"),
-                        c2.apply_to("hdmNNNNmyNMMMMh"),
-                        c1.apply_to("ssssss/")
-                    ),
-                    format!(
-                        "{}{}{}",
-                        c1.apply_to("        .ossssssssssssssssss"),
-                        c2.apply_to("dMMMNy"),
-                        c1.apply_to("sssso.")
-                    ),
-                    format!(
-                        "{}{}{}",
-                        c1.apply_to("          -+sssssssssssssssss"),
-                        c2.apply_to("yyy"),
-                        c1.apply_to("ssss+-")
-                    ),
-                    c1.apply_to("            `:+ssssssssssssssssss+:`")
-                        .to_string(),
-                    c1.apply_to(r"                .-\+oossssoo+/-.").to_string(),
-                ]
-            }
+            "Arch Linux" => include_str!("logos/arch_linux")
+                .lines()
+                .map(str::to_string)
+                .collect(),
+            x if x.contains("Ubuntu") => include_str!("logos/ubuntu_linux")
+                .lines()
+                .map(str::to_string)
+                .collect(),
             x if x.contains("Debian") => {
                 include_str!("logos/debian")
                     .lines()
@@ -377,37 +214,10 @@ impl Config {
 
     #[cfg(target_os = "windows")]
     fn logo() -> Vec<String> {
-        let c1 = Style::new().color256(6).bold();
-        vec![
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-            c1.apply_to("################  ################")
-                .to_string(),
-        ]
+        include_str!("logos/windows")
+            .lines()
+            .map(str::to_string)
+            .collect()
     }
 
     fn get_logo(&self) -> Vec<String> {
