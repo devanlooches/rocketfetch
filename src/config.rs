@@ -189,7 +189,7 @@ impl Config {
     fn logo() -> Vec<String> {
         let os = crate::modules::Os::get_os();
         match os.trim() {
-            "Arch Linux" => include_str!("logos/arch_linux")
+            x if x.contains("Arch Linux") => include_str!("logos/arch_linux")
                 .lines()
                 .map(str::to_string)
                 .collect(),
