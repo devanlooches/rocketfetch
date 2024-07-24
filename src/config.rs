@@ -2,9 +2,9 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use any_terminal_size::any_terminal_size;
+use clap::Parser;
 use console::measure_text_width;
 use console::style;
-use structopt::StructOpt;
 use user_error::{UserFacingError, UFE};
 
 use crate::cli::Mode;
@@ -43,7 +43,7 @@ pub struct Config {
 
 impl Config {
     pub fn get_args() -> Opt {
-        Opt::from_args()
+        Opt::parse()
     }
     pub fn path() -> String {
         let matches = Self::get_args();

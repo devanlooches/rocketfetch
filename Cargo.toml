@@ -13,6 +13,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 any_terminal_size = "0.1.21"
+clap = { version = "4.5.10", features = ["derive"] }
 console = "0.15.8"
 dirs = "5.0.1"
 libmacchina = "7.3.0"
@@ -20,7 +21,6 @@ regex = "1.10.5"
 secfmt = "0.1.1"
 serde = "1.0.204"
 serde_derive = "1.0.204"
-structopt = "0.3.26"
 textwrap = "0.16.1"
 toml = "0.8.15"
 user-error = "1.2.8"

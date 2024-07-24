@@ -1,8 +1,8 @@
-use structopt::StructOpt;
+use clap::Parser;
 use user_error::UserFacingError;
 
-#[derive(StructOpt)]
-#[structopt(
+#[derive(Parser)]
+#[command(
     about = "A WIP command line system information tool (neofetch) rewritten in rust for performance with toml file configuration."
 )]
 pub struct Opt {
