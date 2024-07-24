@@ -12,17 +12,17 @@ keywords = ["system", "cli", "fetch", "multithreaded", "multithreading"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-any_terminal_size = { version = "0.1.21" }
+any_terminal_size = "0.1.21"
 console = "0.15.8"
 dirs = "5.0.1"
-libmacchina = "7.2.2"
-regex = "1.10.4"
+libmacchina = "7.3.0"
+regex = "1.10.5"
 secfmt = "0.1.1"
-serde = "1.0.197"
-serde_derive = "1.0.197"
+serde = "1.0.204"
+serde_derive = "1.0.204"
 structopt = "0.3.26"
 textwrap = "0.16.1"
-toml = "0.8.12"
+toml = "0.8.15"
 user-error = "1.2.8"
 
 [dev-dependencies]
