@@ -1,3 +1,24 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.7.5](https://github.com/devanlooches/rocketfetch/compare/v0.7.4...v0.7.5) - 2024-07-25
+
+### Fixed
+- *(logo)* Make Arch Linux detection more flexible
+- *(logo)* Update Debian logo
+
+### Other
+- Remove Structopt dependency in favor of Clap 3.X
+- Update dependencies
+- *(dependencies)* Update dependency versions
+- Update .gitignore
+- Merge branch 'dev' into main
+- *(logo)* Replace logo vectors with files
 
 
 ## 0.7.4 (2023-08-27)
